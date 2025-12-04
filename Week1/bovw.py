@@ -8,8 +8,9 @@ import glob
 
 from typing import *
 
-from sklearn.discriminant_analysis import StandardScaler
+from sklearn.discriminant_analysis import StandardScaler, LinearDiscriminantAnalysis
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
+from sklearn.decomposition import PCA, TruncatedSVD
 
 class BOVW():
     
@@ -50,8 +51,9 @@ class BOVW():
         self.joint_descriptor_normalization = joint_descriptor_normalization
         self.dimensionality_reduction = dimensionality_reduction
         self.dimensionality_reduction_kwargs = dimensionality_reduction_kwargs
-        
+
         self.scaler = None
+        self.dim_reducer = None
         
     ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
@@ -129,7 +131,7 @@ class BOVW():
 
         # cutre
         # parece muy caro normalizar todo esto (?)
-        descriptors = np.concat(all_descriptors)
+        descriptors = np.concatenate(all_descriptors, axis=0)
         match self.joint_descriptor_normalization:
             case "MaxAbs":
                 self.scaler = MaxAbsScaler()
@@ -149,6 +151,41 @@ class BOVW():
             return all_descriptors
 
         return [self.scaler.transform(descriptors) for descriptors in all_descriptors]
+
+
+    def fit_reduce_dimensionality(self, all_descriptors: list[np.ndarray], labels: Optional[list] = None) -> list[np.ndarray]:
+        if self.dimensionality_reduction is None:
+            return all_descriptors
+
+        descriptors = np.concatenate(all_descriptors, axis=0)
+        match self.dimensionality_reduction:
+            case "PCA":
+                self.dim_reducer = PCA(**self.dimensionality_reduction_kwargs)
+            case "SVD":
+                self.dim_reducer = TruncatedSVD(**self.dimensionality_reduction_kwargs)
+            case "LDA":
+                # LDA because it appears on the slides
+                if labels is None:
+                    raise ValueError("LDA requires labels.")
+                self.dim_reducer = LinearDiscriminantAnalysis(**self.dimensionality_reduction_kwargs)
+            case _:
+                raise ValueError("Invalid dimensionality reduction method. Choose from: PCA, SVD, LDA, NMF, ICA")
+
+        if self.dimensionality_reduction == "LDA":
+            # LDA needs labels during fit!!!
+            # TODO: need a nice way of generating the labels for each descriptor (instead of image), no?
+            self.dim_reducer.fit(descriptors, labels)
+        else:
+            self.dim_reducer.fit(descriptors)
+
+        return self.reduce_dimensionality(all_descriptors)
+
+
+    def reduce_dimensionality(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        if self.dim_reducer is None:
+            return all_descriptors
+
+        return [self.dim_reducer.transform(descriptors) for descriptors in all_descriptors]
 
 
 def visualize_bow_histogram(histogram, image_index, output_folder="./test_example.jpg"):

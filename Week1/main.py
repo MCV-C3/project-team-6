@@ -93,6 +93,8 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
             test_descriptors.append(descriptors)
             descriptors_labels.append(label)
     
+    all_descriptors = bovw.reduce_dimensionality(all_descriptors)
+    
     test_descriptors = bovw.scale_all_descriptors(test_descriptors)
     
     print("Computing the bovw histograms")
@@ -124,6 +126,8 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
             descriptors = bovw.normalize_descriptors(descriptors)
             all_descriptors.append(descriptors)
             all_labels.append(label)
+    
+    all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors)
     
     all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
     
