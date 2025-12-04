@@ -106,7 +106,7 @@ class BOVW():
                 raise ValueError("Invalid normalization.")
     
     # FIXME: this could be fused with the method above
-    def normalize_all_descriptors(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+    def normalize_descriptors_jointly(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
         if self.joint_descriptor_normalization is None:
             return all_descriptors, None
         
