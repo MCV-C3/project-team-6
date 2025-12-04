@@ -13,7 +13,19 @@ from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
 
 class BOVW():
     
-    def __init__(self, detector_type="SIFT", codebook_size:int=50, descriptor_normalization=None, joint_descriptor_normalization=None, detector_kwargs:dict={}, codebook_kwargs:dict={}, dense_kwargs:dict={}):
+    def __init__(
+            self,
+            *,
+            detector_type = "SIFT",
+            codebook_size: int = 50,
+            descriptor_normalization = None,
+            joint_descriptor_normalization = None,
+            detector_kwargs: dict = {},
+            codebook_kwargs: dict = {},
+            dense_kwargs: dict = {},
+            dimensionality_reduction = None,
+            dimensionality_reduction_kwargs: dict = {}
+        ):
 
         self.dense = False
         if detector_type == 'SIFT':
@@ -33,9 +45,13 @@ class BOVW():
         self.detector_type = detector_type
         self.detector_kwargs = detector_kwargs
         self.dense_kwargs = dense_kwargs
-        
+
         self.descriptor_normalization = descriptor_normalization
         self.joint_descriptor_normalization = joint_descriptor_normalization
+        self.dimensionality_reduction = dimensionality_reduction
+        self.dimensionality_reduction_kwargs = dimensionality_reduction_kwargs
+        
+        self.scaler = None
         
     ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
@@ -104,29 +120,35 @@ class BOVW():
                 return np.sqrt(descriptors / norms)
             case _:
                 raise ValueError("Invalid normalization.")
-    
+
+
     # FIXME: this could be fused with the method above
-    def normalize_descriptors_jointly(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+    def fit_scale_descriptors_jointly(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
         if self.joint_descriptor_normalization is None:
-            return all_descriptors, None
-        
+            return all_descriptors
+
         # cutre
         # parece muy caro normalizar todo esto (?)
         descriptors = np.concat(all_descriptors)
         match self.joint_descriptor_normalization:
             case "MaxAbs":
-                scaler = MaxAbsScaler()
+                self.scaler = MaxAbsScaler()
             case "Standard":
-                scaler = StandardScaler()
+                self.scaler = StandardScaler()
             case "MinMax":
-                scaler = MinMaxScaler()
+                self.scaler = MinMaxScaler()
             case _:
                 raise ValueError("Invalid normalization for all descriptors.")
 
-        scaler.fit(descriptors)
-        all_descriptors = [scaler.transform(descriptors) for descriptors in all_descriptors]
-        return all_descriptors, scaler
-            
+        self.scaler.fit(descriptors)
+        return self.normalize_all_descriptors(all_descriptors)
+
+
+    def scale_all_descriptors(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        if self.scaler is None:
+            return all_descriptors
+
+        return [self.scaler.transform(descriptors) for descriptors in all_descriptors]
 
 
 def visualize_bow_histogram(histogram, image_index, output_folder="./test_example.jpg"):

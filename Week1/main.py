@@ -72,7 +72,6 @@ def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"
 def test(dataset: List[Tuple[Type[Image.Image], int]],
         bovw: Type[BOVW], 
         classifier:Type[object],
-        scaler: Optional[Any]
     ):
     
     test_descriptors = []
@@ -94,8 +93,7 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
             test_descriptors.append(descriptors)
             descriptors_labels.append(label)
     
-    if scaler:
-        test_descriptors = [scaler.transform(descriptors) for descriptors in test_descriptors]
+    test_descriptors = bovw.scale_all_descriptors(test_descriptors)
     
     print("Computing the bovw histograms")
     bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, bovw=bovw)
@@ -127,7 +125,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
             all_descriptors.append(descriptors)
             all_labels.append(label)
     
-    all_descriptors, scaler = bovw.normalize_descriptors_jointly(all_descriptors)
+    all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
     
     print("Fitting the codebook")
     kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
@@ -140,7 +138,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
 
     print("Accuracy on Phase[Train]:", accuracy_score(y_true=all_labels, y_pred=classifier.predict(bovw_histograms)))
     
-    return bovw, classifier, scaler
+    return bovw, classifier
 
 
 def Dataset(ImageFolder:str = "../data/places_reduced") -> List[Tuple[Type[Image.Image], int]]:
@@ -190,6 +188,6 @@ if __name__ == "__main__":
     classifier = LogisticRegression(class_weight="balanced")
     # classifier = SVC(kernel='rbf')
     
-    bovw, classifier, scaler = train(dataset=data_train, bovw=bovw, classifier=classifier)
+    bovw, classifier = train(dataset=data_train, bovw=bovw, classifier=classifier)
     
-    test(dataset=data_test, bovw=bovw, classifier=classifier, scaler=scaler)
+    test(dataset=data_test, bovw=bovw, classifier=classifier)
