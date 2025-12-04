@@ -8,28 +8,56 @@ import glob
 
 from typing import *
 
+from sklearn.discriminant_analysis import StandardScaler
+from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
+
 class BOVW():
     
-    def __init__(self, detector_type="AKAZE", codebook_size:int=50, detector_kwargs:dict={}, codebook_kwargs:dict={}):
+    def __init__(self, detector_type="SIFT", codebook_size:int=50, descriptor_normalization=None, joint_descriptor_normalization=None, detector_kwargs:dict={}, codebook_kwargs:dict={}, dense_kwargs:dict={}):
 
+        self.dense = False
         if detector_type == 'SIFT':
             self.detector = cv2.SIFT_create(**detector_kwargs)
         elif detector_type == 'AKAZE':
             self.detector = cv2.AKAZE_create(**detector_kwargs)
         elif detector_type == 'ORB':
             self.detector = cv2.ORB_create(**detector_kwargs)
+        elif detector_type == 'DSIFT':
+            self.dense = True
+            self.detector = cv2.SIFT_create(**detector_kwargs)
         else:
-            raise ValueError("Detector type must be 'SIFT', 'SURF', or 'ORB'")
+            raise ValueError("Detector type must be 'SIFT', 'DSIFT', 'AKAZE', or 'ORB'")
         
         self.codebook_size = codebook_size
         self.codebook_algo = MiniBatchKMeans(n_clusters=self.codebook_size, **codebook_kwargs)
         self.detector_type = detector_type
         self.detector_kwargs = detector_kwargs
-               
+        self.dense_kwargs = dense_kwargs
+        
+        self.descriptor_normalization = descriptor_normalization
+        self.joint_descriptor_normalization = joint_descriptor_normalization
+        
     ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
-
-        return self.detector.detectAndCompute(image, None)
+        if not self.dense:
+            return self.detector.detectAndCompute(image, None)
+        else:
+            return self._extract_dense_features(image)
+        
+        
+    def _extract_dense_features(self, image: Literal["H", "W", "C"]) -> Tuple:
+        step = self.dense_kwargs.get("step", 1)
+        size = self.dense_kwargs.get("size", 1)
+        
+        # TODO: Maybe add padding, or use step//2 as padding?
+        
+        keypoints = [cv2.KeyPoint(x, y, size) 
+                for y in range(0, image.shape[0], step)
+                for x in range(0, image.shape[1], step)]
+        
+        keypoints, descriptors = self.detector.compute(image, keypoints)
+        
+        return keypoints, descriptors
     
     
     def _update_fit_codebook(self, descriptors: Literal["N", "T", "d"])-> Tuple[Type[MiniBatchKMeans],
@@ -54,10 +82,51 @@ class BOVW():
         # Normalize the histogram (optional)
         codebook_descriptor = codebook_descriptor / np.linalg.norm(codebook_descriptor)
         
-        return codebook_descriptor       
+        return codebook_descriptor
+
+    def normalize_descriptors(self, descriptors: np.ndarray) -> np.ndarray:
+        if self.descriptor_normalization is None:
+            return descriptors
+        
+        # cutre
+        match self.descriptor_normalization:
+            case "L2":
+                norms = np.linalg.norm(descriptors, axis=1, keepdims=True)
+                norms[norms == 0] = 1
+                return descriptors / norms
+            case "L1":
+                sums = np.sum(descriptors, axis=1, keepdims=True)
+                sums[sums == 0] = 1
+                return descriptors / sums
+            case "Root":
+                norms = np.linalg.norm(descriptors, axis=1, keepdims=True)
+                norms[norms == 0] = 1
+                return np.sqrt(descriptors / norms)
+            case _:
+                raise ValueError("Invalid normalization.")
     
+    # FIXME: this could be fused with the method above
+    def normalize_all_descriptors(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        if self.joint_descriptor_normalization is None:
+            return all_descriptors, None
+        
+        # cutre
+        # parece muy caro normalizar todo esto (?)
+        descriptors = np.concat(all_descriptors)
+        match self.joint_descriptor_normalization:
+            case "MaxAbs":
+                scaler = MaxAbsScaler()
+            case "Standard":
+                scaler = StandardScaler()
+            case "MinMax":
+                scaler = MinMaxScaler()
+            case _:
+                raise ValueError("Invalid normalization for all descriptors.")
 
-
+        scaler.fit(descriptors)
+        all_descriptors = [scaler.transform(descriptors) for descriptors in all_descriptors]
+        return all_descriptors, scaler
+            
 
 
 def visualize_bow_histogram(histogram, image_index, output_folder="./test_example.jpg"):
