@@ -7,11 +7,23 @@ import numpy as np
 import glob
 import tqdm
 import os
+import pickle
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
 
+def get_detector_config_id(bovw: Type[BOVW]) -> str:
+    """
+    Generates a unique ID string based on detector type and its parameters.
+    """
+    cfg = bovw.detector_type
+
+    if hasattr(bovw, "detector_kwargs") and len(bovw.detector_kwargs) > 0:
+        for key, value in sorted(bovw.detector_kwargs.items()):
+            cfg += f"_{key}{value}"
+
+    return cfg
 
 
 def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"]):
@@ -24,10 +36,30 @@ def test(dataset: List[Tuple[Type[Image.Image], int]]
     
     test_descriptors = []
     descriptors_labels = []
+
+    # Build cache directory
+    config_id = get_detector_config_id(bovw)
+    cache_dir = os.path.join("cache_descriptors", config_id, "val")
+    os.makedirs(cache_dir, exist_ok=True)
     
     for idx in tqdm.tqdm(range(len(dataset)), desc="Phase [Eval]: Extracting the descriptors"):
         image, label = dataset[idx]
-        _, descriptors = bovw._extract_features(image=np.array(image))
+
+        # Define cache path based on image filename
+        img_path = getattr(image, "filename", None)
+        if img_path is not None:
+            base_name = os.path.splitext(os.path.basename(img_path))[0]
+            cache_path = os.path.join(cache_dir, base_name + ".pkl")
+
+        # If pickle exists, load descriptors from cache
+        if os.path.exists(cache_path):
+            with open(cache_path, "rb") as f:
+                data = pickle.load(f)
+            descriptors = data["descriptors"]
+        else:
+            _, descriptors = bovw._extract_features(image=np.array(image))
+            with open(cache_path, "wb") as f:
+                pickle.dump({"descriptors": descriptors, "label": label}, f)
         
         if descriptors is not None:
             test_descriptors.append(descriptors)
@@ -47,11 +79,31 @@ def train(dataset: List[Tuple[Type[Image.Image], int]],
            bovw:Type[BOVW]):
     all_descriptors = []
     all_labels = []
+
+    # Build cache directory
+    config_id = get_detector_config_id(bovw)
+    cache_dir = os.path.join("cache_descriptors", config_id, "train")
+    os.makedirs(cache_dir, exist_ok=True)
     
     for idx in tqdm.tqdm(range(len(dataset)), desc="Phase [Training]: Extracting the descriptors"):
         
         image, label = dataset[idx]
-        _, descriptors = bovw._extract_features(image=np.array(image))
+
+        # Define cache path based on image filename
+        img_path = getattr(image, "filename", None)
+        if img_path is not None:
+            base_name = os.path.splitext(os.path.basename(img_path))[0]
+            cache_path = os.path.join(cache_dir, base_name + ".pkl")
+
+        # If pickle exists, load descriptors from cache
+        if os.path.exists(cache_path):
+            with open(cache_path, "rb") as f:
+                data = pickle.load(f)
+            descriptors = data["descriptors"]
+        else:
+            _, descriptors = bovw._extract_features(image=np.array(image))
+            with open(cache_path, "wb") as f:
+                pickle.dump({"descriptors": descriptors, "label": label}, f)
         
         if descriptors  is not None:
             all_descriptors.append(descriptors)
@@ -71,7 +123,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]],
     return bovw, classifier
 
 
-def Dataset(ImageFolder:str = "data/MIT_split/train") -> List[Tuple[Type[Image.Image], int]]:
+def Dataset(ImageFolder:str = "../data/places_reduced") -> List[Tuple[Type[Image.Image], int]]:
 
     """
     Expected Structure:
@@ -98,7 +150,7 @@ def Dataset(ImageFolder:str = "data/MIT_split/train") -> List[Tuple[Type[Image.I
         images: List[str] = glob.glob(image_path+"/*.jpg")
         for img in images:
             img_pil = Image.open(img).convert("RGB")
-
+            img_pil.filename = img 
             dataset.append((img_pil, map_classes[cls_folder]))
 
 
@@ -109,9 +161,9 @@ def Dataset(ImageFolder:str = "data/MIT_split/train") -> List[Tuple[Type[Image.I
 
 
 if __name__ == "__main__":
-     #/home/cboned/data/Master/MIT_split
-    data_train = Dataset(ImageFolder="/home/cboned/data/Master/MIT_split/train")
-    data_test = Dataset(ImageFolder="/home/cboned/data/Master/MIT_split/test") 
+     #../data/places_reduced/
+    data_train = Dataset(ImageFolder="../data/places_reduced/train")
+    data_test = Dataset(ImageFolder="../data/places_reduced/val") 
 
     bovw = BOVW()
     

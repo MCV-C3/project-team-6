@@ -23,7 +23,8 @@ class BOVW():
         
         self.codebook_size = codebook_size
         self.codebook_algo = MiniBatchKMeans(n_clusters=self.codebook_size, **codebook_kwargs)
-        
+        self.detector_type = detector_type
+        self.detector_kwargs = detector_kwargs
                
     ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
