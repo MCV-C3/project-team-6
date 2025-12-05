@@ -179,7 +179,7 @@ def Dataset(ImageFolder:str = "../data/places_reduced") -> List[Tuple[Type[Image
     return dataset
 
 
-    
+
 
 
 if __name__ == "__main__":
