@@ -19,7 +19,10 @@ JointDescriptorNormalization = Literal["MaxAbs", "Standard", "MinMax"]
 DimensionalityReduction = Literal["PCA", "SVD", "LDA", "TSNE"]
 
 class BOVW():
-    
+    """
+    Bag of Visual Words (BOVW) implementation for image classification.
+    """
+
     def __init__(
             self,
             *,
@@ -34,6 +37,21 @@ class BOVW():
             dimensionality_reduction_kwargs: dict = {},
             pyramid_levels: Optional[int] = None,
         ):
+        """
+        Initialize the BOVW model.
+
+        Args:
+            detector_type: Feature detector type. Options: "SIFT", "AKAZE", "ORB", "DSIFT".
+            codebook_size: Number of visual words in the codebook (must be >= 2).
+            descriptor_normalization: Per-descriptor normalization. Options: "L1", "L2", "Root", or None.
+            joint_descriptor_normalization: Joint normalization across all descriptors. Options: "MaxAbs", "Standard", "MinMax", or None.
+            detector_kwargs: Additional keyword arguments for the detector.
+            codebook_kwargs: Additional keyword arguments for MiniBatchKMeans.
+            dense_kwargs: Dense SIFT parameters (e.g., {"step": 32, "size": 1}).
+            dimensionality_reduction: Dimensionality reduction method. Options: "PCA", "SVD", "LDA", "TSNE", or None.
+            dimensionality_reduction_kwargs: Additional keyword arguments for the dimensionality reduction method.
+            pyramid_levels: Spatial pyramid levels (None for classic BOVW, or >= 1 for pyramid).
+        """
         if codebook_size < 2:
             raise ValueError("codebook_size must be at least 2")
 
@@ -78,8 +96,16 @@ class BOVW():
         self.dim_reducer = None
         self.pyramid_levels = pyramid_levels
         
-    ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
+        """
+        Extract features from an image using the configured detector.
+
+        Args:
+            image: Input image array (H, W, C).
+
+        Returns:
+            Tuple of (keypoints, descriptors).
+        """
         if not self.dense:
             return self.detector.detectAndCompute(image, None)
         else:
@@ -87,23 +113,40 @@ class BOVW():
         
         
     def _extract_dense_features(self, image: Literal["H", "W", "C"]) -> Tuple:
+        """
+        Extract dense SIFT features on a regular grid.
+
+        Args:
+            image: Input image array (H, W, C).
+
+        Returns:
+            Tuple of (keypoints, descriptors).
+        """
         step = self.dense_kwargs.get("step", 1)
         size = self.dense_kwargs.get("size", 1)
-        
+
         # TODO: Maybe add padding, or use step//2 as padding?
-        
-        keypoints = [cv2.KeyPoint(x, y, size) 
+
+        keypoints = [cv2.KeyPoint(x, y, size)
                 for y in range(0, image.shape[0], step)
                 for x in range(0, image.shape[1], step)]
-        
+
         keypoints, descriptors = self.detector.compute(image, keypoints)
-        
+
         return keypoints, descriptors
     
     
     def _update_fit_codebook(self, descriptors: Literal["N", "T", "d"])-> Tuple[Type[MiniBatchKMeans],
                                                                                Literal["codebook_size", "d"]]:
-        
+        """
+        Fit the codebook using MiniBatchKMeans on the provided descriptors.
+
+        Args:
+            descriptors: List of descriptor arrays (N, T, d).
+
+        Returns:
+            Tuple of (fitted kmeans model, cluster centers).
+        """
         all_descriptors = np.vstack(descriptors)
 
         self.codebook_algo = self.codebook_algo.partial_fit(X=all_descriptors)
@@ -111,27 +154,57 @@ class BOVW():
         return self.codebook_algo, self.codebook_algo.cluster_centers_
     
     def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
+        """
+        Compute the BOVW descriptor for an image.
+
+        Args:
+            descriptors: Feature descriptors (T, d).
+            keypoints: Keypoints corresponding to the descriptors.
+            kmeans: Fitted KMeans model.
+            image_size: Image dimensions (height, width).
+
+        Returns:
+            BOVW descriptor (histogram or spatial pyramid).
+        """
         if self.pyramid_levels is None:
             return self._compute_codebook_descriptor_classic(descriptors=descriptors, kmeans=kmeans)
         else:
             return self._compute_codebook_descriptor_pyramid(descriptors=descriptors, keypoints=keypoints, kmeans=kmeans, image_size=image_size)
     
     def _compute_codebook_descriptor_classic(self, descriptors: Literal["1 T d"], kmeans: Type[KMeans]) -> np.ndarray:
+        """
+        Compute classic BOVW histogram (no spatial pyramid).
 
+        Args:
+            descriptors: Feature descriptors (T, d).
+            kmeans: Fitted KMeans model.
+
+        Returns:
+            Normalized histogram of visual words.
+        """
         visual_words = kmeans.predict(descriptors)
 
-
-        # Create a histogram of visual words
         codebook_descriptor = np.zeros(kmeans.n_clusters)
         for label in visual_words:
             codebook_descriptor[label] += 1
 
-        # Normalize the histogram (optional)
         codebook_descriptor = codebook_descriptor / np.linalg.norm(codebook_descriptor)
 
         return codebook_descriptor
 
     def _compute_codebook_descriptor_pyramid(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
+        """
+        Compute spatial pyramid BOVW descriptor.
+
+        Args:
+            descriptors: Feature descriptors (T, d).
+            keypoints: Keypoints corresponding to the descriptors.
+            kmeans: Fitted KMeans model.
+            image_size: Image dimensions (height, width).
+
+        Returns:
+            Concatenated normalized histograms for all pyramid levels and regions.
+        """
         height, width = image_size
 
         visual_words = kmeans.predict(descriptors)
@@ -172,9 +245,18 @@ class BOVW():
         return np.concatenate(all_histograms)
 
     def normalize_descriptors(self, descriptors: np.ndarray) -> np.ndarray:
+        """
+        Normalize individual descriptors using the configured normalization method.
+
+        Args:
+            descriptors: Input descriptors array.
+
+        Returns:
+            Normalized descriptors.
+        """
         if self.descriptor_normalization is None:
             return descriptors
-        
+
         # cutre
         match self.descriptor_normalization:
             case "L2":
@@ -195,6 +277,15 @@ class BOVW():
 
     # FIXME: this could be fused with the method above
     def fit_scale_descriptors_jointly(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        """
+        Fit and apply joint normalization across all descriptors.
+
+        Args:
+            all_descriptors: List of descriptor arrays.
+
+        Returns:
+            Normalized descriptor arrays.
+        """
         if self.joint_descriptor_normalization is None:
             return all_descriptors
 
@@ -216,6 +307,15 @@ class BOVW():
 
 
     def scale_all_descriptors(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        """
+        Apply the fitted scaler to normalize descriptors.
+
+        Args:
+            all_descriptors: List of descriptor arrays.
+
+        Returns:
+            Scaled descriptor arrays.
+        """
         if self.scaler is None:
             return all_descriptors
 
@@ -223,6 +323,16 @@ class BOVW():
 
 
     def fit_reduce_dimensionality(self, all_descriptors: list[np.ndarray], labels: Optional[list] = None) -> list[np.ndarray]:
+        """
+        Fit and apply dimensionality reduction to descriptors.
+
+        Args:
+            all_descriptors: List of descriptor arrays.
+            labels: Optional labels for supervised methods (e.g., LDA).
+
+        Returns:
+            Dimensionality-reduced descriptor arrays.
+        """
         if self.dimensionality_reduction is None:
             return all_descriptors
 
@@ -253,6 +363,15 @@ class BOVW():
 
 
     def reduce_dimensionality(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        """
+        Apply the fitted dimensionality reducer to descriptors.
+
+        Args:
+            all_descriptors: List of descriptor arrays.
+
+        Returns:
+            Dimensionality-reduced descriptor arrays.
+        """
         if self.dim_reducer is None:
             return all_descriptors
 
