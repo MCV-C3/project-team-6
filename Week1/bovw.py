@@ -13,21 +13,26 @@ from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
 from sklearn.decomposition import PCA, TruncatedSVD
 from sklearn.manifold import TSNE
 
+DetectorType = Literal["SIFT", "AKAZE", "ORB", "DSIFT"]
+DescriptorNormalization = Literal["L1", "L2", "Root"]
+JointDescriptorNormalization = Literal["MaxAbs", "Standard", "MinMax"]
+DimensionalityReduction = Literal["PCA", "SVD", "LDA", "TSNE"]
+
 class BOVW():
     
     def __init__(
             self,
             *,
-            detector_type = "SIFT",
+            detector_type: DetectorType = "SIFT",
             codebook_size: int = 50,
-            descriptor_normalization = None,
-            joint_descriptor_normalization = None,
+            descriptor_normalization: Optional[DescriptorNormalization] = None,
+            joint_descriptor_normalization: Optional[JointDescriptorNormalization] = None,
             detector_kwargs: dict = {},
             codebook_kwargs: dict = {},
             dense_kwargs: dict = {},
-            dimensionality_reduction = None,
+            dimensionality_reduction: Optional[DimensionalityReduction] = None,
             dimensionality_reduction_kwargs: dict = {},
-            pyramid_levels=None,
+            pyramid_levels: Optional[int] = None,
         ):
 
         self.dense = False
