@@ -14,7 +14,7 @@ import pickle
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import sklearn
-
+from sklearn.model_selection import StratifiedKFold
 
 def get_detector_config_id(bovw: Type[BOVW]) -> str:
     """
@@ -141,10 +141,17 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
     print("predicting the values")
     y_pred = classifier.predict(bovw_histograms)
     
-    print("Accuracy on Phase[Test]:", accuracy_score(y_true=descriptors_labels, y_pred=y_pred))
-    print("Precision on Phase[Test]:", precision_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted'))
-    print("Recall on Phase[Test]:", recall_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted'))
-    print("F1-Score on Phase[Test]:", f1_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted'))
+    acc = accuracy_score(y_true=descriptors_labels, y_pred=y_pred)
+    prec = precision_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted')
+    rec = recall_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted')
+    f1 = f1_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted')
+
+    print("Accuracy on Phase[Test]:", acc)
+    print("Precision on Phase[Test]:", prec)
+    print("Recall on Phase[Test]:", rec)
+    print("F1-Score on Phase[Test]:", f1)
+
+    return acc, prec, rec, f1
     
 
 def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
@@ -192,6 +199,48 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
     print("F1-Score on Phase[Train]:", f1_score(y_true=all_labels, y_pred=y_pred, average='weighted'))
     
     return bovw, classifier
+
+
+def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs, n_splits=5):
+
+    images = [img for img, _ in dataset]
+    labels = np.array([label for _, label in dataset])
+
+    print(f"Starting {n_splits}-Fold Cross-Validation")
+
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+
+    accs = []
+    precisions = []
+    recalls = []
+    f1s = []
+
+    for fold_idx, (train_idx, val_idx) in enumerate(skf.split(images, labels), 1):
+        print(f"\n[FOLD {fold_idx}/{n_splits}]")
+        print(f"  Training Samples: {len(train_idx)} | Validation Samples: {len(val_idx)}")
+
+        train_data = [(images[i], labels[i]) for i in train_idx]
+        val_data   = [(images[i], labels[i]) for i in val_idx]
+
+        bovw = BOVW(**bovw_kwargs)
+        classifier = classifier_cls(**classifier_kwargs)
+
+        bovw, classifier = train(train_data, bovw, classifier)
+        acc, prec, rec, f1 = test(val_data, bovw, classifier)
+
+        accs.append(acc)
+        precisions.append(prec)
+        recalls.append(rec)
+        f1s.append(f1)
+
+    print(f"\n{n_splits}-Fold Cross-Validation Results")
+    print(f"Accuracy: {np.mean(accs):.3f} ± {np.std(accs):.3f}")
+    print(f"Precision: {np.mean(precisions):.3f} ± {np.std(precisions):.3f}")
+    print(f"Recall: {np.mean(recalls):.3f} ± {np.std(recalls):.3f}")
+    print(f"F1-score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
+
+    return np.mean(accs), np.mean(precisions), np.mean(recalls), np.mean(f1s)
+
 
 
 def Dataset(ImageFolder:str = "../data/places_reduced") -> List[Tuple[Type[Image.Image], int]]:
