@@ -99,8 +99,8 @@ def cache_descriptors(cache_path: str, descriptors: np.ndarray, keypoints: list[
         pickle.dump({"descriptors": descriptors, "keypoints": serializable_keypoints, "label": label}, f)
 
 
-def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"], keypoints: list[list[cv2.KeyPoint]]):
-    return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, keypoints=keypoint, kmeans=bovw.codebook_algo) for descriptor, keypoint in zip(descriptors, keypoints)])
+def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"], keypoints: list[list[cv2.KeyPoint]], image_sizes: list[Tuple[int, int]]):
+    return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, keypoints=keypoint, kmeans=bovw.codebook_algo, image_size=image_size) for descriptor, keypoint, image_size in zip(descriptors, keypoints, image_sizes)])
 
 
 def test(dataset: List[Tuple[Type[Image.Image], int]],
@@ -129,14 +129,14 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
             test_descriptors.append(descriptors)
             test_keypoints.append(keypoints)
             descriptors_labels.append(label)
-            test_image_resolutions.append(image.size)
+            test_image_resolutions.append((image.height, image.width))
     
     test_descriptors = bovw.reduce_dimensionality(test_descriptors)
     
     test_descriptors = bovw.scale_all_descriptors(test_descriptors)
     
     print("Computing the bovw histograms")
-    bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, keypoints=test_keypoints, bovw=bovw)
+    bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, keypoints=test_keypoints, image_sizes=test_image_resolutions, bovw=bovw)
     
     print("predicting the values")
     y_pred = classifier.predict(bovw_histograms)
@@ -167,7 +167,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
             all_descriptors.append(descriptors)
             all_keypoints.append(keypoints)
             all_labels.append(label)
-            all_image_resolutions.append(image.size) # así ???
+            all_image_resolutions.append((image.height, image.width))
     
     all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors)
     
@@ -177,7 +177,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
     kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
 
     print("Computing the bovw histograms")
-    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, bovw=bovw) 
+    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, image_sizes=all_image_resolutions, bovw=bovw) 
     
     print("Fitting the classifier")
     classifier = classifier.fit(bovw_histograms, all_labels)
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     data_test = Dataset(ImageFolder="../data/places_reduced/val") 
 
     bovw = BOVW(detector_type="SIFT", descriptor_normalization="L1", codebook_size=5000, dense_kwargs={"step": 32})
-    bovw = BOVW(codebook_size=2000) # default works the same
+    bovw = BOVW(codebook_size=200, pyramid_levels=3) # default works the same
     classifier = LogisticRegression(class_weight="balanced")
     classifier = SVC(kernel='rbf')
     

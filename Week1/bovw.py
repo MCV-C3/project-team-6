@@ -89,20 +89,66 @@ class BOVW():
 
         return self.codebook_algo, self.codebook_algo.cluster_centers_
     
-    def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans]) -> np.ndarray:
+    def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
+        if self.pyramid_levels is None:
+            return self._compute_codebook_descriptor_classic(descriptors=descriptors, kmeans=kmeans)
+        else:
+            return self._compute_codebook_descriptor_pyramid(descriptors=descriptors, keypoints=keypoints, kmeans=kmeans, image_size=image_size)
+    
+    def _compute_codebook_descriptor_classic(self, descriptors: Literal["1 T d"], kmeans: Type[KMeans]) -> np.ndarray:
 
         visual_words = kmeans.predict(descriptors)
-        
-        
+
+
         # Create a histogram of visual words
         codebook_descriptor = np.zeros(kmeans.n_clusters)
         for label in visual_words:
             codebook_descriptor[label] += 1
-        
+
         # Normalize the histogram (optional)
         codebook_descriptor = codebook_descriptor / np.linalg.norm(codebook_descriptor)
-        
+
         return codebook_descriptor
+
+    def _compute_codebook_descriptor_pyramid(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
+        height, width = image_size
+
+        visual_words = kmeans.predict(descriptors)
+
+        kp_coords = np.array([kp.pt for kp in keypoints])
+
+        all_histograms = []
+
+        for level in range(1, self.pyramid_levels + 1):
+            grid_size = level
+            cell_height = height / grid_size
+            cell_width = width / grid_size
+
+            for row in range(grid_size):
+                for col in range(grid_size):
+                    y_min = row * cell_height
+                    y_max = (row + 1) * cell_height
+                    x_min = col * cell_width
+                    x_max = (col + 1) * cell_width
+
+                    mask = (
+                        (kp_coords[:, 0] >= x_min) & (kp_coords[:, 0] < x_max) &
+                        (kp_coords[:, 1] >= y_min) & (kp_coords[:, 1] < y_max)
+                    )
+
+                    region_words = visual_words[mask]
+
+                    histogram = np.zeros(kmeans.n_clusters)
+                    for word in region_words:
+                        histogram[word] += 1
+
+                    norm = np.linalg.norm(histogram)
+                    if norm > 0:
+                        histogram = histogram / norm
+
+                    all_histograms.append(histogram)
+
+        return np.concatenate(all_histograms)
 
     def normalize_descriptors(self, descriptors: np.ndarray) -> np.ndarray:
         if self.descriptor_normalization is None:
