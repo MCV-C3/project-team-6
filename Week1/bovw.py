@@ -8,28 +8,76 @@ import glob
 
 from typing import *
 
+from sklearn.discriminant_analysis import StandardScaler, LinearDiscriminantAnalysis
+from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
+from sklearn.decomposition import PCA, TruncatedSVD
+
 class BOVW():
     
-    def __init__(self, detector_type="AKAZE", codebook_size:int=50, detector_kwargs:dict={}, codebook_kwargs:dict={}):
+    def __init__(
+            self,
+            *,
+            detector_type = "SIFT",
+            codebook_size: int = 50,
+            descriptor_normalization = None,
+            joint_descriptor_normalization = None,
+            detector_kwargs: dict = {},
+            codebook_kwargs: dict = {},
+            dense_kwargs: dict = {},
+            dimensionality_reduction = None,
+            dimensionality_reduction_kwargs: dict = {},
+            pyramid_levels=None,
+        ):
 
+        self.dense = False
         if detector_type == 'SIFT':
             self.detector = cv2.SIFT_create(**detector_kwargs)
         elif detector_type == 'AKAZE':
             self.detector = cv2.AKAZE_create(**detector_kwargs)
         elif detector_type == 'ORB':
             self.detector = cv2.ORB_create(**detector_kwargs)
+        elif detector_type == 'DSIFT':
+            self.dense = True
+            self.detector = cv2.SIFT_create(**detector_kwargs)
         else:
-            raise ValueError("Detector type must be 'SIFT', 'SURF', or 'ORB'")
+            raise ValueError("Detector type must be 'SIFT', 'DSIFT', 'AKAZE', or 'ORB'")
         
         self.codebook_size = codebook_size
         self.codebook_algo = MiniBatchKMeans(n_clusters=self.codebook_size, **codebook_kwargs)
         self.detector_type = detector_type
         self.detector_kwargs = detector_kwargs
-               
+        self.dense_kwargs = dense_kwargs
+
+        self.descriptor_normalization = descriptor_normalization
+        self.joint_descriptor_normalization = joint_descriptor_normalization
+        self.dimensionality_reduction = dimensionality_reduction
+        self.dimensionality_reduction_kwargs = dimensionality_reduction_kwargs
+
+        self.scaler = None
+        self.dim_reducer = None
+        self.pyramid_levels = pyramid_levels
+        
     ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
-
-        return self.detector.detectAndCompute(image, None)
+        if not self.dense:
+            return self.detector.detectAndCompute(image, None)
+        else:
+            return self._extract_dense_features(image)
+        
+        
+    def _extract_dense_features(self, image: Literal["H", "W", "C"]) -> Tuple:
+        step = self.dense_kwargs.get("step", 1)
+        size = self.dense_kwargs.get("size", 1)
+        
+        # TODO: Maybe add padding, or use step//2 as padding?
+        
+        keypoints = [cv2.KeyPoint(x, y, size) 
+                for y in range(0, image.shape[0], step)
+                for x in range(0, image.shape[1], step)]
+        
+        keypoints, descriptors = self.detector.compute(image, keypoints)
+        
+        return keypoints, descriptors
     
     
     def _update_fit_codebook(self, descriptors: Literal["N", "T", "d"])-> Tuple[Type[MiniBatchKMeans],
@@ -41,23 +89,151 @@ class BOVW():
 
         return self.codebook_algo, self.codebook_algo.cluster_centers_
     
-    def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], kmeans: Type[KMeans]) -> np.ndarray:
+    def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
+        if self.pyramid_levels is None:
+            return self._compute_codebook_descriptor_classic(descriptors=descriptors, kmeans=kmeans)
+        else:
+            return self._compute_codebook_descriptor_pyramid(descriptors=descriptors, keypoints=keypoints, kmeans=kmeans, image_size=image_size)
+    
+    def _compute_codebook_descriptor_classic(self, descriptors: Literal["1 T d"], kmeans: Type[KMeans]) -> np.ndarray:
 
         visual_words = kmeans.predict(descriptors)
-        
-        
+
+
         # Create a histogram of visual words
         codebook_descriptor = np.zeros(kmeans.n_clusters)
         for label in visual_words:
             codebook_descriptor[label] += 1
-        
+
         # Normalize the histogram (optional)
         codebook_descriptor = codebook_descriptor / np.linalg.norm(codebook_descriptor)
+
+        return codebook_descriptor
+
+    def _compute_codebook_descriptor_pyramid(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
+        height, width = image_size
+
+        visual_words = kmeans.predict(descriptors)
+
+        kp_coords = np.array([kp.pt for kp in keypoints])
+
+        all_histograms = []
+
+        for level in range(1, self.pyramid_levels + 1):
+            grid_size = level
+            cell_height = height / grid_size
+            cell_width = width / grid_size
+
+            for row in range(grid_size):
+                for col in range(grid_size):
+                    y_min = row * cell_height
+                    y_max = (row + 1) * cell_height
+                    x_min = col * cell_width
+                    x_max = (col + 1) * cell_width
+
+                    mask = (
+                        (kp_coords[:, 0] >= x_min) & (kp_coords[:, 0] < x_max) &
+                        (kp_coords[:, 1] >= y_min) & (kp_coords[:, 1] < y_max)
+                    )
+
+                    region_words = visual_words[mask]
+
+                    histogram = np.zeros(kmeans.n_clusters)
+                    for word in region_words:
+                        histogram[word] += 1
+
+                    norm = np.linalg.norm(histogram)
+                    if norm > 0:
+                        histogram = histogram / norm
+
+                    all_histograms.append(histogram)
+
+        return np.concatenate(all_histograms)
+
+    def normalize_descriptors(self, descriptors: np.ndarray) -> np.ndarray:
+        if self.descriptor_normalization is None:
+            return descriptors
         
-        return codebook_descriptor       
-    
+        # cutre
+        match self.descriptor_normalization:
+            case "L2":
+                norms = np.linalg.norm(descriptors, axis=1, keepdims=True)
+                norms[norms == 0] = 1
+                return descriptors / norms
+            case "L1":
+                sums = np.sum(descriptors, axis=1, keepdims=True)
+                sums[sums == 0] = 1
+                return descriptors / sums
+            case "Root":
+                norms = np.linalg.norm(descriptors, axis=1, keepdims=True)
+                norms[norms == 0] = 1
+                return np.sqrt(descriptors / norms)
+            case _:
+                raise ValueError("Invalid normalization.")
 
 
+    # FIXME: this could be fused with the method above
+    def fit_scale_descriptors_jointly(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        if self.joint_descriptor_normalization is None:
+            return all_descriptors
+
+        # cutre
+        # parece muy caro normalizar todo esto (?)
+        descriptors = np.concatenate(all_descriptors, axis=0)
+        match self.joint_descriptor_normalization:
+            case "MaxAbs":
+                self.scaler = MaxAbsScaler()
+            case "Standard":
+                self.scaler = StandardScaler()
+            case "MinMax":
+                self.scaler = MinMaxScaler()
+            case _:
+                raise ValueError("Invalid normalization for all descriptors.")
+
+        self.scaler.fit(descriptors)
+        return self.normalize_all_descriptors(all_descriptors)
+
+
+    def scale_all_descriptors(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        if self.scaler is None:
+            return all_descriptors
+
+        return [self.scaler.transform(descriptors) for descriptors in all_descriptors]
+
+
+    def fit_reduce_dimensionality(self, all_descriptors: list[np.ndarray], labels: Optional[list] = None) -> list[np.ndarray]:
+        if self.dimensionality_reduction is None:
+            return all_descriptors
+
+        descriptors = np.concatenate(all_descriptors, axis=0)
+        match self.dimensionality_reduction:
+            case "PCA":
+                self.dim_reducer = PCA(**self.dimensionality_reduction_kwargs)
+            case "SVD":
+                self.dim_reducer = TruncatedSVD(**self.dimensionality_reduction_kwargs)
+            case "LDA":
+                # LDA because it appears on the slides
+                if labels is None:
+                    raise ValueError("LDA requires labels.")
+                self.dim_reducer = LinearDiscriminantAnalysis(**self.dimensionality_reduction_kwargs)
+            case _:
+                raise ValueError("Invalid dimensionality reduction method. Choose from: PCA, SVD, LDA, NMF, ICA")
+
+        if self.dimensionality_reduction == "LDA":
+            # LDA needs labels during fit!!!
+            # TODO: need a nice way of generating the labels for each descriptor (instead of image), no?
+            self.dim_reducer.fit(descriptors, labels)
+        else:
+            self.dim_reducer.fit(descriptors)
+
+        return self.reduce_dimensionality(all_descriptors)
+
+
+    def reduce_dimensionality(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:
+        if self.dim_reducer is None:
+            return all_descriptors
+
+        return [self.dim_reducer.transform(descriptors) for descriptors in all_descriptors]
 
 
 def visualize_bow_histogram(histogram, image_index, output_folder="./test_example.jpg"):
