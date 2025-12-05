@@ -11,6 +11,7 @@ from typing import *
 from sklearn.discriminant_analysis import StandardScaler, LinearDiscriminantAnalysis
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
 from sklearn.decomposition import PCA, TruncatedSVD
+from sklearn.manifold import TSNE
 
 class BOVW():
     
@@ -216,8 +217,10 @@ class BOVW():
                 if labels is None:
                     raise ValueError("LDA requires labels.")
                 self.dim_reducer = LinearDiscriminantAnalysis(**self.dimensionality_reduction_kwargs)
+            case "TSNE":
+                self.dim_reducer = TSNE(**self.dimensionality_reduction_kwargs)
             case _:
-                raise ValueError("Invalid dimensionality reduction method. Choose from: PCA, SVD, LDA, NMF, ICA")
+                raise ValueError("Invalid dimensionality reduction method. Choose from: PCA, SVD, LDA, TSNE")
 
         if self.dimensionality_reduction == "LDA":
             # LDA needs labels during fit!!!
