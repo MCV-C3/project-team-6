@@ -1,3 +1,4 @@
+import cv2
 from sklearn.svm import SVC
 from bovw import BOVW
 
@@ -50,23 +51,56 @@ def get_image_cache_path(cache_dir: str, image: Image) -> str:
     raise ValueError("img_path was None.")
 
 
-def load_cached_descriptors(cache_path: str) -> Optional[np.ndarray]:
+def serialize_keypoints(keypoints: list[cv2.KeyPoint]) -> list[dict]:
+    return [
+        {
+            "pt": kp.pt,
+            "size": kp.size,
+            "angle": kp.angle,
+            "response": kp.response,
+            "octave": kp.octave,
+            "class_id": kp.class_id
+        }
+        for kp in keypoints
+    ]
+
+
+def deserialize_keypoints(keypoints_data: list[dict]) -> list[cv2.KeyPoint]:
+    return [
+        cv2.KeyPoint(
+            x=kp["pt"][0],
+            y=kp["pt"][1],
+            size=kp["size"],
+            angle=kp["angle"],
+            response=kp["response"],
+            octave=kp["octave"],
+            class_id=kp["class_id"]
+        )
+        for kp in keypoints_data
+    ]
+
+
+def load_cached_descriptors(cache_path: str) -> Tuple[Optional[np.ndarray], Optional[list[cv2.KeyPoint]]]:
     # If pickle exists, load descriptors from cache
     if os.path.exists(cache_path):
         with open(cache_path, "rb") as f:
             data = pickle.load(f)
-            return data["descriptors"]
+            return data["descriptors"], data["keypoints"]
+
+    return None, None
+
+
+def cache_descriptors(cache_path: str, descriptors: np.ndarray, keypoints: list[cv2.KeyPoint], label):
     
-    return None
-
-
-def cache_descriptors(cache_path: str, descriptors: np.ndarray, label):
+    return # TODO: remove this to allow caching (my drive is almost full)
+    
     with open(cache_path, "wb") as f:
-        pickle.dump({"descriptors": descriptors, "label": label}, f)
+        serializable_keypoints = serialize_keypoints(keypoints)
+        pickle.dump({"descriptors": descriptors, "keypoints": serializable_keypoints, "label": label}, f)
 
 
-def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"]):
-    return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, kmeans=bovw.codebook_algo) for descriptor in descriptors])
+def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"], keypoints: list[list[cv2.KeyPoint]]):
+    return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, keypoints=keypoint, kmeans=bovw.codebook_algo) for descriptor, keypoint in zip(descriptors, keypoints)])
 
 
 def test(dataset: List[Tuple[Type[Image.Image], int]],
@@ -75,7 +109,9 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
     ):
     
     test_descriptors = []
+    test_keypoints = []
     descriptors_labels = []
+    test_image_resolutions = []
 
     cache_dir = setup_cache(bovw, "val")
     
@@ -83,22 +119,24 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
         image, label = dataset[idx]
         
         cache_path = get_image_cache_path(cache_dir, image)
-        descriptors = load_cached_descriptors(cache_path)
-        if descriptors is None:
-            _, descriptors = bovw._extract_features(image=np.array(image))
-            cache_descriptors(cache_path, descriptors, label)
+        descriptors, keypoints = load_cached_descriptors(cache_path)
+        if descriptors is None or keypoints is None:
+            keypoints, descriptors = bovw._extract_features(image=np.array(image))
+            cache_descriptors(cache_path, descriptors, keypoints, label)
         
         if descriptors is not None:
             descriptors = bovw.normalize_descriptors(descriptors)
             test_descriptors.append(descriptors)
+            test_keypoints.append(keypoints)
             descriptors_labels.append(label)
+            test_image_resolutions.append(image.size)
     
-    all_descriptors = bovw.reduce_dimensionality(all_descriptors)
+    test_descriptors = bovw.reduce_dimensionality(test_descriptors)
     
     test_descriptors = bovw.scale_all_descriptors(test_descriptors)
     
     print("Computing the bovw histograms")
-    bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, bovw=bovw)
+    bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, keypoints=test_keypoints, bovw=bovw)
     
     print("predicting the values")
     y_pred = classifier.predict(bovw_histograms)
@@ -108,7 +146,9 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
 
 def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
     all_descriptors = []
+    all_keypoints = []
     all_labels = []
+    all_image_resolutions = []
 
     cache_dir = setup_cache(bovw, "train")
     
@@ -117,15 +157,17 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
         image, label = dataset[idx]
 
         cache_path = get_image_cache_path(cache_dir, image)
-        descriptors = load_cached_descriptors(cache_path)
-        if descriptors is None:
-            _, descriptors = bovw._extract_features(image=np.array(image))
-            cache_descriptors(cache_path, descriptors, label)
+        descriptors, keypoints = load_cached_descriptors(cache_path)
+        if descriptors is None or keypoints is None:
+            keypoints, descriptors = bovw._extract_features(image=np.array(image))
+            cache_descriptors(cache_path, descriptors, keypoints, label)
         
         if descriptors is not None:
             descriptors = bovw.normalize_descriptors(descriptors)
             all_descriptors.append(descriptors)
+            all_keypoints.append(keypoints)
             all_labels.append(label)
+            all_image_resolutions.append(image.size) # así ???
     
     all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors)
     
@@ -135,7 +177,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
     kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
 
     print("Computing the bovw histograms")
-    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, bovw=bovw) 
+    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, bovw=bovw) 
     
     print("Fitting the classifier")
     classifier = classifier.fit(bovw_histograms, all_labels)
@@ -190,7 +232,7 @@ if __name__ == "__main__":
     bovw = BOVW(detector_type="SIFT", descriptor_normalization="L1", codebook_size=5000, dense_kwargs={"step": 32})
     bovw = BOVW(codebook_size=2000) # default works the same
     classifier = LogisticRegression(class_weight="balanced")
-    # classifier = SVC(kernel='rbf')
+    classifier = SVC(kernel='rbf')
     
     bovw, classifier = train(dataset=data_train, bovw=bovw, classifier=classifier)
     

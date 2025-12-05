@@ -25,7 +25,8 @@ class BOVW():
             codebook_kwargs: dict = {},
             dense_kwargs: dict = {},
             dimensionality_reduction = None,
-            dimensionality_reduction_kwargs: dict = {}
+            dimensionality_reduction_kwargs: dict = {},
+            pyramid_levels=None,
         ):
 
         self.dense = False
@@ -54,6 +55,7 @@ class BOVW():
 
         self.scaler = None
         self.dim_reducer = None
+        self.pyramid_levels = pyramid_levels
         
     ## Modify this function in order to be able to create a dense sift
     def _extract_features(self, image: Literal["H", "W", "C"]) -> Tuple:
@@ -87,7 +89,7 @@ class BOVW():
 
         return self.codebook_algo, self.codebook_algo.cluster_centers_
     
-    def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], kmeans: Type[KMeans]) -> np.ndarray:
+    def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans]) -> np.ndarray:
 
         visual_words = kmeans.predict(descriptors)
         
