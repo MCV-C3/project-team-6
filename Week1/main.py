@@ -10,7 +10,7 @@ import os
 import pickle
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 
 def get_detector_config_id(bovw: Type[BOVW]) -> str:
@@ -73,6 +73,9 @@ def test(dataset: List[Tuple[Type[Image.Image], int]]
     y_pred = classifier.predict(bovw_histograms)
     
     print("Accuracy on Phase[Test]:", accuracy_score(y_true=descriptors_labels, y_pred=y_pred))
+    print("Precision on Phase[Test]:", precision_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted'))
+    print("Recall on Phase[Test]:", recall_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted'))
+    print("F1-Score on Phase[Test]:", f1_score(y_true=descriptors_labels, y_pred=y_pred, average='weighted'))
     
 
 def train(dataset: List[Tuple[Type[Image.Image], int]],
@@ -118,7 +121,11 @@ def train(dataset: List[Tuple[Type[Image.Image], int]],
     print("Fitting the classifier")
     classifier = LogisticRegression(class_weight="balanced").fit(bovw_histograms, all_labels)
 
-    print("Accuracy on Phase[Train]:", accuracy_score(y_true=all_labels, y_pred=classifier.predict(bovw_histograms)))
+    y_pred = classifier.predict(bovw_histograms)
+    print("Accuracy on Phase[Train]:", accuracy_score(y_true=all_labels, y_pred=y_pred))
+    print("Precision on Phase[Train]:", precision_score(y_true=all_labels, y_pred=y_pred, average='weighted'))
+    print("Recall on Phase[Train]:", recall_score(y_true=all_labels, y_pred=y_pred, average='weighted'))
+    print("F1-Score on Phase[Train]:", f1_score(y_true=all_labels, y_pred=y_pred, average='weighted'))
     
     return bovw, classifier
 
