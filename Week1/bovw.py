@@ -34,6 +34,23 @@ class BOVW():
             dimensionality_reduction_kwargs: dict = {},
             pyramid_levels: Optional[int] = None,
         ):
+        if codebook_size < 2:
+            raise ValueError("codebook_size must be at least 2")
+
+        if pyramid_levels is not None and pyramid_levels < 1:
+            raise ValueError("pyramid_levels must be None or >= 1")
+
+        if detector_type not in get_args(DetectorType):
+            raise ValueError(f"detector_type must be one of: {get_args(DetectorType)}. Got: {detector_type}")
+
+        if descriptor_normalization is not None and descriptor_normalization not in get_args(DescriptorNormalization):
+            raise ValueError(f"descriptor_normalization must be None or one of: {get_args(DescriptorNormalization)}. Got: {descriptor_normalization}")
+
+        if joint_descriptor_normalization is not None and joint_descriptor_normalization not in get_args(JointDescriptorNormalization):
+            raise ValueError(f"joint_descriptor_normalization must be None or one of: {get_args(JointDescriptorNormalization)}. Got: {joint_descriptor_normalization}")
+
+        if dimensionality_reduction is not None and dimensionality_reduction not in get_args(DimensionalityReduction):
+            raise ValueError(f"dimensionality_reduction must be None or one of: {get_args(DimensionalityReduction)}. Got: {dimensionality_reduction}")
 
         self.dense = False
         if detector_type == 'SIFT':
@@ -45,8 +62,6 @@ class BOVW():
         elif detector_type == 'DSIFT':
             self.dense = True
             self.detector = cv2.SIFT_create(**detector_kwargs)
-        else:
-            raise ValueError("Detector type must be 'SIFT', 'DSIFT', 'AKAZE', or 'ORB'")
         
         self.codebook_size = codebook_size
         self.codebook_algo = MiniBatchKMeans(n_clusters=self.codebook_size, **codebook_kwargs)
