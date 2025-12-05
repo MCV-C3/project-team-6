@@ -211,11 +211,13 @@ def Dataset(ImageFolder:str = "../data/places_reduced") -> List[Tuple[Type[Image
     
     """
 
-    map_classes = {clsi: idx for idx, clsi  in enumerate(os.listdir(ImageFolder))}
+    class_folders = list(sorted(os.listdir(ImageFolder)))
+
+    map_classes = {clsi: idx for idx, clsi  in enumerate(class_folders)}
     
     dataset :List[Tuple] = []
 
-    for idx, cls_folder in enumerate(os.listdir(ImageFolder)):
+    for idx, cls_folder in enumerate(class_folders):
 
         image_path = os.path.join(ImageFolder, cls_folder)
         images: List[str] = glob.glob(image_path+"/*.jpg")
