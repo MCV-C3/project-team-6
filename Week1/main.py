@@ -289,20 +289,22 @@ def compute_descriptors_and_keypoints_for_cv(dataset: List[Tuple[Type[Image.Imag
 
 type CVDataset = List[FullEntry]
 
-def test_for_cv(test_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEstimator):
+def test_for_cv(test_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEstimator, verbose: bool = True):
     test_descriptors = [entry.descriptors for entry in test_data]
     test_keypoints = [entry.keypoints for entry in test_data]
     test_image_resolutions = [entry.resolution for entry in test_data]
     test_labels = [entry.label for entry in test_data]
-    
+
     test_descriptors = bovw.reduce_dimensionality(test_descriptors)
     
     test_descriptors = bovw.scale_all_descriptors(test_descriptors)
-    
-    print("Computing the bovw histograms")
+
+    if verbose:
+        print("Computing the bovw histograms")
     bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, keypoints=test_keypoints, image_sizes=test_image_resolutions, bovw=bovw)
-    
-    print("predicting the values")
+
+    if verbose:
+        print("predicting the values")
     y_pred = classifier.predict(bovw_histograms)
     
     acc = accuracy_score(y_true=test_labels, y_pred=y_pred)
@@ -317,36 +319,40 @@ def test_for_cv(test_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEs
 
     return acc, prec, rec, f1
 
-def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEstimator):
+def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEstimator, verbose: bool = True):
     all_descriptors = [entry.descriptors for entry in train_data]
     all_keypoints = [entry.keypoints for entry in train_data]
     all_image_resolutions = [entry.resolution for entry in train_data]
     all_labels = [entry.label for entry in train_data]
     
     all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors, all_labels)
-    
+
     all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
-    
-    print("Fitting the codebook")
+
+    if verbose:
+        print("Fitting the codebook")
     kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
 
-    print("Computing the bovw histograms")
-    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, image_sizes=all_image_resolutions, bovw=bovw) 
-    
-    print("Fitting the classifier")
+    if verbose:
+        print("Computing the bovw histograms")
+    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, image_sizes=all_image_resolutions, bovw=bovw)
+
+    if verbose:
+        print("Fitting the classifier")
     classifier = classifier.fit(bovw_histograms, all_labels)
 
     y_pred = classifier.predict(bovw_histograms)
-    
+
     accuracy = accuracy_score(y_true=all_labels, y_pred=y_pred)
     precision = precision_score(y_true=all_labels, y_pred=y_pred, average='weighted')
     recall = recall_score(y_true=all_labels, y_pred=y_pred, average='weighted')
     f1 = f1_score(y_true=all_labels, y_pred=y_pred, average='weighted')
-    
-    print("Accuracy on Phase[Train]:", accuracy)
-    print("Precision on Phase[Train]:", precision)
-    print("Recall on Phase[Train]:", recall)
-    print("F1-Score on Phase[Train]:", f1)
+
+    if verbose:
+        print("Accuracy on Phase[Train]:", accuracy)
+        print("Precision on Phase[Train]:", precision)
+        print("Recall on Phase[Train]:", recall)
+        print("F1-Score on Phase[Train]:", f1)
     
     scores = {
         "accuracy": accuracy,
@@ -357,7 +363,7 @@ def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.Base
     
     return bovw, classifier, scores
 
-def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs, n_splits=5) -> CVResult:
+def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs, n_splits=5, verbose: bool = False) -> CVResult:
 
     # descriptor generation can be done in common, since NOTHING is learnt
     bovw = BOVW(**bovw_kwargs)
@@ -366,7 +372,8 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
     images = [entry.image for entry in full_dataset]
     labels = np.array([entry.label for entry in full_dataset])
 
-    print(f"Starting {n_splits}-Fold Cross-Validation")
+    if verbose:
+        print(f"Starting {n_splits}-Fold Cross-Validation")
 
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
@@ -374,15 +381,16 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
     test_precisions = []
     test_recalls = []
     test_f1s = []
-    
+
     train_accuracies = []
     train_precisions = []
     train_recalls = []
     train_f1s = []
 
-    for fold_idx, (train_idx, val_idx) in enumerate(skf.split(images, labels), 1):
-        print(f"\n[FOLD {fold_idx}/{n_splits}]")
-        print(f"  Training Samples: {len(train_idx)} | Validation Samples: {len(val_idx)}")
+    for fold_idx, (train_idx, val_idx) in tqdm.tqdm(enumerate(skf.split(images, labels), 1), total=n_splits):
+        if verbose:
+            print(f"\n[FOLD {fold_idx}/{n_splits}]")
+            print(f"  Training Samples: {len(train_idx)} | Validation Samples: {len(val_idx)}")
 
         train_data = [full_dataset[i] for i in train_idx]
         val_data   = [full_dataset[i] for i in val_idx]
@@ -390,8 +398,8 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
         bovw = BOVW(**bovw_kwargs)
         classifier = classifier_cls(**classifier_kwargs)
 
-        bovw, classifier, train_scores = train_for_cv(train_data, bovw, classifier)
-        acc, prec, rec, f1 = test_for_cv(val_data, bovw, classifier)
+        bovw, classifier, train_scores = train_for_cv(train_data, bovw, classifier, verbose=verbose)
+        acc, prec, rec, f1 = test_for_cv(val_data, bovw, classifier, verbose=verbose)
 
         train_accuracies.append(train_scores["accuracy"])
         train_precisions.append(train_scores["precision"])
