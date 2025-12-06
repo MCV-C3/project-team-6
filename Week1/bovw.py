@@ -303,7 +303,7 @@ class BOVW():
                 raise ValueError("Invalid normalization for all descriptors.")
 
         self.scaler.fit(descriptors)
-        return self.normalize_all_descriptors(all_descriptors)
+        return self.scale_all_descriptors(all_descriptors)
 
 
     def scale_all_descriptors(self, all_descriptors: list[np.ndarray]) -> list[np.ndarray]:

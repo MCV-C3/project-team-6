@@ -18,7 +18,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import sklearn
 from sklearn.model_selection import StratifiedKFold
 
-def get_detector_config_id(bovw: Type[BOVW]) -> str:
+def get_detector_config_id(bovw: BOVW) -> str:
     """
     Generates a unique ID string based on detector type and its parameters.
     """
@@ -28,7 +28,7 @@ def get_detector_config_id(bovw: Type[BOVW]) -> str:
         for key, value in sorted(bovw.detector_kwargs.items()):
             cfg += f"_{key}{value}"
             
-    if hasattr(bovw, "dense_kwargs") and len(bovw.detector_kwargs) > 0:
+    if hasattr(bovw, "dense_kwargs") and len(bovw.dense_kwargs) > 0:
         for key, value in sorted(bovw.dense_kwargs.items()):
             cfg += f"_{key}{value}"
 
@@ -129,12 +129,12 @@ def cache_descriptors(cache_path: str, descriptors: np.ndarray, keypoints: list[
         pickle.dump({"descriptors": descriptors, "keypoints": serializable_keypoints, "label": label}, f)
 
 
-def extract_bovw_histograms(bovw: Type[BOVW], descriptors: Literal["N", "T", "d"], keypoints: list[list[cv2.KeyPoint]], image_sizes: list[Tuple[int, int]]):
+def extract_bovw_histograms(bovw: BOVW, descriptors: Literal["N", "T", "d"], keypoints: list[list[cv2.KeyPoint]], image_sizes: list[Tuple[int, int]]):
     return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, keypoints=keypoint, kmeans=bovw.codebook_algo, image_size=image_size) for descriptor, keypoint, image_size in zip(descriptors, keypoints, image_sizes)])
 
 
 def test(dataset: List[Tuple[Type[Image.Image], int]],
-        bovw: Type[BOVW], 
+        bovw: BOVW, 
         classifier:Type[object],
     ):
     
@@ -184,7 +184,7 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
     return acc, prec, rec, f1
     
 
-def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
+def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:BOVW, classifier: sklearn.base.BaseEstimator):
     all_descriptors = []
     all_keypoints = []
     all_labels = []
@@ -289,11 +289,11 @@ def compute_descriptors_and_keypoints_for_cv(dataset: List[Tuple[Type[Image.Imag
 
 type CVDataset = List[FullEntry]
 
-def test_for_cv(train_data: CVDataset, bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
-    test_descriptors = [entry.descriptors for entry in train_data]
-    test_keypoints = [entry.keypoints for entry in train_data]
-    test_image_resolutions = [entry.resolution for entry in train_data]
-    test_labels = [entry.label for entry in train_data]
+def test_for_cv(test_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEstimator):
+    test_descriptors = [entry.descriptors for entry in test_data]
+    test_keypoints = [entry.keypoints for entry in test_data]
+    test_image_resolutions = [entry.resolution for entry in test_data]
+    test_labels = [entry.label for entry in test_data]
     
     test_descriptors = bovw.reduce_dimensionality(test_descriptors)
     
@@ -317,7 +317,7 @@ def test_for_cv(train_data: CVDataset, bovw:Type[BOVW], classifier: sklearn.base
 
     return acc, prec, rec, f1
 
-def train_for_cv(train_data: CVDataset, bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
+def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEstimator):
     all_descriptors = [entry.descriptors for entry in train_data]
     all_keypoints = [entry.keypoints for entry in train_data]
     all_image_resolutions = [entry.resolution for entry in train_data]
