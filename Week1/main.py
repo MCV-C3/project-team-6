@@ -1,5 +1,6 @@
 import shutil
 import statistics
+import time
 import cv2
 from sklearn.svm import SVC
 from bovw import BOVW
@@ -247,9 +248,16 @@ class Scores(NamedTuple):
     f1: Score
     
 
+class Times(NamedTuple):
+    total: float
+    descriptors: float
+    folds: list[float]
+    all_folds: float
+
 class CVResult(NamedTuple):
     train: Scores
     test: Scores
+    time: Times
 
 class FullEntry(NamedTuple):
     image: Image.Image
@@ -364,11 +372,15 @@ def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.Base
     return bovw, classifier, scores
 
 def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs, n_splits=5, verbose: bool = False) -> CVResult:
-
+    
+    descriptor_start = time.time()
     # descriptor generation can be done in common, since NOTHING is learnt
     bovw = BOVW(**bovw_kwargs)
     full_dataset = compute_descriptors_and_keypoints_for_cv(dataset, bovw)
-
+    descriptor_time = time.time() - descriptor_start
+    
+    folds_start = time.time()
+    
     images = [entry.image for entry in full_dataset]
     labels = np.array([entry.label for entry in full_dataset])
 
@@ -386,8 +398,10 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
     train_precisions = []
     train_recalls = []
     train_f1s = []
-
+    
+    times = []
     for fold_idx, (train_idx, val_idx) in tqdm.tqdm(enumerate(skf.split(images, labels), 1), total=n_splits):
+        fold_start = time.time()
         if verbose:
             print(f"\n[FOLD {fold_idx}/{n_splits}]")
             print(f"  Training Samples: {len(train_idx)} | Validation Samples: {len(val_idx)}")
@@ -410,6 +424,10 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
         test_precisions.append(prec)
         test_recalls.append(rec)
         test_f1s.append(f1)
+        
+        times.append(time.time() - fold_start)
+
+    all_folds_time = time.time() - folds_start
 
     # print(f"\n{n_splits}-Fold Cross-Validation Results")
     # print(f"Accuracy: {np.mean(accs):.3f} ± {np.std(accs):.3f}")
@@ -431,9 +449,19 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
         f1=scores_stats(train_f1s),
     )
 
+    total_time = time.time() - descriptor_start
+
+    times = Times(
+        total=total_time,
+        descriptors=descriptor_time,
+        folds=times,
+        all_folds=all_folds_time,
+    )
+
     return CVResult(
         train=train_scores,
         test=test_scores,
+        time=times,
     )
 
 
