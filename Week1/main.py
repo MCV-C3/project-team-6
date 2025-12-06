@@ -209,7 +209,7 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
             all_labels.append(label)
             all_image_resolutions.append((image.height, image.width))
     
-    all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors)
+    all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors, all_labels)
     
     all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
     
@@ -323,7 +323,7 @@ def train_for_cv(train_data: CVDataset, bovw:Type[BOVW], classifier: sklearn.bas
     all_image_resolutions = [entry.resolution for entry in train_data]
     all_labels = [entry.label for entry in train_data]
     
-    all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors)
+    all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors, all_labels)
     
     all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
     

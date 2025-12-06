@@ -322,7 +322,30 @@ class BOVW():
         return [self.scaler.transform(descriptors) for descriptors in all_descriptors]
 
 
-    def fit_reduce_dimensionality(self, all_descriptors: list[np.ndarray], labels: Optional[list] = None) -> list[np.ndarray]:
+    def prepare_labels_for_lda(self, all_descriptors: list[np.ndarray], image_labels: list[int]) -> np.ndarray:
+        """
+        Prepare labels for LDA by repeating each image label for all its descriptors.
+
+        Args:
+            all_descriptors: List of descriptor arrays (N images, each with T_i descriptors of dimension d).
+            image_labels: List of image labels (N labels, one per image).
+
+        Returns:
+            Array of labels where each descriptor gets the label of its parent image.
+            Shape: (total_descriptors,)
+        """
+        if len(all_descriptors) != len(image_labels):
+            raise ValueError(f"Number of descriptor arrays ({len(all_descriptors)}) must match number of labels ({len(image_labels)})")
+
+        descriptor_labels = []
+        for descriptors, label in zip(all_descriptors, image_labels):
+            num_descriptors = descriptors.shape[0]
+            descriptor_labels.extend([label] * num_descriptors)
+
+        return np.array(descriptor_labels)
+
+
+    def fit_reduce_dimensionality(self, all_descriptors: list[np.ndarray], labels: Optional[list[int]] = None) -> list[np.ndarray]:
         """
         Fit and apply dimensionality reduction to descriptors.
 
@@ -354,8 +377,9 @@ class BOVW():
 
         if self.dimensionality_reduction == "LDA":
             # LDA needs labels during fit!!!
-            # TODO: need a nice way of generating the labels for each descriptor (instead of image), no?
-            self.dim_reducer.fit(descriptors, labels)
+            # Prepare labels for each descriptor (not just each image)
+            descriptor_labels = self.prepare_labels_for_lda(all_descriptors, labels)
+            self.dim_reducer.fit(descriptors, descriptor_labels)
         else:
             self.dim_reducer.fit(descriptors)
 
