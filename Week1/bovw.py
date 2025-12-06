@@ -12,11 +12,14 @@ from sklearn.discriminant_analysis import StandardScaler, LinearDiscriminantAnal
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler
 from sklearn.decomposition import PCA, TruncatedSVD
 from sklearn.manifold import TSNE
+from sklearn.mixture import GaussianMixture
+from skimage.feature import fisher_vector, learn_gmm
 
 DetectorType = Literal["SIFT", "AKAZE", "ORB", "DSIFT"]
 DescriptorNormalization = Literal["L1", "L2", "Root"]
 JointDescriptorNormalization = Literal["MaxAbs", "Standard", "MinMax"]
 DimensionalityReduction = Literal["PCA", "SVD", "LDA", "TSNE"]
+EncodingMethod = Literal["bovw", "fisher"]
 
 class BOVW():
     """
@@ -36,21 +39,23 @@ class BOVW():
             dimensionality_reduction: Optional[DimensionalityReduction] = None,
             dimensionality_reduction_kwargs: dict = {},
             pyramid_levels: Optional[int] = None,
+            encoding_method: EncodingMethod = "bovw",
         ):
         """
         Initialize the BOVW model.
 
         Args:
             detector_type: Feature detector type. Options: "SIFT", "AKAZE", "ORB", "DSIFT".
-            codebook_size: Number of visual words in the codebook (must be >= 2).
+            codebook_size: Number of visual words in the codebook (must be >= 2). For Fisher Vectors, this is the number of GMM modes.
             descriptor_normalization: Per-descriptor normalization. Options: "L1", "L2", "Root", or None.
             joint_descriptor_normalization: Joint normalization across all descriptors. Options: "MaxAbs", "Standard", "MinMax", or None.
             detector_kwargs: Additional keyword arguments for the detector.
-            codebook_kwargs: Additional keyword arguments for MiniBatchKMeans.
+            codebook_kwargs: Additional keyword arguments for MiniBatchKMeans (BOVW) or GaussianMixture (Fisher).
             dense_kwargs: Dense SIFT parameters (e.g., {"step": 32, "size": 1}).
             dimensionality_reduction: Dimensionality reduction method. Options: "PCA", "SVD", "LDA", "TSNE", or None.
             dimensionality_reduction_kwargs: Additional keyword arguments for the dimensionality reduction method.
-            pyramid_levels: Spatial pyramid levels (None for classic BOVW, or >= 1 for pyramid).
+            pyramid_levels: Spatial pyramid levels (None for classic encoding, or >= 1 for pyramid).
+            encoding_method: Encoding method. Options: "bovw" (Bag of Visual Words), "fisher" (Fisher Vectors).
         """
         if codebook_size < 2:
             raise ValueError("codebook_size must be at least 2")
@@ -70,6 +75,9 @@ class BOVW():
         if dimensionality_reduction is not None and dimensionality_reduction not in get_args(DimensionalityReduction):
             raise ValueError(f"dimensionality_reduction must be None or one of: {get_args(DimensionalityReduction)}. Got: {dimensionality_reduction}")
 
+        if encoding_method not in get_args(EncodingMethod):
+            raise ValueError(f"encoding_method must be one of: {get_args(EncodingMethod)}. Got: {encoding_method}")
+
         self.dense = False
         if detector_type == 'SIFT':
             self.detector = cv2.SIFT_create(**detector_kwargs)
@@ -82,7 +90,17 @@ class BOVW():
             self.detector = cv2.SIFT_create(**detector_kwargs)
         
         self.codebook_size = codebook_size
-        self.codebook_algo = MiniBatchKMeans(n_clusters=self.codebook_size, **codebook_kwargs)
+        self.encoding_method = encoding_method
+
+        # Initialize encoding algorithm based on method
+        if self.encoding_method == "bovw":
+            self.codebook_algo = MiniBatchKMeans(n_clusters=self.codebook_size, **codebook_kwargs)
+            self.gmm = None
+        elif self.encoding_method == "fisher":
+            self.codebook_algo = None
+            self.gmm = None  # Will be fitted later using learn_gmm
+            self.codebook_kwargs = codebook_kwargs
+
         self.detector_type = detector_type
         self.detector_kwargs = detector_kwargs
         self.dense_kwargs = dense_kwargs
@@ -152,24 +170,49 @@ class BOVW():
         self.codebook_algo = self.codebook_algo.partial_fit(X=all_descriptors)
 
         return self.codebook_algo, self.codebook_algo.cluster_centers_
+
+    def _update_fit_gmm(self, descriptors: Literal["N", "T", "d"]) -> Type[GaussianMixture]:
+        """
+        Fit the GMM using learn_gmm on the provided descriptors for Fisher Vectors.
+
+        Args:
+            descriptors: List of descriptor arrays (N, T, d).
+
+        Returns:
+            Fitted GMM model.
+        """
+        # learn_gmm can take a list of arrays directly
+        # Ensure covariance_type is 'diag' as required by Fisher vectors
+        gm_args = self.codebook_kwargs.copy() if self.codebook_kwargs else {}
+        gm_args['covariance_type'] = 'diag'
+
+        self.gmm = learn_gmm(descriptors, n_modes=self.codebook_size, gm_args=gm_args)
+
+        return self.gmm
     
     def _compute_codebook_descriptor(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], kmeans: Type[KMeans], image_size: Tuple[int, int]) -> np.ndarray:
         """
-        Compute the BOVW descriptor for an image.
+        Compute the encoded descriptor for an image (BOVW or Fisher Vector).
 
         Args:
             descriptors: Feature descriptors (T, d).
             keypoints: Keypoints corresponding to the descriptors.
-            kmeans: Fitted KMeans model.
+            kmeans: Fitted KMeans model (for BOVW) or GMM (for Fisher).
             image_size: Image dimensions (height, width).
 
         Returns:
-            BOVW descriptor (histogram or spatial pyramid).
+            Encoded descriptor (BOVW histogram or Fisher vector, with or without spatial pyramid).
         """
-        if self.pyramid_levels is None:
-            return self._compute_codebook_descriptor_classic(descriptors=descriptors, kmeans=kmeans)
-        else:
-            return self._compute_codebook_descriptor_pyramid(descriptors=descriptors, keypoints=keypoints, kmeans=kmeans, image_size=image_size)
+        if self.encoding_method == "bovw":
+            if self.pyramid_levels is None:
+                return self._compute_codebook_descriptor_classic(descriptors=descriptors, kmeans=kmeans)
+            else:
+                return self._compute_codebook_descriptor_pyramid(descriptors=descriptors, keypoints=keypoints, kmeans=kmeans, image_size=image_size)
+        elif self.encoding_method == "fisher":
+            if self.pyramid_levels is None:
+                return self._compute_fisher_vector_classic(descriptors=descriptors, gmm=kmeans)  # kmeans parameter holds GMM for fisher
+            else:
+                return self._compute_fisher_vector_pyramid(descriptors=descriptors, keypoints=keypoints, gmm=kmeans, image_size=image_size)
     
     def _compute_codebook_descriptor_classic(self, descriptors: Literal["1 T d"], kmeans: Type[KMeans]) -> np.ndarray:
         """
@@ -243,6 +286,69 @@ class BOVW():
                     all_histograms.append(histogram)
 
         return np.concatenate(all_histograms)
+
+    def _compute_fisher_vector_classic(self, descriptors: Literal["1 T d"], gmm: Type[GaussianMixture]) -> np.ndarray:
+        """
+        Compute classic Fisher Vector (no spatial pyramid).
+
+        Args:
+            descriptors: Feature descriptors (T, d).
+            gmm: Fitted GMM model.
+
+        Returns:
+            Fisher vector encoding.
+        """
+        fv = fisher_vector(descriptors, gmm, improved=True)
+        return fv
+
+    def _compute_fisher_vector_pyramid(self, descriptors: Literal["1 T d"], keypoints: list[cv2.KeyPoint], gmm: Type[GaussianMixture], image_size: Tuple[int, int]) -> np.ndarray:
+        """
+        Compute spatial pyramid Fisher Vector descriptor.
+
+        Args:
+            descriptors: Feature descriptors (T, d).
+            keypoints: Keypoints corresponding to the descriptors.
+            gmm: Fitted GMM model.
+            image_size: Image dimensions (height, width).
+
+        Returns:
+            Concatenated Fisher vectors for all pyramid levels and regions.
+        """
+        height, width = image_size
+        kp_coords = np.array([kp.pt for kp in keypoints])
+
+        all_fisher_vectors = []
+
+        for level in range(1, self.pyramid_levels + 1):
+            grid_size = level
+            cell_height = height / grid_size
+            cell_width = width / grid_size
+
+            for row in range(grid_size):
+                for col in range(grid_size):
+                    y_min = row * cell_height
+                    y_max = (row + 1) * cell_height
+                    x_min = col * cell_width
+                    x_max = (col + 1) * cell_width
+
+                    mask = (
+                        (kp_coords[:, 0] >= x_min) & (kp_coords[:, 0] < x_max) &
+                        (kp_coords[:, 1] >= y_min) & (kp_coords[:, 1] < y_max)
+                    )
+
+                    region_descriptors = descriptors[mask]
+
+                    # If no descriptors in this region, use zeros
+                    if len(region_descriptors) == 0:
+                        # Fisher vector dimension: 2*K*D + K (gradients w.r.t. weights, means, covariances)
+                        fv_dim = 2 * gmm.n_components * descriptors.shape[1] + gmm.n_components
+                        fv = np.zeros(fv_dim)
+                    else:
+                        fv = fisher_vector(region_descriptors, gmm, improved=True)
+
+                    all_fisher_vectors.append(fv)
+
+        return np.concatenate(all_fisher_vectors)
 
     def normalize_descriptors(self, descriptors: np.ndarray) -> np.ndarray:
         """
