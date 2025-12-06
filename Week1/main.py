@@ -1,3 +1,4 @@
+import shutil
 import statistics
 import cv2
 from sklearn.svm import SVC
@@ -33,10 +34,33 @@ def get_detector_config_id(bovw: Type[BOVW]) -> str:
 
     return cfg
 
+
+_CACHE_ENABLED = True
+_CACHE_FOLDER = "cache_descriptors"
+
+def enable_cache():
+    global _CACHE_ENABLED
+    _CACHE_ENABLED = True
+    
+
+def disable_cache():
+    global _CACHE_ENABLED
+    _CACHE_ENABLED = False
+
+
+def cache_is_enabled():
+    global _CACHE_ENABLED
+    return _CACHE_ENABLED
+
+
+def clear_cache():
+    shutil.rmtree(_CACHE_FOLDER, ignore_errors=True)
+
+
 def setup_cache(bovw: BOVW, type: str) -> str:
     # Build cache directory
     config_id = get_detector_config_id(bovw)
-    cache_dir = os.path.join("cache_descriptors", config_id, type)
+    cache_dir = os.path.join(_CACHE_FOLDER, config_id, type)
     os.makedirs(cache_dir, exist_ok=True)
     return cache_dir
 
@@ -82,6 +106,10 @@ def deserialize_keypoints(keypoints_data: list[dict]) -> list[cv2.KeyPoint]:
 
 
 def load_cached_descriptors(cache_path: str) -> Tuple[Optional[np.ndarray], Optional[list[cv2.KeyPoint]]]:
+    
+    if not _CACHE_ENABLED:
+        return None, None
+    
     # If pickle exists, load descriptors from cache
     if os.path.exists(cache_path):
         with open(cache_path, "rb") as f:
@@ -93,7 +121,8 @@ def load_cached_descriptors(cache_path: str) -> Tuple[Optional[np.ndarray], Opti
 
 def cache_descriptors(cache_path: str, descriptors: np.ndarray, keypoints: list[cv2.KeyPoint], label):
     
-    return # TODO: remove this to allow caching (my drive is almost full)
+    if not _CACHE_ENABLED:
+        return
     
     with open(cache_path, "wb") as f:
         serializable_keypoints = serialize_keypoints(keypoints)
