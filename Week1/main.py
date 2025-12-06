@@ -1,3 +1,4 @@
+import statistics
 import cv2
 from sklearn.svm import SVC
 from bovw import BOVW
@@ -200,46 +201,203 @@ def train(dataset: List[Tuple[Type[Image.Image], int]], bovw:Type[BOVW], classif
     
     return bovw, classifier
 
+class Score(NamedTuple):
+    mean: float
+    std: float
+    all: list[float]
 
-def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs, n_splits=5):
+def scores_stats(scores: list[float]) -> Score:
+    mean = statistics.mean(scores)
+    std = statistics.stdev(scores)
+    return Score(mean, std, scores)
 
-    images = [img for img, _ in dataset]
-    labels = np.array([label for _, label in dataset])
+class Scores(NamedTuple):
+    accuracy: Score
+    precision: Score
+    recall: Score
+    f1: Score
+    
+
+class CVResult(NamedTuple):
+    train: Scores
+    test: Scores
+
+class FullEntry(NamedTuple):
+    image: Image.Image
+    descriptors: np.ndarray
+    keypoints: list[cv2.KeyPoint]
+    resolution: tuple[int, int]
+    label: int
+
+def compute_descriptors_and_keypoints_for_cv(dataset: List[Tuple[Type[Image.Image], int]], bovw: BOVW) -> list[FullEntry]:
+    final_dataset = []
+    
+    cache_dir = setup_cache(bovw, "train")
+
+    for idx in tqdm.tqdm(range(len(dataset)), desc="Phase [Setup]: Extracting the descriptors"):
+        
+        image, label = dataset[idx]
+
+        cache_path = get_image_cache_path(cache_dir, image)
+        descriptors, keypoints = load_cached_descriptors(cache_path)
+        if descriptors is None or keypoints is None:
+            keypoints, descriptors = bovw._extract_features(image=np.array(image))
+            cache_descriptors(cache_path, descriptors, keypoints, label)
+        
+        if descriptors is None:
+            print(f"Could not compute descriptors for image {image.filename} of class {label}.")
+            # FIXME: do something about this? Maybe np.empty descriptors and [] keypoints? For the moment we just skip.
+            continue
+        
+        
+        descriptors = bovw.normalize_descriptors(descriptors) # FIXME: here is ok? Maybe this will modify BOVW in the future.
+        resolution = (image.height, image.width)
+        
+        final_dataset.append(FullEntry(image, descriptors, keypoints, resolution, label))
+        
+    return final_dataset
+
+
+type CVDataset = List[FullEntry]
+
+def test_for_cv(train_data: CVDataset, bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
+    test_descriptors = [entry.descriptors for entry in train_data]
+    test_keypoints = [entry.keypoints for entry in train_data]
+    test_image_resolutions = [entry.resolution for entry in train_data]
+    test_labels = [entry.label for entry in train_data]
+    
+    test_descriptors = bovw.reduce_dimensionality(test_descriptors)
+    
+    test_descriptors = bovw.scale_all_descriptors(test_descriptors)
+    
+    print("Computing the bovw histograms")
+    bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, keypoints=test_keypoints, image_sizes=test_image_resolutions, bovw=bovw)
+    
+    print("predicting the values")
+    y_pred = classifier.predict(bovw_histograms)
+    
+    acc = accuracy_score(y_true=test_labels, y_pred=y_pred)
+    prec = precision_score(y_true=test_labels, y_pred=y_pred, average='weighted')
+    rec = recall_score(y_true=test_labels, y_pred=y_pred, average='weighted')
+    f1 = f1_score(y_true=test_labels, y_pred=y_pred, average='weighted')
+
+    # print("Accuracy on Phase[Test]:", acc)
+    # print("Precision on Phase[Test]:", prec)
+    # print("Recall on Phase[Test]:", rec)
+    # print("F1-Score on Phase[Test]:", f1)
+
+    return acc, prec, rec, f1
+
+def train_for_cv(train_data: CVDataset, bovw:Type[BOVW], classifier: sklearn.base.BaseEstimator):
+    all_descriptors = [entry.descriptors for entry in train_data]
+    all_keypoints = [entry.keypoints for entry in train_data]
+    all_image_resolutions = [entry.resolution for entry in train_data]
+    all_labels = [entry.label for entry in train_data]
+    
+    all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors)
+    
+    all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
+    
+    print("Fitting the codebook")
+    kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
+
+    print("Computing the bovw histograms")
+    bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, image_sizes=all_image_resolutions, bovw=bovw) 
+    
+    print("Fitting the classifier")
+    classifier = classifier.fit(bovw_histograms, all_labels)
+
+    y_pred = classifier.predict(bovw_histograms)
+    
+    accuracy = accuracy_score(y_true=all_labels, y_pred=y_pred)
+    precision = precision_score(y_true=all_labels, y_pred=y_pred, average='weighted')
+    recall = recall_score(y_true=all_labels, y_pred=y_pred, average='weighted')
+    f1 = f1_score(y_true=all_labels, y_pred=y_pred, average='weighted')
+    
+    print("Accuracy on Phase[Train]:", accuracy)
+    print("Precision on Phase[Train]:", precision)
+    print("Recall on Phase[Train]:", recall)
+    print("F1-Score on Phase[Train]:", f1)
+    
+    scores = {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+    }
+    
+    return bovw, classifier, scores
+
+def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs, n_splits=5) -> CVResult:
+
+    # descriptor generation can be done in common, since NOTHING is learnt
+    bovw = BOVW(**bovw_kwargs)
+    full_dataset = compute_descriptors_and_keypoints_for_cv(dataset, bovw)
+
+    images = [entry.image for entry in full_dataset]
+    labels = np.array([entry.label for entry in full_dataset])
 
     print(f"Starting {n_splits}-Fold Cross-Validation")
 
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
-    accs = []
-    precisions = []
-    recalls = []
-    f1s = []
+    test_accuracies = []
+    test_precisions = []
+    test_recalls = []
+    test_f1s = []
+    
+    train_accuracies = []
+    train_precisions = []
+    train_recalls = []
+    train_f1s = []
 
     for fold_idx, (train_idx, val_idx) in enumerate(skf.split(images, labels), 1):
         print(f"\n[FOLD {fold_idx}/{n_splits}]")
         print(f"  Training Samples: {len(train_idx)} | Validation Samples: {len(val_idx)}")
 
-        train_data = [(images[i], labels[i]) for i in train_idx]
-        val_data   = [(images[i], labels[i]) for i in val_idx]
+        train_data = [full_dataset[i] for i in train_idx]
+        val_data   = [full_dataset[i] for i in val_idx]
 
         bovw = BOVW(**bovw_kwargs)
         classifier = classifier_cls(**classifier_kwargs)
 
-        bovw, classifier = train(train_data, bovw, classifier)
-        acc, prec, rec, f1 = test(val_data, bovw, classifier)
+        bovw, classifier, train_scores = train_for_cv(train_data, bovw, classifier)
+        acc, prec, rec, f1 = test_for_cv(val_data, bovw, classifier)
 
-        accs.append(acc)
-        precisions.append(prec)
-        recalls.append(rec)
-        f1s.append(f1)
+        train_accuracies.append(train_scores["accuracy"])
+        train_precisions.append(train_scores["precision"])
+        train_recalls.append(train_scores["recall"])
+        train_f1s.append(train_scores["f1"])
 
-    print(f"\n{n_splits}-Fold Cross-Validation Results")
-    print(f"Accuracy: {np.mean(accs):.3f} ± {np.std(accs):.3f}")
-    print(f"Precision: {np.mean(precisions):.3f} ± {np.std(precisions):.3f}")
-    print(f"Recall: {np.mean(recalls):.3f} ± {np.std(recalls):.3f}")
-    print(f"F1-score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
+        test_accuracies.append(acc)
+        test_precisions.append(prec)
+        test_recalls.append(rec)
+        test_f1s.append(f1)
 
-    return np.mean(accs), np.mean(precisions), np.mean(recalls), np.mean(f1s)
+    # print(f"\n{n_splits}-Fold Cross-Validation Results")
+    # print(f"Accuracy: {np.mean(accs):.3f} ± {np.std(accs):.3f}")
+    # print(f"Precision: {np.mean(precisions):.3f} ± {np.std(precisions):.3f}")
+    # print(f"Recall: {np.mean(recalls):.3f} ± {np.std(recalls):.3f}")
+    # print(f"F1-score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
+
+    test_scores = Scores(
+        accuracy=scores_stats(test_accuracies),
+        precision=scores_stats(test_precisions),
+        recall=scores_stats(test_recalls),
+        f1=scores_stats(test_f1s),
+    )
+    
+    train_scores = Scores(
+        accuracy=scores_stats(train_accuracies),
+        precision=scores_stats(train_precisions),
+        recall=scores_stats(train_recalls),
+        f1=scores_stats(train_f1s),
+    )
+
+    return CVResult(
+        train=train_scores,
+        test=test_scores,
+    )
 
 
 
