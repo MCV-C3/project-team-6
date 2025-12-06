@@ -114,7 +114,7 @@ def load_cached_descriptors(cache_path: str) -> Tuple[Optional[np.ndarray], Opti
     if os.path.exists(cache_path):
         with open(cache_path, "rb") as f:
             data = pickle.load(f)
-            return data["descriptors"], data["keypoints"]
+            return data["descriptors"], deserialize_keypoints(data["keypoints"])
 
     return None, None
 
