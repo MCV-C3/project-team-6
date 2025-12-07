@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import cv2
 
 def plot_cv_accuracy(x_values, means, stds, descriptor_name, hyperparam_name):
     """
@@ -15,3 +16,20 @@ def plot_cv_accuracy(x_values, means, stds, descriptor_name, hyperparam_name):
     plt.grid(True, linestyle="--", alpha=0.5)
     plt.tight_layout()
     plt.show()
+
+def dense_keypoints_grid(img_shape, step, scale):
+    h, w = img_shape[:2]
+    keypoints = []
+    for y in range(0, h, step):
+        for x in range(0, w, step):
+            keypoints.append(cv2.KeyPoint(x=float(x), y=float(y), size=float(scale)))
+    return keypoints
+
+def show_dense_sift(img, step, scale, title=""):
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    kps = dense_keypoints_grid(gray.shape, step=step, scale=scale)
+    img_kps = cv2.drawKeypoints(img, kps, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+    plt.imshow(img_kps)
+    plt.axis("off")
+    plt.title(f"{title}\nstep={step}, scale={scale}")
