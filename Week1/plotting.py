@@ -139,7 +139,7 @@ def plot_final_metrics_comparison(method_names, metrics_list, title="Final Test 
     plt.tight_layout()
     plt.show()
 
-def plot_multiclass_roc(y_true, y_score, class_names=None, output_path="roc_curves.png", figsize=(10, 8)):
+def plot_multiclass_roc(y_true, y_score, class_names=None, figsize=(10, 8)):
     """
     Plot ROC curves for multi-class classification using One-vs-Rest approach.
     Based on scikit-learn's official example.
