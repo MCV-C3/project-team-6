@@ -131,7 +131,9 @@ def cache_descriptors(cache_path: str, descriptors: np.ndarray, keypoints: list[
 
 
 def extract_bovw_histograms(bovw: BOVW, descriptors: Literal["N", "T", "d"], keypoints: list[list[cv2.KeyPoint]], image_sizes: list[Tuple[int, int]]):
-    return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, keypoints=keypoint, kmeans=bovw.codebook_algo, image_size=image_size) for descriptor, keypoint, image_size in zip(descriptors, keypoints, image_sizes)])
+    # Use gmm for Fisher Vectors, codebook_algo for BOVW
+    encoder = bovw.gmm if bovw.encoding_method == "fisher" else bovw.codebook_algo
+    return np.array([bovw._compute_codebook_descriptor(descriptors=descriptor, keypoints=keypoint, kmeans=encoder, image_size=image_size) for descriptor, keypoint, image_size in zip(descriptors, keypoints, image_sizes)])
 
 
 def test(dataset: List[Tuple[Type[Image.Image], int]],
@@ -303,12 +305,19 @@ def test_for_cv(test_data: CVDataset, bovw:BOVW, classifier: sklearn.base.BaseEs
     test_image_resolutions = [entry.resolution for entry in test_data]
     test_labels = [entry.label for entry in test_data]
 
+    if verbose:
+        print("Reducing dimensionality")
     test_descriptors = bovw.reduce_dimensionality(test_descriptors)
-    
+
+    if verbose:
+        print("Joint scaling")
     test_descriptors = bovw.scale_all_descriptors(test_descriptors)
 
     if verbose:
-        print("Computing the bovw histograms")
+        if bovw.encoding_method == "bovw":
+            print("Computing the bovw histograms")
+        else:
+            print("Computing the fisher vectors")
     bovw_histograms = extract_bovw_histograms(descriptors=test_descriptors, keypoints=test_keypoints, image_sizes=test_image_resolutions, bovw=bovw)
 
     if verbose:
@@ -333,16 +342,31 @@ def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.Base
     all_image_resolutions = [entry.resolution for entry in train_data]
     all_labels = [entry.label for entry in train_data]
     
+    if verbose:
+        print("Fitting dimensionality reduction")
     all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors, all_labels)
 
+    if verbose:
+        print("Fitting joint scaling")
     all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
 
     if verbose:
-        print("Fitting the codebook")
-    kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
+        if bovw.encoding_method == "bovw":
+            print("Fitting the codebook")
+        else:
+            print("Fitting the GMM")
+
+    if bovw.encoding_method == "bovw":
+        kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
+    elif bovw.encoding_method == "fisher":
+        kmeans = bovw._update_fit_gmm(descriptors=all_descriptors)
+        cluster_centers = None
 
     if verbose:
-        print("Computing the bovw histograms")
+        if bovw.encoding_method == "bovw":
+            print("Computing the bovw histograms")
+        else:
+            print("Computing the fisher vectors")
     bovw_histograms = extract_bovw_histograms(descriptors=all_descriptors, keypoints=all_keypoints, image_sizes=all_image_resolutions, bovw=bovw)
 
     if verbose:
@@ -518,3 +542,80 @@ if __name__ == "__main__":
     bovw, classifier = train(dataset=data_train, bovw=bovw, classifier=classifier)
     
     test(dataset=data_test, bovw=bovw, classifier=classifier)
+    
+    
+    
+    # Config for fisher vectors that gives 0.38 on cv k=5
+    """
+    disable_cache()
+    enable_cache()
+    bovw_params = {
+        "detector_type": "DSIFT",
+        "codebook_size": 100, 
+        "detector_kwargs": {"nfeatures": 100},
+        "dense_kwargs": {"step": 8, "size": 8},
+        "pyramid_levels": 2,
+        # "dimensionality_reduction": "LDA"
+    }
+
+    bovw_params = {
+        "detector_type": "SIFT",
+        "encoding_method": "fisher",
+        "codebook_size": 8,
+        "descriptor_normalization": "L2",
+        "joint_descriptor_normalization": None,
+        "detector_kwargs": {"nfeatures": 10},
+        # "codebook_kwargs": {"batch_size": 1000, "random_state": SEED},
+        # "dimensionality_reduction": "PCA",
+        # "dimensionality_reduction_kwargs": {"n_components": 64},
+        "pyramid_levels": None,
+    }
+
+    bovw_params = {
+        "detector_type": "DSIFT",
+        "dense_kwargs": {"step": 32, "size": 16},
+        "encoding_method": "fisher",
+        "codebook_size": 32,
+        "descriptor_normalization": "L2",
+        "joint_descriptor_normalization": None,
+        "detector_kwargs": {"nfeatures": 10},
+        # "codebook_kwargs": {"batch_size": 1000, "random_state": SEED},
+        # "dimensionality_reduction": "PCA",
+        # "dimensionality_reduction_kwargs": {"n_components": 64},
+        "pyramid_levels": None,
+    }
+
+    classifier_cls = SVC
+    classifier_params = {
+        "kernel": 'linear',
+    }
+    # classifier_params = {
+    #     "kernel": "rbf",
+    #     "C": 1.0,
+    #     "gamma": "scale",
+    #     "class_weight": "balanced",
+    #     "random_state": SEED,
+    # }
+
+    # classifier_cls = LogisticRegression
+
+    # classifier_params = {
+    #     "class_weight": "balanced"
+    # }
+
+    scores = cross_validate_bovw(
+        data_train,
+        bovw_kwargs=bovw_params,
+        classifier_cls=classifier_cls,
+        classifier_kwargs=classifier_params,
+        verbose=True
+    )
+
+    scores.test.accuracy.mean
+    """
+    
+    
+    
+    
+    
+    
