@@ -187,10 +187,20 @@ class BOVW():
         
         all_descriptors = np.vstack(descriptors)
         
-        if all_descriptors.shape[0] < self.codebook_size:
+        # Convert to float64 for numerical stability
+        all_descriptors = all_descriptors.astype(np.float64)
+        
+        # Adaptive component reduction: if we don't have enough samples per component
+        max_components = max(2, all_descriptors.shape[0] // 5)  # At least 5 samples per component
+        effective_codebook_size = min(self.codebook_size, max_components)
+        
+        if effective_codebook_size < self.codebook_size:
+            print(f"Warning: Reducing GMM components from {self.codebook_size} to {effective_codebook_size} due to insufficient samples")
+        
+        if all_descriptors.shape[0] < effective_codebook_size:
             raise ValueError(
                 f"Not enough descriptors ({all_descriptors.shape[0]}) "
-                f"for {self.codebook_size} GMM components. Need at least {self.codebook_size}."
+                f"for {effective_codebook_size} GMM components. Need at least {effective_codebook_size}."
             )
         
         # Verificar que no hay dimensiones con varianza cero
@@ -201,9 +211,10 @@ class BOVW():
         # Ensure covariance_type is 'diag' as required by Fisher vectors
         gm_args = self.codebook_kwargs.copy() if self.codebook_kwargs else {}
         gm_args['covariance_type'] = 'diag'
-        gm_args['reg_covar'] = 1e-6  # Add regularization to prevent singular covariance
+        gm_args['reg_covar'] = 1e-3
+        gm_args['n_init'] = 3
 
-        self.gmm = learn_gmm(descriptors, n_modes=self.codebook_size, gm_args=gm_args)
+        self.gmm = learn_gmm(descriptors, n_modes=effective_codebook_size, gm_args=gm_args)
 
         return self.gmm
     
