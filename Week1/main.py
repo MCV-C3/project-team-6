@@ -256,7 +256,7 @@ class Times(NamedTuple):
 
 class CVResult(NamedTuple):
     train: Scores
-    test: Scores
+    val: Scores
     time: Times
 
 class FullEntry(NamedTuple):
@@ -389,10 +389,10 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
 
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
 
-    test_accuracies = []
-    test_precisions = []
-    test_recalls = []
-    test_f1s = []
+    val_accuracies = []
+    val_precisions = []
+    val_recalls = []
+    val_f1s = []
 
     train_accuracies = []
     train_precisions = []
@@ -420,10 +420,10 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
         train_recalls.append(train_scores["recall"])
         train_f1s.append(train_scores["f1"])
 
-        test_accuracies.append(acc)
-        test_precisions.append(prec)
-        test_recalls.append(rec)
-        test_f1s.append(f1)
+        val_accuracies.append(acc)
+        val_precisions.append(prec)
+        val_recalls.append(rec)
+        val_f1s.append(f1)
         
         times.append(time.time() - fold_start)
 
@@ -435,11 +435,11 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
     # print(f"Recall: {np.mean(recalls):.3f} ± {np.std(recalls):.3f}")
     # print(f"F1-score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
 
-    test_scores = Scores(
-        accuracy=scores_stats(test_accuracies),
-        precision=scores_stats(test_precisions),
-        recall=scores_stats(test_recalls),
-        f1=scores_stats(test_f1s),
+    val_scores = Scores(
+        accuracy=scores_stats(val_accuracies),
+        precision=scores_stats(val_precisions),
+        recall=scores_stats(val_recalls),
+        f1=scores_stats(val_f1s),
     )
     
     train_scores = Scores(
@@ -460,7 +460,7 @@ def cross_validate_bovw(dataset, bovw_kwargs, classifier_cls, classifier_kwargs,
 
     return CVResult(
         train=train_scores,
-        test=test_scores,
+        val=val_scores,
         time=times,
     )
 
