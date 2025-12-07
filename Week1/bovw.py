@@ -181,6 +181,18 @@ class BOVW():
         Returns:
             Fitted GMM model.
         """
+        all_descriptors = np.vstack(descriptors)  # ← Añade validación
+        
+        if all_descriptors.shape[0] < self.codebook_size:
+            raise ValueError(
+                f"Not enough descriptors ({all_descriptors.shape[0]}) "
+                f"for {self.codebook_size} GMM components. Need at least {self.codebook_size}."
+            )
+        
+        # Verificar que no hay dimensiones con varianza cero
+        if np.any(np.std(all_descriptors, axis=0) == 0):
+            raise ValueError("Some descriptor dimensions have zero variance. Check normalization.")
+        
         # learn_gmm can take a list of arrays directly
         # Ensure covariance_type is 'diag' as required by Fisher vectors
         gm_args = self.codebook_kwargs.copy() if self.codebook_kwargs else {}
