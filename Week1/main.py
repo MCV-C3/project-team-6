@@ -358,20 +358,24 @@ def train_for_cv(train_data: CVDataset, bovw:BOVW, classifier: sklearn.base.Base
     all_descriptors = bovw.fit_reduce_dimensionality(all_descriptors, all_labels)
 
     if verbose:
-        print("Fitting joint scaling")
-    all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
-
-    if verbose:
         if bovw.encoding_method == "bovw":
             print("Fitting the codebook")
         else:
             print("Fitting the GMM")
 
     if bovw.encoding_method == "bovw":
+        if verbose:
+            print("Fitting joint scaling")
+        all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
+        
         kmeans, cluster_centers = bovw._update_fit_codebook(descriptors=all_descriptors)
     elif bovw.encoding_method == "fisher":
         kmeans = bovw._update_fit_gmm(descriptors=all_descriptors)
         cluster_centers = None
+        
+        if verbose:
+            print("Fitting joint scaling")
+        all_descriptors = bovw.fit_scale_descriptors_jointly(all_descriptors)
 
     if verbose:
         if bovw.encoding_method == "bovw":
@@ -624,9 +628,8 @@ if __name__ == "__main__":
 
     scores.test.accuracy.mean
     """
-    
-    
-    
-    
-    
-    
+
+
+
+
+

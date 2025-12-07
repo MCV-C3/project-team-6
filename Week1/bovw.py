@@ -181,7 +181,11 @@ class BOVW():
         Returns:
             Fitted GMM model.
         """
-        all_descriptors = np.vstack(descriptors)  # ← Añade validación
+        # learn_gmm expects a list of arrays, NOT a stacked array
+        if not isinstance(descriptors, list):
+            raise TypeError(f"descriptors must be a list of arrays, got {type(descriptors)}")
+        
+        all_descriptors = np.vstack(descriptors)
         
         if all_descriptors.shape[0] < self.codebook_size:
             raise ValueError(
@@ -197,6 +201,7 @@ class BOVW():
         # Ensure covariance_type is 'diag' as required by Fisher vectors
         gm_args = self.codebook_kwargs.copy() if self.codebook_kwargs else {}
         gm_args['covariance_type'] = 'diag'
+        gm_args['reg_covar'] = 1e-6  # Add regularization to prevent singular covariance
 
         self.gmm = learn_gmm(descriptors, n_modes=self.codebook_size, gm_args=gm_args)
 
