@@ -139,6 +139,7 @@ def extract_bovw_histograms(bovw: BOVW, descriptors: Literal["N", "T", "d"], key
 def test(dataset: List[Tuple[Type[Image.Image], int]],
         bovw: BOVW, 
         classifier:Type[object],
+        return_predictions: bool = False
     ):
     
     test_descriptors = []
@@ -183,6 +184,16 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
     print("Precision on Phase[Test]:", prec)
     print("Recall on Phase[Test]:", rec)
     print("F1-Score on Phase[Test]:", f1)
+
+    if return_predictions:
+        if hasattr(classifier, 'predict_proba'):
+            y_score = classifier.predict_proba(bovw_histograms)
+        elif hasattr(classifier, 'decision_function'):
+            y_score = classifier.decision_function(bovw_histograms)
+        else:
+            raise ValueError("Classifier must have either predict_proba or decision_function method for ROC curves")
+        
+        return acc, prec, rec, f1, descriptors_labels, y_score
 
     return acc, prec, rec, f1
     
