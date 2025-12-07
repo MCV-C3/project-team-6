@@ -191,9 +191,9 @@ def test(dataset: List[Tuple[Type[Image.Image], int]],
         elif hasattr(classifier, 'decision_function'):
             y_score = classifier.decision_function(bovw_histograms)
         else:
-            raise ValueError("Classifier must have either predict_proba or decision_function method for ROC curves")
+            y_score = None
         
-        return acc, prec, rec, f1, descriptors_labels, y_score
+        return acc, prec, rec, f1, descriptors_labels, y_pred, y_score
 
     return acc, prec, rec, f1
     
