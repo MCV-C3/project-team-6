@@ -71,6 +71,84 @@ def plot_cv_accuracy(x_values, means, stds, descriptor_name, hyperparam_name):
     plt.tight_layout()
     plt.show()
 
+
+def plot_cv_accuracy_boxplot(x_values, all_fold_values, descriptor_name, hyperparam_name, ylim=(0, 1), show_points=True):
+    """
+    Plot CV validation accuracy vs a hyperparameter showing individual fold results.
+
+    For small sample sizes (like 5-fold CV), this shows all individual points
+    overlaid on a simple range visualization (min to max with mean).
+
+    Args:
+        x_values: List/array of hyperparameter values (e.g., [128, 256, 512])
+        all_fold_values: List of lists, where each inner list contains accuracy values
+                        from all CV folds for that hyperparameter value
+                        Shape: (n_hyperparams, n_folds)
+        descriptor_name: Name of the descriptor (e.g., "SIFT")
+        hyperparam_name: Name of the hyperparameter (e.g., "Codebook Size")
+        ylim: Tuple (ymin, ymax) for y-axis limits. Default is (0, 1).
+              Set to None for automatic scaling.
+        show_points: If True (default), show individual fold points overlaid on the plot.
+
+    Example:
+        x_values = [128, 256, 512]
+        all_fold_values = [
+            [0.32, 0.33, 0.31, 0.34, 0.32],  # 5 fold accuracies for size=128
+            [0.35, 0.36, 0.34, 0.37, 0.35],  # 5 fold accuracies for size=256
+            [0.38, 0.39, 0.37, 0.40, 0.38],  # 5 fold accuracies for size=512
+        ]
+        plot_cv_accuracy_boxplot(x_values, all_fold_values, "SIFT", "Codebook Size")
+
+        # Or with custom y-limits
+        plot_cv_accuracy_boxplot(x_values, all_fold_values, "SIFT", "Codebook Size", ylim=(0.2, 0.5))
+
+        # Or with automatic scaling
+        plot_cv_accuracy_boxplot(x_values, all_fold_values, "SIFT", "Codebook Size", ylim=None)
+    """
+
+    plt.figure(figsize=(10, 6))
+
+    positions = range(len(x_values))
+
+    # For each hyperparameter value, plot min-max range and mean
+    for i, (pos, values) in enumerate(zip(positions, all_fold_values)):
+        values = np.array(values)
+        mean_val = np.mean(values)
+        min_val = np.min(values)
+        max_val = np.max(values)
+
+        # Plot vertical line from min to max
+        plt.plot([pos, pos], [min_val, max_val], 'k-', linewidth=2, alpha=0.3)
+
+        # Plot mean as a horizontal line
+        plt.plot([pos - 0.2, pos + 0.2], [mean_val, mean_val], 'r-', linewidth=3, label='Mean' if i == 0 else '')
+
+        # Plot individual points with slight jitter for visibility
+        if show_points:
+            jitter = np.random.normal(0, 0.05, size=len(values))
+            plt.scatter([pos + j for j in jitter], values,
+                       color='darkblue', s=80, alpha=0.7, zorder=3,
+                       label='Individual Folds' if i == 0 else '')
+
+    # Set x-axis labels
+    plt.xticks(positions, x_values)
+
+    # Set y-axis limits
+    if ylim is not None:
+        plt.ylim(ylim)
+
+    plt.title(f"{descriptor_name} — Validation Accuracy vs {hyperparam_name}\n(5-Fold Cross-Validation)",
+              fontsize=14)
+    plt.xlabel(hyperparam_name, fontsize=12)
+    plt.ylabel("Validation Accuracy", fontsize=12)
+    plt.grid(True, linestyle="--", alpha=0.3, axis='y')
+
+    # Add legend
+    plt.legend(loc='best')
+
+    plt.tight_layout()
+    plt.show()
+
 def dense_keypoints_grid(img_shape, step, scale):
     h, w = img_shape[:2]
     keypoints = []
