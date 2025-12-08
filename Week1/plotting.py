@@ -265,7 +265,7 @@ def plot_multiclass_roc(y_true, y_score, class_names=None, figsize=(10, 8)):
         ylim=[-0.01, 1.05],
         xlabel="False Positive Rate",
         ylabel="True Positive Rate",
-        title="Multi-class ROC curve\nto One-vs-Rest",
+        title="Multi-class ROC curve\nOne-vs-Rest",
     )
     ax.legend(loc="lower right", fontsize=8)
     ax.grid(alpha=0.3)
