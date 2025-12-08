@@ -1,59 +1,54 @@
-import matplotlib.pyplot as plt
+from itertools import cycle
+from sklearn.metrics import roc_curve, auc
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import cv2
-import numpy as np
-
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import math
 
-def plot_one_sample_per_class(dataset, title="One Example Image per Class"):
+def plot_images(images, title="", figsize=(15, 8), max_cols=5):
     """
-    Plots one sample image per class from the dataset in 2 rows.
+    Plot a grid of images with their class name and label.
     
     Args:
-        dataset: List of (PIL.Image, label)
-        title: Optional title for the figure
+        images (list): List of (PIL.Image, label) tuples
+        title (str): Title for the figure
+        figsize (tuple): Figure size
+        max_cols (int): Maximum number of columns
     """
+    num_imgs = len(images)
+    if num_imgs == 0:
+        print("No images to plot")
+        return
+    
+    cols = min(num_imgs, max_cols)
+    rows = math.ceil(num_imgs / cols)
 
-    # Extract class names and create mapping class_name -> label
-    class_dirs = {
-        os.path.basename(os.path.dirname(img.filename)): label
-        for img, label in dataset
-    }
-    classes = sorted(class_dirs.keys(), key=lambda c: class_dirs[c])
-
-    num_classes = len(classes)
-    rows = 2
-    cols = math.ceil(num_classes / rows)
-
-    # Collect one example image per class
-    examples = {}
-    for img, label in dataset:
-        cls_name = os.path.basename(os.path.dirname(img.filename))
-        if cls_name not in examples:
-            examples[cls_name] = (img, label)
-        if len(examples) == num_classes:
-            break
-
-    # Plot
-    fig, axes = plt.subplots(rows, cols, figsize=(5 * cols, 5 * rows))
-    axes = axes.flatten()
-
-    for idx, cls_name in enumerate(classes):
-        img, label = examples[cls_name]
-        axes[idx].imshow(np.array(img))
-        axes[idx].set_title(f"{cls_name} ({label})")
-        axes[idx].axis("off")
-
+    fig, axes = plt.subplots(rows, cols, figsize=figsize)
+    
+    # Handle single image case
+    if num_imgs == 1:
+        axes = [axes]
+    else:
+        axes = axes.flatten()
+    
+    for i, (img, label) in enumerate(images):
+        class_name = os.path.basename(os.path.dirname(img.filename))
+        filename = os.path.basename(img.filename)
+        
+        axes[i].imshow(img)
+        axes[i].set_title(f"{class_name} ({label})\n{filename}", fontsize=10)
+        axes[i].axis("off")
+    
     # Hide empty axes if any
-    for j in range(len(classes), len(axes)):
+    for j in range(num_imgs, len(axes)):
         axes[j].axis("off")
-
+    
     plt.suptitle(title, fontsize=16)
     plt.tight_layout()
     plt.show()
-
 
 def plot_cv_accuracy(x_values, means, stds, descriptor_name, hyperparam_name):
     """
@@ -322,3 +317,149 @@ def plot_final_metrics_comparison(method_names, metrics_list, title="Final Test 
     plt.legend()
     plt.tight_layout()
     plt.show()
+
+def plot_confusion_matrix(y_true, y_pred, class_names=None,
+                          title="Confusion Matrix", figsize=(7, 5), cmap="Blues"):
+    """
+    Plot a confusion matrix with optional class name auto-detection.
+    
+    Args:
+        y_true: Array of true labels
+        y_pred: Array of predicted labels
+        class_names: Optional list of class names. If None, class indices are used.
+        title: Plot title
+        figsize: Figure size
+        cmap: Colormap
+    """
+    
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+
+    if class_names is None:
+        classes = np.unique(y_true)
+        class_names = [f"Class {c}" for c in classes]
+
+    cm = confusion_matrix(y_true, y_pred)
+
+    fig, ax = plt.subplots(figsize=figsize)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
+    disp.plot(cmap=cmap, ax=ax, xticks_rotation=45)
+    ax.set_title(title)
+    plt.tight_layout()
+    plt.show()
+
+def plot_multiclass_roc(y_true, y_score, class_names=None, figsize=(10, 8)):
+    """
+    Plot ROC curves for multi-class classification using One-vs-Rest approach.
+    Based on scikit-learn's official example.
+    
+    Args:
+        y_true (np.array): True labels (N,). Can be string labels or integers.
+        y_score (np.array): Predicted probabilities or decision scores (N, n_classes).
+                           Each row should contain the score/probability for each class.
+        class_names (list): Optional list of class names for the legend. 
+                           If None, uses the unique values from y_true.
+        output_path (str): Path where the plot will be saved.
+        figsize (tuple): Figure size (width, height).
+    
+    Returns:
+        dict: Dictionary containing fpr, tpr, and roc_auc for each class.
+    """
+    # Get number of classes
+    n_classes = y_score.shape[1]
+    
+    # Use LabelBinarizer for One-Hot encoding (handles string labels too)
+    label_binarizer = LabelBinarizer().fit(y_true)
+    y_onehot_test = label_binarizer.transform(y_true)
+    
+    # Store class names
+    if class_names is None:
+        class_names = label_binarizer.classes_
+    
+    # Compute ROC curve and ROC area for each class
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = roc_curve(y_onehot_test[:, i], y_score[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+    
+    # Compute micro-average ROC curve and ROC area
+    fpr["micro"], tpr["micro"], _ = roc_curve(y_onehot_test.ravel(), y_score.ravel())
+    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+    
+    # Compute macro-average ROC curve and ROC area
+    # Aggregate all false positive rates
+    fpr_grid = np.linspace(0.0, 1.0, 1000)
+    
+    # Interpolate all ROC curves at these points
+    mean_tpr = np.zeros_like(fpr_grid)
+    for i in range(n_classes):
+        mean_tpr += np.interp(fpr_grid, fpr[i], tpr[i])
+    
+    # Average it and compute AUC
+    mean_tpr /= n_classes
+    
+    fpr["macro"] = fpr_grid
+    tpr["macro"] = mean_tpr
+    roc_auc["macro"] = auc(fpr["macro"], tpr["macro"])
+    
+    # Plot all ROC curves
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    # Plot micro-average ROC curve
+    ax.plot(
+        fpr["micro"], 
+        tpr["micro"],
+        label=f'Micro-average ROC curve (AUC = {roc_auc["micro"]:.2f})',
+        color='deeppink', 
+        linestyle=':', 
+        linewidth=4
+    )
+    
+    # Plot macro-average ROC curve
+    ax.plot(
+        fpr["macro"], 
+        tpr["macro"],
+        label=f'Macro-average ROC curve (AUC = {roc_auc["macro"]:.2f})',
+        color='navy', 
+        linestyle=':', 
+        linewidth=4
+    )
+    
+    # Plot ROC curve for each class
+    colors = cycle(['aqua', 'darkorange', 'cornflowerblue', 'green', 'red', 
+                    'purple', 'brown', 'pink', 'gray', 'olive', 'cyan'])
+    
+    for class_id, color in zip(range(n_classes), colors):
+        ax.plot(
+            fpr[class_id], 
+            tpr[class_id], 
+            color=color, 
+            lw=2,
+            label=f'ROC curve for {class_names[class_id]} (AUC = {roc_auc[class_id]:.2f})'
+        )
+    
+    # Plot diagonal (chance level)
+    ax.plot([0, 1], [0, 1], 'k--', lw=2, label='Chance level (AUC = 0.5)')
+    
+    ax.set(
+        xlim=[-0.01, 1.01],
+        ylim=[-0.01, 1.05],
+        xlabel="False Positive Rate",
+        ylabel="True Positive Rate",
+        title="Multi-class ROC curve\nOne-vs-Rest",
+    )
+    ax.legend(loc="lower right", fontsize=8)
+    ax.grid(alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Also print the scores
+    print(f"\nMicro-averaged One-vs-Rest ROC AUC score: {roc_auc['micro']:.2f}")
+    print(f"Macro-averaged One-vs-Rest ROC AUC score: {roc_auc['macro']:.2f}")
+    print("\nPer-class ROC AUC scores:")
+    for i in range(n_classes):
+        print(f"  {class_names[i]}: {roc_auc[i]:.2f}")
