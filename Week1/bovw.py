@@ -402,7 +402,7 @@ class BOVW():
                 sums[sums == 0] = 1
                 return descriptors / sums
             case "Root":
-                norms = np.linalg.norm(descriptors, axis=1, keepdims=True)
+                norms = np.sum(descriptors, axis=1, keepdims=True)
                 norms[norms == 0] = 1
                 return np.sqrt(descriptors / norms)
             case _:
