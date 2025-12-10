@@ -6,19 +6,27 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-from models import SimpleModel
+from models.simple import SimpleModel
+from augmentation import AugmentationOnGPU
+from models.dense_descriptor_classifier import DenseDescriptorClassifier
 import torchvision.transforms.v2  as F
 from torchviz import make_dot
 import tqdm
 
+from models.descriptor_classifier import make_like_simple
+
+
 # Train function
-def train(model, dataloader, criterion, optimizer, device):
+def train(model, dataloader, criterion, optimizer, device, augmentation=None):
     model.train()
     train_loss = 0.0
     correct, total = 0, 0
 
     for inputs, labels in dataloader:
-        inputs, labels = inputs.to(device), labels.to(device)
+        inputs, labels = inputs.to(device, non_blocking=True), labels.to(device, non_blocking=True)
+
+        if augmentation is not None:
+            inputs = augmentation(inputs)
 
         # Forward pass
         outputs = model(inputs)
@@ -47,7 +55,7 @@ def test(model, dataloader, criterion, device):
 
     with torch.no_grad():
         for inputs, labels in dataloader:
-            inputs, labels = inputs.to(device), labels.to(device)
+            inputs, labels = inputs.to(device, non_blocking=True), labels.to(device, non_blocking=True)
 
             # Forward pass
             outputs = model(inputs)
@@ -118,36 +126,41 @@ if __name__ == "__main__":
 
     torch.manual_seed(42)
 
-    transformation  = F.Compose([
-                                    F.ToImage(),
-                                    F.ToDtype(torch.float32, scale=True),
-                                    F.Resize(size=(224, 224)),
-                                ])
-    
-    data_train = ImageFolder("~/data/Master/MIT_split/train", transform=transformation)
-    data_test = ImageFolder("~/data/Master/MIT_split/test", transform=transformation) 
+    transformation = F.Compose([
+        F.ToImage(),
+        F.ToDtype(torch.float32, scale=True),
+        F.Resize(size=(224, 224)),
+    ])
 
-    train_loader = DataLoader(data_train, batch_size=256, pin_memory=True, shuffle=True, num_workers=8)
-    test_loader = DataLoader(data_test, batch_size=128, pin_memory=True, shuffle=False, num_workers=8)
+    data_train = ImageFolder("../data/places_reduced/train", transform=transformation)
+    data_test = ImageFolder("../data/places_reduced/val", transform=transformation)
+
+    train_loader = DataLoader(data_train, batch_size=256, pin_memory=True, shuffle=True, num_workers=8, prefetch_factor=4, persistent_workers=True)
+    test_loader = DataLoader(data_test, batch_size=128, pin_memory=True, shuffle=False, num_workers=8, prefetch_factor=4, persistent_workers=True)
 
     C, H, W = np.array(data_train[0][0]).shape
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-    model = SimpleModel(input_d=C*H*W, hidden_d=300, output_d=8)
-    plot_computational_graph(model, input_size=(1, C*H*W))  # Batch size of 1, input_dim=10
+    # model = SimpleModel(input_d=C*H*W, hidden_d=300, output_d=11)
+    model = make_like_simple(input_d=C*H*W, hidden_d=300, output_d=11)
+    plot_computational_graph(model, input_size=(1, C, H, W))  # Batch size of 1, input_dim=10
 
     model = model.to(device)
+
+    # augmentation = AugmentationOnGPU().to(device)
+    augmentation = None
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     num_epochs = 20
 
     train_losses, train_accuracies = [], []
     test_losses, test_accuracies = [], []
-    
+
     for epoch in tqdm.tqdm(range(num_epochs), desc="TRAINING THE MODEL"):
-        train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device)
+        train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
         test_loss, test_accuracy = test(model, test_loader, criterion, device)
 
         train_losses.append(train_loss)
