@@ -3,41 +3,47 @@ import utils
 import wandb
 from pipeline import experiment
 from models.base_model import BaseModel
-import time
 
 
-model = BaseModel([
-    3 * 224 * 224,
-    300,
-    11
-])
+EPOCHS = 2
+DEPTH = 4
 
-optimizer = torch.optim.Adam(model.parameters(), 0.0001)
+train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
+
+widths = [3*224*224]
+
+for i in range(DEPTH):
+    widths.append(300)
+    
+widths.append(11)
+
+model = BaseModel(widths=widths)
+
+print(model)
+
 loss = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), 0.0001)
 
 run = wandb.init(
     entity="mcv-team-6",
     project="C3-Week2",
-    name="Baseline",
+    name=f"Depth only variation : {DEPTH}",
     config={
         "architecture": "BaseModel",
-        "epochs": 20
+        "epochs": EPOCHS
     }
 )
-
-train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
 
 experiment("test_run",
     model=model,
     optimizer=optimizer,
     criterion=loss,
-    epochs=2,
+    epochs=EPOCHS,
     train_loader=train_loader,
     test_loader=test_loader,
     augmentation=None,
     wandb_run=run,
 )
-
 
 run.finish()
 wandb.join()
