@@ -6,14 +6,20 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
+from models.alexnet import AlexNet
+from models.pyramidal_dense_descriptor_classifier import make_pyramidal_default
 from models.simple import SimpleModel
 from augmentation import AugmentationOnGPU
 from models.dense_descriptor_classifier import DenseDescriptorClassifier
 import torchvision.transforms.v2  as F
 from torchviz import make_dot
 import tqdm
+import kornia.augmentation as ka
 
-from models.descriptor_classifier import make_like_simple
+from models.descriptor_classifier import DescriptorClassifier, make_like_simple
+
+import wandb
+
 
 
 # Train function
@@ -122,18 +128,60 @@ def plot_computational_graph(model: torch.nn.Module, input_size: tuple, filename
     print(f"Computational graph saved as {filename}")
 
 
+
+
+def experiment(*,
+        model: nn.Module,
+        optimizer: torch.optim.Optimizer,
+        criterion,
+        epochs: int,
+        train_loader: DataLoader,
+        test_loader: DataLoader,
+        augmentation: Optional[nn.Module],
+        wandb_run: wandb.Run
+    ):
+    train_losses, train_accuracies = [], []
+    test_losses, test_accuracies = [], []
+
+    for epoch in tqdm.tqdm(range(epochs), desc="TRAINING THE MODEL"):
+        train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
+        test_loss, test_accuracy = test(model, test_loader, criterion, device)
+
+        train_losses.append(train_loss)
+        train_accuracies.append(train_accuracy)
+        test_losses.append(test_loss)
+        test_accuracies.append(test_accuracy)
+
+        print(f"Epoch {epoch + 1}/{epochs} - "
+              f"Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}, "
+              f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
+        
+    # Plot results
+    plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss")
+    plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "accuracy")
+
+
+
 if __name__ == "__main__":
+
+    FINAL_SIZE = (224, 224)
+    FINAL_C = 3
 
     torch.manual_seed(42)
 
-    transformation = F.Compose([
+    train_transformation = F.Compose([
         F.ToImage(),
         F.ToDtype(torch.float32, scale=True),
-        F.Resize(size=(224, 224)),
+        F.Resize(size=FINAL_SIZE),
     ])
-
-    data_train = ImageFolder("../data/places_reduced/train", transform=transformation)
-    data_test = ImageFolder("../data/places_reduced/val", transform=transformation)
+    test_transformation = F.Compose([
+        F.ToImage(),
+        F.ToDtype(torch.float32, scale=True),
+        # F.Resize(size=(128, 128)),
+        F.Resize(size=FINAL_SIZE),
+    ])
+    data_train = ImageFolder("../data/places_reduced/train", transform=train_transformation)
+    data_test = ImageFolder("../data/places_reduced/val", transform=test_transformation)
 
     train_loader = DataLoader(data_train, batch_size=256, pin_memory=True, shuffle=True, num_workers=8, prefetch_factor=4, persistent_workers=True)
     test_loader = DataLoader(data_test, batch_size=128, pin_memory=True, shuffle=False, num_workers=8, prefetch_factor=4, persistent_workers=True)
@@ -144,17 +192,27 @@ if __name__ == "__main__":
 
 
     # model = SimpleModel(input_d=C*H*W, hidden_d=300, output_d=11)
-    model = make_like_simple(input_d=C*H*W, hidden_d=300, output_d=11)
-    plot_computational_graph(model, input_size=(1, C, H, W))  # Batch size of 1, input_dim=10
+    # model = make_like_simple(input_d=C*H*W, hidden_d=300, output_d=11)
+    model = make_pyramidal_default()
+    
+    plot_computational_graph(model, input_size=(1, FINAL_C, FINAL_SIZE[0], FINAL_SIZE[1]))  # Batch size of 1, input_dim=10
 
     model = model.to(device)
 
-    # augmentation = AugmentationOnGPU().to(device)
-    augmentation = None
+    # augmentation = None
+    augmentation = nn.Sequential(
+        ka.RandomGaussianBlur(kernel_size=(7, 7), sigma=(0.5, 0.5), p=0.1),
+        ka.RandomRotation(degrees=(-10, 10)),
+        ka.RandomResizedCrop(size=(224, 224), scale=(0.5, 1.0), ratio=(1.0, 1.0)),
+        ka.ColorJiggle(0.2, 0.2, 0.2, 0.2),
+        ka.RandomHorizontalFlip(),
+        ka.RandomGrayscale(),
+        # # ka.Resize(size=FINAL_SIZE)
+    )
 
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-    num_epochs = 20
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001 / 4, weight_decay=1e-6)
+    num_epochs = 500
 
     train_losses, train_accuracies = [], []
     test_losses, test_accuracies = [], []
