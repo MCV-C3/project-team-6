@@ -133,7 +133,9 @@ def experiment(model_folder: str, *,
         test_loader: DataLoader,
         augmentation: Optional[nn.Module],
         wandb_run: wandb.Run,
-        device = None
+        device = None,
+        early_stopping_patience: int = 50,
+        early_stopping_min_delta: float = 0.0001
     ):
     
     os.makedirs(f"trained_models/{model_folder}", exist_ok=True)
@@ -149,6 +151,7 @@ def experiment(model_folder: str, *,
 
     best_test_loss = float('inf')
     best_test_accuracy = 0
+    patience_counter = 0
 
     for epoch in tqdm.tqdm(range(epochs), desc="TRAINING THE MODEL"):
         train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
@@ -177,7 +180,7 @@ def experiment(model_folder: str, *,
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': criterion,
             }, f"trained_models/{model_folder}/best_test_accuracy.pt")
-            
+
         if best_test_loss > test_loss and epoch > 10:
             torch.save({
                 'epoch': epoch,
@@ -185,8 +188,20 @@ def experiment(model_folder: str, *,
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': criterion,
             }, f"trained_models/{model_folder}/best_test_loss.pt")
-            
-        
+
+        # Early stopping check
+        if test_loss < best_test_loss - early_stopping_min_delta:
+            best_test_loss = test_loss
+            patience_counter = 0
+        else:
+            patience_counter += 1
+
+        if patience_counter >= early_stopping_patience:
+            print(f"\nEarly stopping triggered at epoch {epoch + 1}")
+            print(f"Best test loss: {best_test_loss:.4f}")
+            break
+
+
 
     # Plot results
     plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss", directory=f"trained_models/{model_folder}/metrics/")

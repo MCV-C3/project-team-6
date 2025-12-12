@@ -27,3 +27,24 @@ def make_like_simple(input_d: int, hidden_d: int, output_d: int) -> DescriptorCl
     )
     classification_head = nn.Linear(hidden_d, output_d)
     return DescriptorClassifier(descriptor_head, classification_head)
+
+def make_from_widths(input_d: int, descriptor_widths: list[int], classifier_widths: list[int]) -> DescriptorClassifier:
+    descriptor_modules = [nn.Flatten()]
+    prev_d = input_d
+    for width in descriptor_widths:
+        descriptor_modules.append(nn.Linear(prev_d, width))
+        descriptor_modules.append(nn.ReLU())
+        prev_d = width
+    descriptor_head = nn.Sequential(*descriptor_modules)
+
+    classifier_modules = []
+    for width in classifier_widths:
+        classifier_modules.append(nn.Linear(prev_d, width))
+        classifier_modules.append(nn.ReLU())
+        prev_d = width
+
+    if classifier_modules:
+        classifier_modules.pop() # to remove the last ReLU
+    classification_head = nn.Sequential(*classifier_modules) if classifier_modules else nn.Linear(descriptor_widths[-1], classifier_widths[-1])
+
+    return DescriptorClassifier(descriptor_head, classification_head)

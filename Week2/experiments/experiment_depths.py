@@ -7,6 +7,9 @@ from models.base_model import BaseModel
 
 EPOCHS = 2
 DEPTH = 4
+GPU_ID = 0
+
+device = utils.set_device(GPU_ID)
 
 train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
 
@@ -43,6 +46,7 @@ experiment("test_run",
     test_loader=test_loader,
     augmentation=None,
     wandb_run=run,
+    device=device,
 )
 
 run.finish()
