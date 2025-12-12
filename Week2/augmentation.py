@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+import kornia.augmentation as ka
 
 # TODO: Maybe try this? https://kornia.readthedocs.io/en/latest/augmentation.module.html
 class AugmentationOnGPU(nn.Module):
@@ -33,3 +34,16 @@ class AugmentationOnGPU(nn.Module):
         x = self.random_horizontal_flip(x)
         x = self.random_color_jitter(x)
         return x
+
+
+full_augmentation = nn.Sequential(
+    ka.RandomGaussianBlur(kernel_size=(7, 7), sigma=(0.5, 0.5), p=0.1),
+    ka.RandomRotation(degrees=(-10, 10)),
+    ka.RandomResizedCrop(size=(224, 224), scale=(0.5, 1.0), ratio=(1.0, 1.0)),
+    ka.ColorJiggle(0.2, 0.2, 0.2, 0.2),
+    ka.RandomHorizontalFlip(),
+    ka.RandomGrayscale(),
+    # # ka.Resize(size=FINAL_SIZE)
+)
+
+

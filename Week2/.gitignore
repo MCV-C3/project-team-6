@@ -1,0 +1,4 @@
+wandb
+trained_models
+
+*.pyc

@@ -1,3 +1,4 @@
+import os
 from typing import *
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
@@ -130,7 +131,7 @@ def plot_computational_graph(model: torch.nn.Module, input_size: tuple, filename
 
 
 
-def experiment(*,
+def experiment(model_folder: str, *,
         model: nn.Module,
         optimizer: torch.optim.Optimizer,
         criterion,
@@ -138,10 +139,22 @@ def experiment(*,
         train_loader: DataLoader,
         test_loader: DataLoader,
         augmentation: Optional[nn.Module],
-        wandb_run: wandb.Run
+        wandb_run: wandb.Run,
+        device = None
     ):
+    
+    os.makedirs(f"trained_models/{model_folder}", exist_ok=True)
+    
+    if device is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    model = model.to(device)
+    
     train_losses, train_accuracies = [], []
     test_losses, test_accuracies = [], []
+
+    best_test_loss = float('inf')
+    best_test_accuracy = 0
 
     for epoch in tqdm.tqdm(range(epochs), desc="TRAINING THE MODEL"):
         train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
@@ -156,10 +169,37 @@ def experiment(*,
               f"Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}, "
               f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
         
+        wandb_run.log({
+            "train_accuracy": train_accuracy,
+            "test_accuracy": test_accuracy,
+            "train_loss": train_loss,
+            "test_loss": test_loss,
+        })
+        
+        if best_test_accuracy < test_accuracy and epoch > 10:
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': criterion,
+            }, f"trained_models/{model_folder}/best_test_accuracy.pt")
+            
+        if best_test_loss > test_loss and epoch > 10:
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': criterion,
+            }, f"trained_models/{model_folder}/best_test_loss.pt")
+            
+        
+        
+
     # Plot results
     plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss")
     plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "accuracy")
-
+    
+    
 
 
 if __name__ == "__main__":
