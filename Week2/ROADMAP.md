@@ -9,7 +9,7 @@
 STATEMENT: Redefine the structure of the newtork (adding new layers, changing image size, ...)
 
 1. Train SimpleModel once (use make_like_simple)
-2. Train SimpleModel with more hidden width [512, 1024, 2048, more?]. Select best width.
+2. Train SimpleModel with more hidden width [256, 512, 1024, 2048, 4096]. Select best width.
 3. DO THE REPORT OF THE PREVIOUS EXPERIMENTS!!!
 4. Train SimpleModel with more hidden layers (300 hidden width) [from 1 to 4]. Select best depth.
 5. DO THE REPORT OF THE PREVIOUS EXPERIMENT!!!
