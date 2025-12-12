@@ -1,26 +1,32 @@
 import torch
 import utils
 import wandb
+
+from models.descriptor_classifier import make_from_widths
 from pipeline import experiment
 from models.base_model import BaseModel
 
 
-EPOCHS = 2
-DEPTH = 4
-GPU_ID = 0
+argparser = utils.get_experiment_argument_parser()
+argparser.add_argument('--depth', type=int, default=4, help='Depth of the hidden layer')
+argparser.add_argument('--width', type=int, default=100, help='Width of the hidden layer')
+args = argparser.parse_args()
 
-device = utils.set_device(GPU_ID)
+EPOCHS = args.epochs
+DEPTH = args.depth
+WIDTH = args.width
+IMG_SIZE = 224
 
-train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
+device = utils.set_device(args.gpu_id)
 
-widths = [3*224*224]
+train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE))
 
-for i in range(DEPTH):
-    widths.append(300)
-    
-widths.append(11)
+input_d = 3*IMG_SIZE*IMG_SIZE
+descriptor_widths = [WIDTH]*DEPTH #Assume all hidden layers same size
+classifier_widths = [11]
 
-model = BaseModel(widths=widths)
+
+model = make_from_widths(input_d=input_d, descriptor_widths=descriptor_widths, classifier_widths=classifier_widths)
 
 print(model)
 
