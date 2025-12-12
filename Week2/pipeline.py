@@ -7,11 +7,11 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-from models.alexnet import AlexNet
-from models.pyramidal_dense_descriptor_classifier import make_pyramidal_default
+from models.complex_models.alexnet import AlexNet
+from models.complex_models.pyramidal_dense_descriptor_classifier import make_pyramidal_default
 from models.simple import SimpleModel
 from augmentation import AugmentationOnGPU
-from models.dense_descriptor_classifier import DenseDescriptorClassifier
+from models.complex_models.dense_descriptor_classifier import DenseDescriptorClassifier
 import torchvision.transforms.v2  as F
 from torchviz import make_dot
 import tqdm
@@ -20,8 +20,6 @@ import kornia.augmentation as ka
 from models.descriptor_classifier import DescriptorClassifier, make_like_simple
 
 import wandb
-
-
 
 # Train function
 def train(model, dataloader, criterion, optimizer, device, augmentation=None):
@@ -54,7 +52,6 @@ def train(model, dataloader, criterion, optimizer, device, augmentation=None):
     accuracy = correct / total
     return avg_loss, accuracy
 
-
 def test(model, dataloader, criterion, device):
     model.eval()
     test_loss = 0.0
@@ -78,7 +75,7 @@ def test(model, dataloader, criterion, device):
     accuracy = correct / total
     return avg_loss, accuracy
 
-def plot_metrics(train_metrics: Dict, test_metrics: Dict, metric_name: str):
+def plot_metrics(train_metrics: Dict, test_metrics: Dict, metric_name: str, directory: str):
     """
     Plots and saves metrics for training and testing.
 
@@ -102,12 +99,11 @@ def plot_metrics(train_metrics: Dict, test_metrics: Dict, metric_name: str):
 
     # Save the plot with the appropriate name
     filename = "loss.png" if metric_name.lower() == "loss" else "metrics.png"
+    filename = directory+filename
     plt.savefig(filename)
     print(f"Plot saved as {filename}")
 
     plt.close()  # Close the figure to free memory
-
-
 
 def plot_computational_graph(model: torch.nn.Module, input_size: tuple, filename: str = "computational_graph"):
     """
@@ -128,9 +124,6 @@ def plot_computational_graph(model: torch.nn.Module, input_size: tuple, filename
 
     print(f"Computational graph saved as {filename}")
 
-
-
-
 def experiment(model_folder: str, *,
         model: nn.Module,
         optimizer: torch.optim.Optimizer,
@@ -144,6 +137,7 @@ def experiment(model_folder: str, *,
     ):
     
     os.makedirs(f"trained_models/{model_folder}", exist_ok=True)
+    os.makedirs(f"trained_models/{model_folder}/metrics", exist_ok=True)
     
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -193,14 +187,10 @@ def experiment(model_folder: str, *,
             }, f"trained_models/{model_folder}/best_test_loss.pt")
             
         
-        
 
     # Plot results
-    plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss")
-    plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "accuracy")
-    
-    
-
+    plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss", directory=f"trained_models/{model_folder}/metrics/")
+    plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "accuracy", directory=f"trained_models/{model_folder}/metrics/")
 
 if __name__ == "__main__":
 

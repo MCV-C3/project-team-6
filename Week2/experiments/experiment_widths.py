@@ -3,35 +3,35 @@ import utils
 import wandb
 from pipeline import experiment
 from models.base_model import BaseModel
-import time
 
 
+EPOCHS = 2
+WIDTH = 512
+
+train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
 model = BaseModel([
-    3 * 224 * 224,
-    300,
-    11
-])
+    3*224*224, 
+    WIDTH, 
+    11])
 
-optimizer = torch.optim.Adam(model.parameters(), 0.0001)
 loss = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), 0.0001)
 
 run = wandb.init(
     entity="mcv-team-6",
     project="C3-Week2",
-    name="Test Run",
+    name=f"Width only variation : {WIDTH}",
     config={
-        "architecture": "make_like_simple(3 * 224 * 224, 300, 11)",
-        "epochs": 20
+        "architecture": "BaseModel",
+        "epochs": EPOCHS
     }
 )
-
-train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
 
 experiment("test_run",
     model=model,
     optimizer=optimizer,
     criterion=loss,
-    epochs=2,
+    epochs=EPOCHS,
     train_loader=train_loader,
     test_loader=test_loader,
     augmentation=None,
