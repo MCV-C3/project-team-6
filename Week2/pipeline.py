@@ -161,6 +161,7 @@ def experiment(model_folder: str, *,
 
     best_test_loss = float('inf')
     best_test_accuracy = 0
+    best_test_loss_for_early_stopping = float('inf')
     patience_counter = 0
 
     best_accuracy_checkpoint = None
@@ -207,8 +208,8 @@ def experiment(model_folder: str, *,
                 torch.save(best_loss_checkpoint, f"trained_models/{model_folder}/best_test_loss.pt")
 
         # Early stopping check
-        if test_loss < best_test_loss - early_stopping_min_delta:
-            best_test_loss = test_loss
+        if test_loss < best_test_loss_for_early_stopping - early_stopping_min_delta:
+            best_test_loss_for_early_stopping = test_loss
             patience_counter = 0
         else:
             patience_counter += 1
