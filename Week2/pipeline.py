@@ -181,6 +181,8 @@ def experiment(model_folder: str, *,
                 'loss': criterion,
             }, f"trained_models/{model_folder}/best_test_accuracy.pt")
 
+            best_test_accuracy = test_accuracy
+
         if best_test_loss > test_loss and epoch > 10:
             torch.save({
                 'epoch': epoch,
@@ -188,6 +190,8 @@ def experiment(model_folder: str, *,
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': criterion,
             }, f"trained_models/{model_folder}/best_test_loss.pt")
+
+            best_test_loss = test_loss
 
         # Early stopping check
         if test_loss < best_test_loss - early_stopping_min_delta:
