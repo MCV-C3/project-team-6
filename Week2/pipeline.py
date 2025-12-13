@@ -124,6 +124,15 @@ def plot_computational_graph(model: torch.nn.Module, input_size: tuple, filename
 
     print(f"Computational graph saved as {filename}")
 
+def make_checkpoint(epoch, model, optimizer, criterion):
+    return {
+        'epoch': epoch,
+        'model_state_dict': {k: v.cpu().clone() for k, v in model.state_dict().items()},
+        'optimizer_state_dict': {k: v.cpu().clone() if isinstance(v, torch.Tensor) else v
+                                for k, v in optimizer.state_dict().items()},
+        'loss': criterion,
+    }
+
 def experiment(model_folder: str, *,
         model: nn.Module,
         optimizer: torch.optim.Optimizer,
@@ -135,7 +144,8 @@ def experiment(model_folder: str, *,
         wandb_run: wandb.Run,
         device = None,
         early_stopping_patience: int = 50,
-        early_stopping_min_delta: float = 0.0001
+        early_stopping_min_delta: float = 0.0001,
+        checkpoint_save_interval: int = 10
     ):
     
     os.makedirs(f"trained_models/{model_folder}", exist_ok=True)
@@ -152,6 +162,9 @@ def experiment(model_folder: str, *,
     best_test_loss = float('inf')
     best_test_accuracy = 0
     patience_counter = 0
+
+    best_accuracy_checkpoint = None
+    best_loss_checkpoint = None
 
     for epoch in tqdm.tqdm(range(epochs), desc="TRAINING THE MODEL"):
         train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
@@ -172,26 +185,26 @@ def experiment(model_folder: str, *,
             "train_loss": train_loss,
             "test_loss": test_loss,
         })
+
+        is_best_accuracy = best_test_accuracy < test_accuracy and epoch > 10
+        is_best_loss = best_test_loss > test_loss and epoch > 10
+
+        if is_best_accuracy or is_best_loss:
+            checkpoint = make_checkpoint(epoch, model, optimizer, criterion)
+
+            if is_best_accuracy:
+                best_accuracy_checkpoint = checkpoint
+                best_test_accuracy = test_accuracy
+
+            if is_best_loss:
+                best_loss_checkpoint = checkpoint
+                best_test_loss = test_loss
         
-        if best_test_accuracy < test_accuracy and epoch > 10:
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'loss': criterion,
-            }, f"trained_models/{model_folder}/best_test_accuracy.pt")
-
-            best_test_accuracy = test_accuracy
-
-        if best_test_loss > test_loss and epoch > 10:
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'loss': criterion,
-            }, f"trained_models/{model_folder}/best_test_loss.pt")
-
-            best_test_loss = test_loss
+        if (epoch + 1) % checkpoint_save_interval == 0:
+            if best_accuracy_checkpoint is not None:
+                torch.save(best_accuracy_checkpoint, f"trained_models/{model_folder}/best_test_accuracy.pt")
+            if best_loss_checkpoint is not None:
+                torch.save(best_loss_checkpoint, f"trained_models/{model_folder}/best_test_loss.pt")
 
         # Early stopping check
         if test_loss < best_test_loss - early_stopping_min_delta:
@@ -202,10 +215,16 @@ def experiment(model_folder: str, *,
 
         if patience_counter >= early_stopping_patience:
             print(f"\nEarly stopping triggered at epoch {epoch + 1}")
-            print(f"Best test loss: {best_test_loss:.4f}")
             break
 
+    print(f"Best test loss: {best_test_loss:.4f}")
+    print(f"Best test accuracy: {best_test_accuracy:.4f}")
 
+    # Save to disk at the end
+    if best_accuracy_checkpoint is not None:
+        torch.save(best_accuracy_checkpoint, f"trained_models/{model_folder}/best_test_accuracy.pt")
+    if best_loss_checkpoint is not None:
+        torch.save(best_loss_checkpoint, f"trained_models/{model_folder}/best_test_loss.pt")
 
     # Plot results
     plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss", directory=f"trained_models/{model_folder}/metrics/")
