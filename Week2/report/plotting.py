@@ -129,8 +129,8 @@ def plot_metric(all_runs_data, metric_train, metric_test, save_as, max_epochs=No
         color = colors[idx]
 
         # Plot original lightly
-        plt.plot(x, y_train, color=color, alpha=0.15, linestyle="--", linewidth=1)
-        plt.plot(x, y_test,  color=color, alpha=0.15, linestyle="-", linewidth=1)
+        # plt.plot(x, y_train, color=color, alpha=0.15, linestyle="--", linewidth=1)
+        # plt.plot(x, y_test,  color=color, alpha=0.15, linestyle="-", linewidth=1)
 
         # Plot smoothed - train is dashed, test is solid
         plt.plot(x, y_train_sm, color=color, label=run_name, linestyle="--", linewidth=2, alpha=0.7)
@@ -151,7 +151,7 @@ def plot_metric(all_runs_data, metric_train, metric_test, save_as, max_epochs=No
                 best_run = run_name
 
     plt.title(f"{metric_train} & {metric_test}")
-    plt.xlabel(X_KEY)
+    plt.xlabel("Epoch")
 
     # Add custom legend explanation
     legend = plt.legend(title="Run (--train / —test)")
