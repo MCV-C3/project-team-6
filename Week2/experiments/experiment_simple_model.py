@@ -24,8 +24,9 @@ optimizer = torch.optim.Adam(model.parameters(), 0.0001)
 loss = torch.nn.CrossEntropyLoss()
 
 epochs = args.epochs
-
-run = wandb.init(
+dry = args.dry
+run = utils.init_wandb_run(
+    dry=dry,
     entity="mcv-team-6",
     project="C3-Week2",
     name="Baseline",

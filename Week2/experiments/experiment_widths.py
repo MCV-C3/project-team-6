@@ -1,4 +1,5 @@
 import torch
+from augmentation import make_full_augmentation
 import utils
 import wandb
 
@@ -13,7 +14,7 @@ args = argparser.parse_args()
 
 EPOCHS = args.epochs
 WIDTH = args.width
-
+dry = args.dry
 device = utils.set_device(args.gpu_id)
 
 train_loader, test_loader = utils.get_loaders(image_size=(224, 224))
@@ -26,7 +27,9 @@ model = make_like_simple(3*224*224, WIDTH, 11)
 loss = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), 0.0001)
 
-run = wandb.init(
+
+run = utils.init_wandb_run(
+    dry=dry,
     entity="mcv-team-6",
     project="C3-Week2",
     name=f"Width only variation : {WIDTH}",
