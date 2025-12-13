@@ -1,4 +1,5 @@
 import torch
+from augmentation import make_full_augmentation
 import utils
 import wandb
 
@@ -10,6 +11,7 @@ import time
 # FIXME: esto crea un modelo de 2 capas solo, no sé si es que falta un 300
 # model = BaseModel([
 #     3 * 224 * 224,
+#     300,
 #     300,
 #     11
 # ])
@@ -45,7 +47,7 @@ experiment("test_run",
     epochs=epochs,
     train_loader=train_loader,
     test_loader=test_loader,
-    augmentation=None,
+    augmentation=None, # make_full_augmentation((224, 224)),
     wandb_run=run,
     device=device,
 )

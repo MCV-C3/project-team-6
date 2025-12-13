@@ -181,6 +181,7 @@ def experiment(model_folder: str, *,
               f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
         
         wandb_run.log({
+            "epoch": epoch,
             "train_accuracy": train_accuracy,
             "test_accuracy": test_accuracy,
             "train_loss": train_loss,

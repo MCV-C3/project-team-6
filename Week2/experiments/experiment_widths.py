@@ -46,7 +46,7 @@ experiment(f"base_model_width_{WIDTH}",
     epochs=EPOCHS,
     train_loader=train_loader,
     test_loader=test_loader,
-    augmentation=None,
+    augmentation=None, # make_full_augmentation((224, 224)),
     wandb_run=run,
     device=device,
 )

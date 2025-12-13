@@ -1,4 +1,5 @@
 import torch
+from augmentation import make_full_augmentation
 import utils
 import wandb
 
@@ -9,7 +10,7 @@ from models.base_model import BaseModel
 
 argparser = utils.get_experiment_argument_parser()
 argparser.add_argument('--depth', type=int, default=4, help='Depth of the hidden layer')
-argparser.add_argument('--width', type=int, default=100, help='Width of the hidden layer')
+argparser.add_argument('--width', type=int, default=300, help='Width of the hidden layer')
 args = argparser.parse_args()
 
 EPOCHS = args.epochs
@@ -28,7 +29,7 @@ classifier_widths = [11]
 
 model = make_from_widths(input_d=input_d, descriptor_widths=descriptor_widths, classifier_widths=classifier_widths)
 
-print(model)
+# print(model)
 
 loss = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), 0.0001)
@@ -43,14 +44,14 @@ run = wandb.init(
     }
 )
 
-experiment("test_run",
+experiment(f"base_model_depth_{DEPTH}",
     model=model,
     optimizer=optimizer,
     criterion=loss,
     epochs=EPOCHS,
     train_loader=train_loader,
     test_loader=test_loader,
-    augmentation=None,
+    augmentation=make_full_augmentation((IMG_SIZE, IMG_SIZE)),
     wandb_run=run,
     device=device,
 )
