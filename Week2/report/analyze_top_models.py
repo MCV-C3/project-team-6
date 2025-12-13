@@ -10,6 +10,8 @@ WANDB_PROJECT = "C3-Week2"
 # Metric names in W&B
 TEST_LOSS_KEY = "test_loss"
 TEST_ACC_KEY = "test_accuracy"
+TRAIN_LOSS_KEY = "train_loss"
+TRAIN_ACC_KEY = "train_accuracy"
 
 # Number of best epochs to average
 TOP_N = 10
@@ -20,6 +22,7 @@ TXT_FILES = [
     "report/first_experiments_witouht_augmentation.txt",
     "report/depth_experiments_without_augmentation.txt",
     "report/depth_experiments_with_augmentation.txt",
+    "report/experiment_best_depth_width.txt"
 ]
 
 # ========================================
@@ -49,7 +52,7 @@ def parse_experiment_file(file_path):
 
 def get_run_metrics(api, run_id):
     """
-    Fetch test accuracy and test loss history for a given run ID.
+    Fetch train and test metrics for a given run ID.
     Returns a tuple: (DataFrame with the metrics, list of tags)
     """
     try:
@@ -58,8 +61,8 @@ def get_run_metrics(api, run_id):
         # Get tags from the run
         tags = run.tags if hasattr(run, 'tags') else []
 
-        # Scan history for test metrics
-        records = list(run.scan_history(keys=[TEST_ACC_KEY, TEST_LOSS_KEY]))
+        # Scan history for both train and test metrics
+        records = list(run.scan_history(keys=[TEST_ACC_KEY, TEST_LOSS_KEY, TRAIN_ACC_KEY, TRAIN_LOSS_KEY]))
 
         if len(records) == 0:
             print(f"⚠️  No history found for run {run_id}")
@@ -68,10 +71,10 @@ def get_run_metrics(api, run_id):
         df = pd.DataFrame(records)
 
         # Filter to only metrics we care about
-        available_keys = [k for k in [TEST_ACC_KEY, TEST_LOSS_KEY] if k in df.columns]
+        available_keys = [k for k in [TEST_ACC_KEY, TEST_LOSS_KEY, TRAIN_ACC_KEY, TRAIN_LOSS_KEY] if k in df.columns]
 
         if len(available_keys) == 0:
-            print(f"⚠️  No test metrics found for run {run_id}")
+            print(f"⚠️  No metrics found for run {run_id}")
             return None, None
 
         return df[available_keys], tags
@@ -141,24 +144,62 @@ def main():
         if df is None:
             continue
 
-        # Calculate top N averages
-        avg_acc = calculate_top_n_average(df, TEST_ACC_KEY, TOP_N, higher_is_better=True)
-        avg_loss = calculate_top_n_average(df, TEST_LOSS_KEY, TOP_N, higher_is_better=False)
+        # Calculate top N averages for test metrics
+        avg_test_acc = calculate_top_n_average(df, TEST_ACC_KEY, TOP_N, higher_is_better=True)
+        avg_test_loss = calculate_top_n_average(df, TEST_LOSS_KEY, TOP_N, higher_is_better=False)
+
+        # Calculate top N averages for train metrics
+        avg_train_acc = calculate_top_n_average(df, TRAIN_ACC_KEY, TOP_N, higher_is_better=True)
+        avg_train_loss = calculate_top_n_average(df, TRAIN_LOSS_KEY, TOP_N, higher_is_better=False)
+
+        # Calculate best single epoch metrics
+        best_test_acc = df[TEST_ACC_KEY].max() if TEST_ACC_KEY in df.columns else None
+        best_test_loss = df[TEST_LOSS_KEY].min() if TEST_LOSS_KEY in df.columns else None
+
+        # Calculate final epoch metrics (last valid value)
+        final_test_acc = df[TEST_ACC_KEY].dropna().iloc[-1] if TEST_ACC_KEY in df.columns and len(df[TEST_ACC_KEY].dropna()) > 0 else None
+        final_test_loss = df[TEST_LOSS_KEY].dropna().iloc[-1] if TEST_LOSS_KEY in df.columns and len(df[TEST_LOSS_KEY].dropna()) > 0 else None
+        final_train_acc = df[TRAIN_ACC_KEY].dropna().iloc[-1] if TRAIN_ACC_KEY in df.columns and len(df[TRAIN_ACC_KEY].dropna()) > 0 else None
+        final_train_loss = df[TRAIN_LOSS_KEY].dropna().iloc[-1] if TRAIN_LOSS_KEY in df.columns and len(df[TRAIN_LOSS_KEY].dropna()) > 0 else None
+
+        # Calculate overfitting indicators (using top-N averages)
+        acc_gap = None
+        loss_gap = None
+        if avg_train_acc is not None and avg_test_acc is not None:
+            acc_gap = avg_train_acc - avg_test_acc  # Positive means overfitting
+        if avg_train_loss is not None and avg_test_loss is not None:
+            loss_gap = avg_test_loss - avg_train_loss  # Positive means overfitting
 
         results.append({
             'experiment_name': exp_name,
             'run_id': run_id,
             'tags': tags,
-            'avg_top_accuracy': avg_acc,
-            'avg_top_loss': avg_loss
+            'avg_top_test_accuracy': avg_test_acc,
+            'avg_top_test_loss': avg_test_loss,
+            'avg_top_train_accuracy': avg_train_acc,
+            'avg_top_train_loss': avg_train_loss,
+            'best_test_accuracy': best_test_acc,
+            'best_test_loss': best_test_loss,
+            'final_test_accuracy': final_test_acc,
+            'final_test_loss': final_test_loss,
+            'final_train_accuracy': final_train_acc,
+            'final_train_loss': final_train_loss,
+            'accuracy_gap': acc_gap,
+            'loss_gap': loss_gap,
         })
 
-        if avg_acc is not None and avg_loss is not None:
-            print(f"   ✓ Avg top-{TOP_N} accuracy: {avg_acc:.4f}, loss: {avg_loss:.4f}")
-        elif avg_acc is not None:
-            print(f"   ✓ Avg top-{TOP_N} accuracy: {avg_acc:.4f}")
-        elif avg_loss is not None:
-            print(f"   ✓ Avg top-{TOP_N} loss: {avg_loss:.4f}")
+        if avg_test_acc is not None:
+            print(f"   ✓ Avg top-{TOP_N} test accuracy: {avg_test_acc:.4f}", end="")
+            if avg_train_acc is not None:
+                print(f" (train: {avg_train_acc:.4f}, gap: {acc_gap:.4f})")
+            else:
+                print()
+        if avg_test_loss is not None:
+            print(f"   ✓ Avg top-{TOP_N} test loss: {avg_test_loss:.4f}", end="")
+            if avg_train_loss is not None:
+                print(f" (train: {avg_train_loss:.4f}, gap: {loss_gap:.4f})")
+            else:
+                print()
 
     # Create DataFrame for analysis
     results_df = pd.DataFrame(results)
@@ -174,8 +215,8 @@ def main():
     print("="*80)
 
     # Rank by accuracy
-    acc_ranked = results_df.dropna(subset=['avg_top_accuracy']).sort_values(
-        'avg_top_accuracy', ascending=False
+    acc_ranked = results_df.dropna(subset=['avg_top_test_accuracy']).sort_values(
+        'avg_top_test_accuracy', ascending=False
     )
 
     for i, row in enumerate(acc_ranked.head(N).itertuples(), 1):
@@ -183,17 +224,40 @@ def main():
         print(f"   Run ID: {row.run_id}")
         if row.tags:
             print(f"   Tags: {', '.join(row.tags)}")
-        print(f"   Avg Top-{TOP_N} Test Accuracy: {row.avg_top_accuracy:.4f}")
-        if pd.notna(row.avg_top_loss):
-            print(f"   Avg Top-{TOP_N} Test Loss: {row.avg_top_loss:.4f}")
+        print(f"   📊 Test Metrics:")
+        print(f"      Avg Top-{TOP_N} Accuracy: {row.avg_top_test_accuracy:.4f}")
+        if pd.notna(row.avg_top_test_loss):
+            print(f"      Avg Top-{TOP_N} Loss: {row.avg_top_test_loss:.4f}")
+        if pd.notna(row.best_test_accuracy):
+            print(f"      Best Accuracy: {row.best_test_accuracy:.4f}")
+        if pd.notna(row.final_test_accuracy):
+            print(f"      Final Accuracy: {row.final_test_accuracy:.4f}")
+
+        print(f"   📊 Train Metrics:")
+        if pd.notna(row.avg_top_train_accuracy):
+            print(f"      Avg Top-{TOP_N} Accuracy: {row.avg_top_train_accuracy:.4f}")
+        if pd.notna(row.avg_top_train_loss):
+            print(f"      Avg Top-{TOP_N} Loss: {row.avg_top_train_loss:.4f}")
+        if pd.notna(row.final_train_accuracy):
+            print(f"      Final Accuracy: {row.final_train_accuracy:.4f}")
+        if pd.notna(row.final_train_loss):
+            print(f"      Final Loss: {row.final_train_loss:.4f}")
+
+        print(f"   ⚠️  Overfitting Indicators:")
+        if pd.notna(row.accuracy_gap):
+            overfit_status = "⚠️ OVERFITTING" if row.accuracy_gap > 0.05 else "✓ Good"
+            print(f"      Accuracy Gap (train-test): {row.accuracy_gap:+.4f} {overfit_status}")
+        if pd.notna(row.loss_gap):
+            overfit_status = "⚠️ OVERFITTING" if row.loss_gap > 0.1 else "✓ Good"
+            print(f"      Loss Gap (test-train): {row.loss_gap:+.4f} {overfit_status}")
 
     print("\n" + "="*80)
     print(f"📉 TOP {N} MODELS BY TEST LOSS")
     print("="*80)
 
     # Rank by loss (lower is better)
-    loss_ranked = results_df.dropna(subset=['avg_top_loss']).sort_values(
-        'avg_top_loss', ascending=True
+    loss_ranked = results_df.dropna(subset=['avg_top_test_loss']).sort_values(
+        'avg_top_test_loss', ascending=True
     )
 
     for i, row in enumerate(loss_ranked.head(N).itertuples(), 1):
@@ -201,9 +265,32 @@ def main():
         print(f"   Run ID: {row.run_id}")
         if row.tags:
             print(f"   Tags: {', '.join(row.tags)}")
-        print(f"   Avg Top-{TOP_N} Test Loss: {row.avg_top_loss:.4f}")
-        if pd.notna(row.avg_top_accuracy):
-            print(f"   Avg Top-{TOP_N} Test Accuracy: {row.avg_top_accuracy:.4f}")
+        print(f"   📊 Test Metrics:")
+        print(f"      Avg Top-{TOP_N} Loss: {row.avg_top_test_loss:.4f}")
+        if pd.notna(row.avg_top_test_accuracy):
+            print(f"      Avg Top-{TOP_N} Accuracy: {row.avg_top_test_accuracy:.4f}")
+        if pd.notna(row.best_test_loss):
+            print(f"      Best Loss: {row.best_test_loss:.4f}")
+        if pd.notna(row.final_test_loss):
+            print(f"      Final Loss: {row.final_test_loss:.4f}")
+
+        print(f"   📊 Train Metrics:")
+        if pd.notna(row.avg_top_train_accuracy):
+            print(f"      Avg Top-{TOP_N} Accuracy: {row.avg_top_train_accuracy:.4f}")
+        if pd.notna(row.avg_top_train_loss):
+            print(f"      Avg Top-{TOP_N} Loss: {row.avg_top_train_loss:.4f}")
+        if pd.notna(row.final_train_accuracy):
+            print(f"      Final Accuracy: {row.final_train_accuracy:.4f}")
+        if pd.notna(row.final_train_loss):
+            print(f"      Final Loss: {row.final_train_loss:.4f}")
+
+        print(f"   ⚠️  Overfitting Indicators:")
+        if pd.notna(row.accuracy_gap):
+            overfit_status = "⚠️ OVERFITTING" if row.accuracy_gap > 0.05 else "✓ Good"
+            print(f"      Accuracy Gap (train-test): {row.accuracy_gap:+.4f} {overfit_status}")
+        if pd.notna(row.loss_gap):
+            overfit_status = "⚠️ OVERFITTING" if row.loss_gap > 0.1 else "✓ Good"
+            print(f"      Loss Gap (test-train): {row.loss_gap:+.4f} {overfit_status}")
 
     print("\n" + "="*80)
 

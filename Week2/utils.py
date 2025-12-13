@@ -60,7 +60,7 @@ class InMemoryDataset(Dataset):
         return self.images[idx], self.targets[idx]
 
 
-def get_loaders(image_size : Optional[Tuple[int, int]] = None, train_batch_size: int = 256, resize_train: bool = True, resize_test: bool = True):
+def get_loaders(image_size : Optional[Tuple[int, int]] = None, train_batch_size: int = 256, resize_train: bool = False, resize_test: bool = True):
 
     torch.manual_seed(42)
 
