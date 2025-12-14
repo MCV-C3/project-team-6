@@ -22,7 +22,9 @@ TXT_FILES = [
     "report/first_experiments_witouht_augmentation.txt",
     "report/depth_experiments_without_augmentation.txt",
     "report/depth_experiments_with_augmentation.txt",
-    "report/experiment_best_depth_width.txt"
+    "report/experiment_best_depth_width.txt",
+    "report/experiments_d5_image_size.txt",
+    "report/experiments_w512_image_size.txt",
 ]
 
 # ========================================
