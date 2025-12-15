@@ -32,3 +32,9 @@ python3 -m experiments.experiment_image_sizes --depth 2 --width 512 --imsize 32 
 python3 -m experiments.experiment_image_sizes --depth 2 --width 512 --imsize 64 --epochs 500 --gpu-id 0
 python3 -m experiments.experiment_image_sizes --depth 2 --width 512 --imsize 128 --epochs 500 --gpu-id 0
 python3 -m experiments.experiment_image_sizes --depth 2 --width 512 --imsize 224 --epochs 500 --gpu-id 0
+
+python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size 4 --epochs 500
+python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size 8 --epochs 500
+python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size 16 --epochs 500
+python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size 32 --epochs 500
+
