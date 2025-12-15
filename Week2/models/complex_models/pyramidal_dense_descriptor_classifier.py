@@ -61,3 +61,23 @@ def make_pyramidal_default() -> DescriptorClassifier:
     return DescriptorClassifier(
         description, classification,
     )
+
+
+def make_pyramidal_fine_to_coarse() -> DescriptorClassifier:
+    description = nn.Sequential(
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=3, out_channels=64),
+        PatchDescriptionBlock(patch_size=(4, 4), in_channels=64, out_channels=256),
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=256, out_channels=1024),
+        PatchDescriptionBlock(patch_size=(4, 4), in_channels=1024, out_channels=4096),
+        nn.Flatten()
+    )
+    
+    classification = nn.Sequential(
+        nn.Linear(in_features=4096, out_features=4096),
+        nn.GELU(),
+        nn.Linear(in_features=4096, out_features=11),
+    )
+    
+    return DescriptorClassifier(
+        description, classification,
+    )
