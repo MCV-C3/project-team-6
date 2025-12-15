@@ -30,9 +30,11 @@ device = utils.set_device(args.gpu_id)
 
 train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE), resize_train=False)
 
-descriptor_widths = [WIDTH]
-for i in range(1, DEPTH):
-    descriptor_widths.append(max(128, WIDTH // (2 ** i)))
+# descriptor_widths = [WIDTH]
+# for i in range(1, DEPTH):
+#     descriptor_widths.append(max(128, WIDTH // (2 ** i)))
+
+descriptor_widths = [WIDTH] * DEPTH
 
 model = make_patch_model(
     input_channels=3,
