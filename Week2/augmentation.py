@@ -47,7 +47,7 @@ full_augmentation = nn.Sequential(
 )
 
 def make_full_augmentation(final_size: tuple[int, int]):
-    return nn.Sequential(
+    return ka.AugmentationSequential(
         ka.RandomGaussianBlur(kernel_size=(7, 7), sigma=(0.5, 0.5), p=0.1),
         ka.RandomRotation(degrees=(-10, 10)),
         ka.RandomResizedCrop(size=final_size, scale=(0.5, 1.0), ratio=(1.0, 1.0)),
