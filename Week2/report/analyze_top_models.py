@@ -27,6 +27,7 @@ TXT_FILES = [
     "report/experiments_w512_image_size.txt",
     "report/experiments_patch_based_patch_size.txt",
     "report/experiments_cool_cnns.txt",
+    "report/experiments_patch_based_descriptor_size.txt",
 ]
 
 # ========================================
