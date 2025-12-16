@@ -40,3 +40,10 @@ python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size
 
 python3 -m experiments.experiment_pyramidal_default --epochs 1000
 python3 -m experiments.experiment_pyramidal_fine_to_coarse --epochs 1000
+
+python3 -m experiments.experiment_last_layer_width --patch-size 32 --last-layer-width 32 --epochs 500 --gpu-id 0 > experiment_last_layer_width_32.log
+python3 -m experiments.experiment_last_layer_width --patch-size 32 --last-layer-width 64 --epochs 500 --gpu-id 0 > experiment_last_layer_width_64.log
+python3 -m experiments.experiment_last_layer_width --patch-size 32 --last-layer-width 128 --epochs 500 --gpu-id 0 > experiment_last_layer_width_128.log
+python3 -m experiments.experiment_last_layer_width --patch-size 32 --last-layer-width 256 --epochs 500 --gpu-id 0 > experiment_last_layer_width_256.log
+python3 -m experiments.experiment_last_layer_width --patch-size 32 --last-layer-width 512 --epochs 500 --gpu-id 0 > experiment_last_layer_width_512.log
+python3 -m experiments.experiment_last_layer_width --patch-size 32 --last-layer-width 1024 --epochs 500 --gpu-id 0 > experiment_last_layer_width_1024.log
