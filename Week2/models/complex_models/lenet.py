@@ -18,7 +18,7 @@ class LeNet(nn.Module):
         h, w = image_size
         
         self.classification = nn.Sequential(
-            nn.Linear(in_features=..., out_features=120),
+            nn.Linear(in_features=16 * (h//4 - 2) * (w//4 -2), out_features=120),
             nn.Tanh(),
             nn.Linear(in_features=120, out_features=84),
             nn.Tanh(),

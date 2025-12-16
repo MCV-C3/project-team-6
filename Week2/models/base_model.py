@@ -23,9 +23,16 @@ class BaseModel(nn.Module):
         current_features = widths[0]
         
         for idx, out_features in enumerate(widths[1:-1]):
-            descriptor_modules.append(nn.Linear(in_features=current_features, out_features=out_features))
-            descriptor_modules.append(relu)
-            current_features = out_features
+            
+            if isinstance(out_features, tuple):
+                name, prob = out_features
+                descriptor_modules.append(nn.Dropout(p=prob))
+                continue
+            
+            else:
+                descriptor_modules.append(nn.Linear(in_features=current_features, out_features=out_features))
+                descriptor_modules.append(relu)
+                current_features = out_features
             
 
         self.descriptor_head = nn.Sequential(*descriptor_modules)

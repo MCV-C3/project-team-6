@@ -12,6 +12,7 @@ class PatchDescriptionBlock(nn.Module):
             nn.Linear(in_features=in_channels * patch_size[0] * patch_size[1], out_features=out_channels),
             nn.GELU(),
         ]
+        
         if dropout > 0:
             layers.append(nn.Dropout(p=dropout))
 
@@ -19,8 +20,6 @@ class PatchDescriptionBlock(nn.Module):
             nn.Linear(in_features=out_channels, out_features=out_channels),
             nn.GELU(),
         ])
-        if dropout > 0:
-            layers.append(nn.Dropout(p=dropout))
 
         self.description = nn.Sequential(*layers)
         self.patch_size = patch_size

@@ -8,7 +8,7 @@ from pipeline import experiment
 
 
 argparser = utils.get_experiment_argument_parser()
-argparser.add_argument('--dropout', type=float, default=0.3, help='Dropout probability')
+argparser.add_argument('--dropout', type=float, default=0.1, help='Dropout probability')
 argparser.add_argument('--weight-decay', type=float, default=1e-4, help='Weight decay (L2 regularization)')
 argparser.add_argument('--label-smoothing', type=float, default=0.1, help='Label smoothing')
 args = argparser.parse_args()
