@@ -5,16 +5,24 @@ import torch.nn.functional as F
 from models.descriptor_classifier import DescriptorClassifier
 
 class PatchDescriptionBlock(nn.Module):
-    def __init__(self, *, patch_size: tuple[int, int], in_channels: int, out_channels: int):
+    def __init__(self, *, patch_size: tuple[int, int], in_channels: int, out_channels: int, dropout: float = 0.0):
         super(PatchDescriptionBlock, self).__init__()
-        
-        self.description = nn.Sequential(
+
+        layers = [
             nn.Linear(in_features=in_channels * patch_size[0] * patch_size[1], out_features=out_channels),
             nn.GELU(),
+        ]
+        if dropout > 0:
+            layers.append(nn.Dropout(p=dropout))
+
+        layers.extend([
             nn.Linear(in_features=out_channels, out_features=out_channels),
             nn.GELU(),
-        )
-        
+        ])
+        if dropout > 0:
+            layers.append(nn.Dropout(p=dropout))
+
+        self.description = nn.Sequential(*layers)
         self.patch_size = patch_size
         
     # psize 16x16 im 256
@@ -44,40 +52,48 @@ class PatchDescriptionBlock(nn.Module):
         return descriptors
     
 
-def make_pyramidal_default() -> DescriptorClassifier:
+def make_pyramidal_default(dropout: float = 0.0) -> DescriptorClassifier:
     description = nn.Sequential(
-        PatchDescriptionBlock(patch_size=(16, 16), in_channels=3, out_channels=128),
-        PatchDescriptionBlock(patch_size=(7, 7), in_channels=128, out_channels=1024),
-        PatchDescriptionBlock(patch_size=(2, 2), in_channels=1024, out_channels=4096),
+        PatchDescriptionBlock(patch_size=(16, 16), in_channels=3, out_channels=128, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=128, out_channels=1024, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=1024, out_channels=4096, dropout=dropout),
         nn.Flatten()
     )
-    
-    classification = nn.Sequential(
+
+    classification_layers = [
         nn.Linear(in_features=4096, out_features=4096),
         nn.GELU(),
-        nn.Linear(in_features=4096, out_features=11),
-    )
-    
+    ]
+    if dropout > 0:
+        classification_layers.append(nn.Dropout(p=dropout))
+    classification_layers.append(nn.Linear(in_features=4096, out_features=11))
+
+    classification = nn.Sequential(*classification_layers)
+
     return DescriptorClassifier(
         description, classification,
     )
 
 
-def make_pyramidal_fine_to_coarse() -> DescriptorClassifier:
+def make_pyramidal_fine_to_coarse(dropout: float = 0.0) -> DescriptorClassifier:
     description = nn.Sequential(
-        PatchDescriptionBlock(patch_size=(2, 2), in_channels=3, out_channels=64),
-        PatchDescriptionBlock(patch_size=(4, 4), in_channels=64, out_channels=256),
-        PatchDescriptionBlock(patch_size=(7, 7), in_channels=256, out_channels=1024),
-        PatchDescriptionBlock(patch_size=(4, 4), in_channels=1024, out_channels=4096),
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=3, out_channels=64, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(4, 4), in_channels=64, out_channels=256, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=256, out_channels=1024, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(4, 4), in_channels=1024, out_channels=4096, dropout=dropout),
         nn.Flatten()
     )
-    
-    classification = nn.Sequential(
+
+    classification_layers = [
         nn.Linear(in_features=4096, out_features=4096),
         nn.GELU(),
-        nn.Linear(in_features=4096, out_features=11),
-    )
-    
+    ]
+    if dropout > 0:
+        classification_layers.append(nn.Dropout(p=dropout))
+    classification_layers.append(nn.Linear(in_features=4096, out_features=11))
+
+    classification = nn.Sequential(*classification_layers)
+
     return DescriptorClassifier(
         description, classification,
     )

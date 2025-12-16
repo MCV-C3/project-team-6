@@ -38,3 +38,5 @@ python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size
 python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size 16 --epochs 500
 python3 -m experiments.experiment_patch_based --merge-strategy mean --patch-size 32 --epochs 500
 
+python3 -m experiments.experiment_pyramidal_default --epochs 1000
+python3 -m experiments.experiment_pyramidal_fine_to_coarse --epochs 1000
