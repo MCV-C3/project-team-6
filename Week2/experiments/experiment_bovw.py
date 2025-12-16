@@ -7,6 +7,7 @@ from sklearn.metrics import accuracy_score
 import utils
 
 from models.patch_based_classifier import make_patch_model
+from pipeline import test
 
 argparser = utils.get_experiment_argument_parser()
 argparser.add_argument('--checkpoint-path', type=str, required=True, help='Path to the saved model checkpoint')
@@ -56,6 +57,16 @@ print(f"Model architecture: patch_size={PATCH_SIZE}, stride={STRIDE}, depth={DEP
 print(f"Bag of Visual Words: num_words={NUM_WORDS}")
 if LDA_COMPONENTS is not None:
     print(f"LDA dimensionality reduction: {LDA_COMPONENTS} components")
+
+# Sanity check: Evaluate the network directly on test set
+print("\n" + "="*60)
+print("SANITY CHECK: Evaluating loaded model directly on test set...")
+print("="*60)
+loss = torch.nn.CrossEntropyLoss()
+test_loss, test_accuracy = test(model, test_loader, loss, device)
+print(f"Direct model test accuracy: {test_accuracy:.4f} ({test_accuracy*100:.2f}%)")
+print(f"Direct model test loss: {test_loss:.4f}")
+print("="*60)
 
 # Step 2: Generate descriptors for training images
 print("\n" + "="*60)
