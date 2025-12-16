@@ -122,8 +122,22 @@ if LDA_COMPONENTS is not None:
     print("\n" + "="*60)
     print(f"Applying LDA dimensionality reduction to {LDA_COMPONENTS} components...")
     print("="*60)
+
+    # Calculate actual number of descriptors per image based on total descriptors
+    total_descriptors = all_train_descriptors.shape[0]
+    num_train_images = len(train_labels)
+
+    print(f"Debug: total_descriptors={total_descriptors}, num_train_images={num_train_images}")
+    print(f"Debug: expected patches per image={num_patches_per_image}")
+    print(f"Debug: total_descriptors / num_patches_per_image = {total_descriptors / num_patches_per_image}")
+
+    # Create labels by repeating each label num_patches_per_image times
+    descriptor_labels = np.repeat(train_labels, num_patches_per_image)
+
+    print(f"Debug: len(descriptor_labels)={len(descriptor_labels)}")
+
     lda = LinearDiscriminantAnalysis(n_components=LDA_COMPONENTS)
-    all_train_descriptors = lda.fit_transform(all_train_descriptors, np.repeat(train_labels, num_patches_per_image))
+    all_train_descriptors = lda.fit_transform(all_train_descriptors, descriptor_labels)
     print(f"LDA completed! Descriptors reduced to shape: {all_train_descriptors.shape}")
 
 # Step 4 & 5: For each image, compute word assignments and create histograms
