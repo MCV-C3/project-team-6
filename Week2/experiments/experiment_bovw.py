@@ -93,7 +93,7 @@ kmeans = MiniBatchKMeans(
     n_clusters=NUM_WORDS,
     batch_size=batch_size,
     random_state=42,
-    verbose=1
+    verbose=0
 )
 # Calculate number of patches per image
 num_patches_h = (IMG_SIZE - PATCH_SIZE) // STRIDE + 1
@@ -150,7 +150,7 @@ del train_descriptors_list
 print("\n" + "="*60)
 print("Step 4/5: Training SVC with RBF kernel, C=1...")
 print("="*60)
-svc = SVC(kernel='rbf', C=1.0, verbose=True)
+svc = SVC(kernel='rbf', C=1.0, verbose=False)
 svc.fit(train_histograms, train_labels)
 print("SVC training completed!")
 
