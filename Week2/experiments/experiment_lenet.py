@@ -12,7 +12,7 @@ argparser = utils.get_experiment_argument_parser()
 args = argparser.parse_args()
 
 EPOCHS = args.epochs
-IMG_SIZE = 224
+IMG_SIZE = 32
 
 dry = args.dry
 device = utils.set_device(args.gpu_id)
@@ -30,7 +30,7 @@ optimizer = torch.optim.Adam(model.parameters(), 0.0001)
 
 augmentation = make_full_augmentation((IMG_SIZE, IMG_SIZE))
 
-run_name = f"LeNet"
+run_name = f"LeNet imsize = {IMG_SIZE}"
 
 run = utils.init_wandb_run(
     dry=dry,
@@ -44,7 +44,7 @@ run = utils.init_wandb_run(
     }
 )
 
-experiment_name = f"lenet"
+experiment_name = f"lenet_imsize_{IMG_SIZE}"
 
 experiment(
     experiment_name,
