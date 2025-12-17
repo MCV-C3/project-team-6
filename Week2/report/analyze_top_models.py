@@ -28,6 +28,7 @@ TXT_FILES = [
     "report/experiments_patch_based_patch_size.txt",
     "report/experiments_cool_cnns.txt",
     "report/experiments_patch_based_descriptor_size.txt",
+    "report/experiments_pyramidal.txt",
 ]
 
 # ========================================
@@ -213,7 +214,7 @@ def main():
         print("\n❌ No valid results found!")
         return
     
-    N = 10
+    N = 100
     
     print("\n" + "="*80)
     print(f"📈 TOP {N} MODELS BY TEST ACCURACY")

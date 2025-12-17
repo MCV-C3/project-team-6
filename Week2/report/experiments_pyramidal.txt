@@ -1,0 +1,4 @@
+Pyramidal gran_denormal (dropout=0.1 wd=0.0001 ls=0.1)          f4axygz6
+Pyramidal petit_normal (dropout=0.1 wd=0.0001 ls=0.1)           es0u0hlp
+Pyramidal petit_denormal (dropout=0.1 wd=0.0001 ls=0.1)         xqvn6f96
+Pyramidal gran_normal (dropout=0.1 wd=0.0001 ls=0.1)            axlvhge7
