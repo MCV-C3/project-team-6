@@ -33,7 +33,7 @@ IMG_SIZE = args.imsize
 
 device = utils.set_device(args.gpu_id)
 
-train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE), resize_train=False)
+train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE), resize_train=True)
 
 # Build descriptor widths: all layers are 512 except the last one
 descriptor_widths = [512] * (DEPTH - 1) + [LAST_LAYER_WIDTH]
@@ -90,9 +90,35 @@ train_labels = np.concatenate(train_labels)
 print(f"Total patch descriptors extracted: {all_train_descriptors.shape}")
 print(f"Train labels shape: {train_labels.shape}")
 
-# Step 3: Train KMeans on the descriptors
+# Calculate number of patches per image
+num_patches_h = (IMG_SIZE - PATCH_SIZE) // STRIDE + 1
+num_patches_w = (IMG_SIZE - PATCH_SIZE) // STRIDE + 1
+num_patches_per_image = num_patches_h * num_patches_w
+
+print(f"Number of patches per image: {num_patches_per_image}")
+
+# Optional LDA dimensionality reduction (must be done BEFORE KMeans)
+lda = None
+if LDA_COMPONENTS is not None:
+    print("\n" + "="*60)
+    print(f"Step 2/5: Applying LDA dimensionality reduction to {LDA_COMPONENTS} components...")
+    print("="*60)
+
+    # Create labels by repeating each label num_patches_per_image times
+    descriptor_labels = np.repeat(train_labels, num_patches_per_image)
+
+    print(f"Descriptor labels shape: {len(descriptor_labels)}")
+
+    lda = LinearDiscriminantAnalysis(n_components=LDA_COMPONENTS)
+    all_train_descriptors = lda.fit_transform(all_train_descriptors, descriptor_labels)
+    print(f"LDA completed! Descriptors reduced to shape: {all_train_descriptors.shape}")
+
+# Step 3: Train KMeans on the descriptors (after LDA if applicable)
 print("\n" + "="*60)
-print("Step 2/5: Training MiniBatchKMeans for visual vocabulary...")
+if LDA_COMPONENTS is not None:
+    print("Step 3/5: Training MiniBatchKMeans for visual vocabulary...")
+else:
+    print("Step 2/5: Training MiniBatchKMeans for visual vocabulary...")
 print("="*60)
 
 # Set batch_size as 10% of the number of descriptors or 10 * num_words, whichever is larger
@@ -106,43 +132,16 @@ kmeans = MiniBatchKMeans(
     random_state=42,
     verbose=0
 )
-# Calculate number of patches per image
-num_patches_h = (IMG_SIZE - PATCH_SIZE) // STRIDE + 1
-num_patches_w = (IMG_SIZE - PATCH_SIZE) // STRIDE + 1
-num_patches_per_image = num_patches_h * num_patches_w
-
-print(f"Number of patches per image: {num_patches_per_image}")
 
 kmeans.fit(all_train_descriptors)
 print(f"KMeans training completed! Vocabulary of {NUM_WORDS} visual words created.")
 
-# Optional LDA dimensionality reduction
-lda = None
-if LDA_COMPONENTS is not None:
-    print("\n" + "="*60)
-    print(f"Applying LDA dimensionality reduction to {LDA_COMPONENTS} components...")
-    print("="*60)
-
-    # Calculate actual number of descriptors per image based on total descriptors
-    total_descriptors = all_train_descriptors.shape[0]
-    num_train_images = len(train_labels)
-
-    print(f"Debug: total_descriptors={total_descriptors}, num_train_images={num_train_images}")
-    print(f"Debug: expected patches per image={num_patches_per_image}")
-    print(f"Debug: total_descriptors / num_patches_per_image = {total_descriptors / num_patches_per_image}")
-
-    # Create labels by repeating each label num_patches_per_image times
-    descriptor_labels = np.repeat(train_labels, num_patches_per_image)
-
-    print(f"Debug: len(descriptor_labels)={len(descriptor_labels)}")
-
-    lda = LinearDiscriminantAnalysis(n_components=LDA_COMPONENTS)
-    all_train_descriptors = lda.fit_transform(all_train_descriptors, descriptor_labels)
-    print(f"LDA completed! Descriptors reduced to shape: {all_train_descriptors.shape}")
-
 # Step 4 & 5: For each image, compute word assignments and create histograms
 print("\n" + "="*60)
-print("Step 3/5: Computing BoVW histograms for training set...")
+if LDA_COMPONENTS is not None:
+    print("Step 4/5: Computing BoVW histograms for training set...")
+else:
+    print("Step 3/5: Computing BoVW histograms for training set...")
 print("="*60)
 
 # Compute histograms for training set
@@ -173,7 +172,10 @@ del train_descriptors_list
 
 # Step 6: Train SVC
 print("\n" + "="*60)
-print("Step 4/5: Training SVC with RBF kernel, C=1...")
+if LDA_COMPONENTS is not None:
+    print("Step 5/5: Training SVC with RBF kernel, C=1...")
+else:
+    print("Step 4/5: Training SVC with RBF kernel, C=1...")
 print("="*60)
 svc = SVC(kernel='rbf', C=1.0, verbose=False)
 svc.fit(train_histograms, train_labels)
@@ -181,7 +183,7 @@ print("SVC training completed!")
 
 # Test set processing
 print("\n" + "="*60)
-print("Step 5/5: Computing BoVW histograms for test set...")
+print("Evaluating: Computing BoVW histograms for test set...")
 print("="*60)
 test_descriptors_list = []
 test_labels = []
