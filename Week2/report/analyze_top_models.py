@@ -19,15 +19,16 @@ TOP_N = 10
 # List of txt files to analyze
 TXT_FILES = [
     "report/first_experiments_with_augmentation.txt",
-    "report/first_experiments_witouht_augmentation.txt",
-    "report/depth_experiments_without_augmentation.txt",
+    # "report/first_experiments_witouht_augmentation.txt",
+    # "report/depth_experiments_without_augmentation.txt",
     "report/depth_experiments_with_augmentation.txt",
-    "report/experiment_best_depth_width.txt",
-    "report/experiments_d5_image_size.txt",
-    "report/experiments_w512_image_size.txt",
-    "report/experiments_patch_based_patch_size.txt",
-    "report/experiments_cool_cnns.txt",
-    "report/experiments_patch_based_descriptor_size.txt",
+    # "report/experiment_best_depth_width.txt",
+    # "report/experiments_d5_image_size.txt",
+    # "report/experiments_w512_im@age_size.txt",
+    # "report/experiments_patch_based_patch_size.txt",
+    # "report/experiments_cool_cnns.txt",
+    # "report/experiments_patch_based_descriptor_size.txt",
+    # "report/experiments_pyramidal.txt",
 ]
 
 # ========================================
@@ -213,7 +214,7 @@ def main():
         print("\n❌ No valid results found!")
         return
     
-    N = 10
+    N = 100
     
     print("\n" + "="*80)
     print(f"📈 TOP {N} MODELS BY TEST ACCURACY")
