@@ -57,6 +57,7 @@ python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_lay
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw512_d2/best_test_loss.pt --patch-size 32 --last-layer-width 512 --depth 2 --num-words 512 --gpu-id 0 > bovw_lw512_no_lda.log
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw1024_d2/best_test_loss.pt --patch-size 32 --last-layer-width 1024 --depth 2 --num-words 512 --gpu-id 0 > bovw_lw1024_no_lda.log
 
+
 # With LDA (8 components)
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw32_d2/best_test_loss.pt --patch-size 32 --last-layer-width 32 --depth 2 --num-words 512 --lda-components 8 --gpu-id 0 > bovw_lw32_lda8.log
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw64_d2/best_test_loss.pt --patch-size 32 --last-layer-width 64 --depth 2 --num-words 512 --lda-components 8 --gpu-id 0 > bovw_lw64_lda8.log
@@ -65,6 +66,10 @@ python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_lay
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw512_d2/best_test_loss.pt --patch-size 32 --last-layer-width 512 --depth 2 --num-words 512 --lda-components 8 --gpu-id 0 > bovw_lw512_lda8.log
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw1024_d2/best_test_loss.pt --patch-size 32 --last-layer-width 1024 --depth 2 --num-words 512 --lda-components 8 --gpu-id 0 > bovw_lw1024_lda8.log
 
+
+
+python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw2048_d2/best_test_loss.pt --patch-size 32 --last-layer-width 2048 --depth 2 --num-words 512 --gpu-id 0 > bovw_lw2048_no_lda.log
+python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw2048_d2/best_test_loss.pt --patch-size 32 --last-layer-width 2048 --depth 2 --num-words 512 --lda-components 8 --gpu-id 0 > bovw_lw2048_lda8.log
 
 # Without LDA
 python3 -m experiments.experiment_bovw --checkpoint-path trained_models/last_layer_width_ps32_s32_mean_lw32_d2/best_test_loss.pt --patch-size 32 --last-layer-width 32 --depth 2 --num-words 512 --gpu-id 0 > bovw_lw32_no_lda.log

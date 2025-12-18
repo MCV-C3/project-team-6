@@ -144,6 +144,131 @@ def make_double_descriptor_prototype(dropout: float = 0.0, num_classes: int = 11
         classification_head
     )
 
+######################################
+######################################
+######################################
+
+def make_double_descriptor_prototype_petit_denormal(dropout: float = 0.0, num_classes: int = 11) -> DoubleDescriptorClassifier:
+    patch_description_head = PatchDescriptionBlock(
+        patch_size=(16, 16),
+        in_channels=3,
+        out_channels=128,
+        dropout=dropout
+    )
+
+    image_descriptor_modules = [
+        PatchDescriptionBlock(patch_size=(14, 14), in_channels=128, out_channels=1024, dropout=dropout),
+        nn.Flatten(),
+    ]
+    image_descriptor_head = nn.Sequential(*image_descriptor_modules)
+
+    classification_layers = [
+        nn.Linear(in_features=1024, out_features=num_classes)
+    ]
+    classification_head = nn.Sequential(*classification_layers)
+
+    return DoubleDescriptorClassifier(
+        patch_description_head,
+        image_descriptor_head,
+        classification_head
+    )
+
+
+def make_double_descriptor_prototype_petit_normal(dropout: float = 0.0, num_classes: int = 11) -> DoubleDescriptorClassifier:
+    patch_description_head = PatchDescriptionBlock(
+        patch_size=(16, 16),
+        in_channels=3,
+        out_channels=128,
+        dropout=dropout
+    )
+
+    image_descriptor_modules = [
+        PatchDescriptionBlock(patch_size=(14, 14), in_channels=128, out_channels=1024, dropout=dropout),
+        nn.Flatten(),
+        nn.BatchNorm1d(1024),
+    ]
+    image_descriptor_head = nn.Sequential(*image_descriptor_modules)
+
+    classification_layers = [
+        nn.Linear(in_features=1024, out_features=num_classes)
+    ]
+    classification_head = nn.Sequential(*classification_layers)
+
+    return DoubleDescriptorClassifier(
+        patch_description_head,
+        image_descriptor_head,
+        classification_head
+    )
+
+
+def make_double_descriptor_prototype_gran_denormal(dropout: float = 0.0, num_classes: int = 11) -> DoubleDescriptorClassifier:
+    patch_description_head = PatchDescriptionBlock(
+        patch_size=(16, 16),
+        in_channels=3,
+        out_channels=128,
+        dropout=dropout
+    )
+
+    image_descriptor_modules = [
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=128, out_channels=512, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=512, out_channels=1024, dropout=dropout),
+        nn.Flatten(),
+    ]
+    image_descriptor_head = nn.Sequential(*image_descriptor_modules)
+
+    classification_layers = [
+        nn.Linear(in_features=1024, out_features=num_classes)
+    ]
+    classification_head = nn.Sequential(*classification_layers)
+
+    return DoubleDescriptorClassifier(
+        patch_description_head,
+        image_descriptor_head,
+        classification_head
+    )
+
+def make_double_descriptor_prototype_gran_normal(dropout: float = 0.0, num_classes: int = 11) -> DoubleDescriptorClassifier:
+    patch_description_head = PatchDescriptionBlock(
+        patch_size=(16, 16),
+        in_channels=3,
+        out_channels=128,
+        dropout=dropout
+    )
+
+    image_descriptor_modules = [
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=128, out_channels=512, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=512, out_channels=1024, dropout=dropout),
+        nn.Flatten(),
+        nn.BatchNorm1d(1024),
+    ]
+    image_descriptor_head = nn.Sequential(*image_descriptor_modules)
+
+    classification_layers = [
+        nn.Linear(in_features=1024, out_features=num_classes)
+    ]
+    classification_head = nn.Sequential(*classification_layers)
+
+    return DoubleDescriptorClassifier(
+        patch_description_head,
+        image_descriptor_head,
+        classification_head
+    )
+
+
+
+######################################
+######################################
+######################################
+
+
+
+
+
+
+
+
+
+
 def make_double_descriptor_default(dropout: float = 0.0, num_classes: int = 11) -> DoubleDescriptorClassifier:
     patch_description_head = PatchDescriptionBlock(
         patch_size=(16, 16),

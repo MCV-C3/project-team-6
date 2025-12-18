@@ -75,14 +75,13 @@ class PatchBasedClassifier(nn.Module):
             return logits.median(dim=1)[0]
 
         elif self.merge_strategy == "voting":
-            predictions = logits.argmax(dim=2)
-
-            votes = torch.zeros(B, self.num_classes, device=logits.device)
-            for b in range(B):
-                for patch_pred in predictions[b]:
-                    votes[b, patch_pred] += 1
-
-            return votes
+            # Soft voting: average the softmax probabilities across patches
+            # This is differentiable and can be used during training
+            probabilities = torch.softmax(logits, dim=2)
+            averaged_probs = probabilities.mean(dim=1)
+            # Convert back to logits for loss computation
+            # Add small epsilon to avoid log(0)
+            return torch.log(averaged_probs + 1e-10)
 
         else:
             raise ValueError(f"Unknown merge strategy: {self.merge_strategy}")
