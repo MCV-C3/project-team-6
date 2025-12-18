@@ -1,0 +1,98 @@
+import torch
+from torch import nn
+import torch.nn.functional as F
+
+from models.descriptor_classifier import DescriptorClassifier
+
+class PatchDescriptionBlock(nn.Module):
+    def __init__(self, *, patch_size: tuple[int, int], in_channels: int, out_channels: int, dropout: float = 0.0):
+        super(PatchDescriptionBlock, self).__init__()
+
+        layers = [
+            nn.Linear(in_features=in_channels * patch_size[0] * patch_size[1], out_features=out_channels),
+            nn.GELU(),
+        ]
+        
+        if dropout > 0:
+            layers.append(nn.Dropout(p=dropout))
+
+        layers.extend([
+            nn.Linear(in_features=out_channels, out_features=out_channels),
+            nn.GELU(),
+        ])
+
+        self.description = nn.Sequential(*layers)
+        self.patch_size = patch_size
+        
+    # psize 16x16 im 256
+    # [B, 3, 256, 256] -> [Bx16x16, 3, 16, 16] -> [B, 128, 16, 16]
+    
+    def extract_patches(self, x: torch.Tensor):
+        B, C, H, W = x.shape
+        ps = self.patch_size
+        
+        assert H % ps[0] == 0 and W % ps[1] == 0, f"Image size ({H}, {W}) must be divisible by patch size ({ps[0]}, {ps[1]})."
+        
+        patches = F.unfold(x, kernel_size=ps, stride=ps)
+
+        patches = patches.transpose(1, 2)
+        return patches
+    
+    def forward(self, x: torch.Tensor):
+        batch_size, C, H, W = x.shape
+
+        patches = self.extract_patches(x)
+        num_patches = patches.shape[1]
+
+        patches_flat = patches.reshape(-1, patches.shape[2])
+        descriptors_flat = self.description(patches_flat)
+        descriptor_dim = descriptors_flat.shape[1]
+        descriptors = descriptors_flat.reshape(batch_size, descriptor_dim, H // self.patch_size[0], W // self.patch_size[1])
+        return descriptors
+    
+
+def make_pyramidal_default(dropout: float = 0.0) -> DescriptorClassifier:
+    description = nn.Sequential(
+        PatchDescriptionBlock(patch_size=(16, 16), in_channels=3, out_channels=128, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=128, out_channels=1024, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=1024, out_channels=4096, dropout=dropout),
+        nn.Flatten()
+    )
+
+    classification_layers = [
+        nn.Linear(in_features=4096, out_features=4096),
+        nn.GELU(),
+    ]
+    if dropout > 0:
+        classification_layers.append(nn.Dropout(p=dropout))
+    classification_layers.append(nn.Linear(in_features=4096, out_features=11))
+
+    classification = nn.Sequential(*classification_layers)
+
+    return DescriptorClassifier(
+        description, classification,
+    )
+
+
+def make_pyramidal_fine_to_coarse(dropout: float = 0.0) -> DescriptorClassifier:
+    description = nn.Sequential(
+        PatchDescriptionBlock(patch_size=(2, 2), in_channels=3, out_channels=64, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(4, 4), in_channels=64, out_channels=256, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(7, 7), in_channels=256, out_channels=1024, dropout=dropout),
+        PatchDescriptionBlock(patch_size=(4, 4), in_channels=1024, out_channels=4096, dropout=dropout),
+        nn.Flatten()
+    )
+
+    classification_layers = [
+        nn.Linear(in_features=4096, out_features=4096),
+        nn.GELU(),
+    ]
+    if dropout > 0:
+        classification_layers.append(nn.Dropout(p=dropout))
+    classification_layers.append(nn.Linear(in_features=4096, out_features=11))
+
+    classification = nn.Sequential(*classification_layers)
+
+    return DescriptorClassifier(
+        description, classification,
+    )

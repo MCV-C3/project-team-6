@@ -1,0 +1,4 @@
+PatchModel: patch=4 non-overlap merge=mean w=512 d=2            8pe3oaru
+PatchModel: patch=8 non-overlap merge=mean w=512 d=2            2gub0r0e
+PatchModel: patch=16 non-overlap merge=mean w=512 d=2           stri55ry
+PatchModel: patch=32 non-overlap merge=mean w=512 d=2           5n1eu3ay
