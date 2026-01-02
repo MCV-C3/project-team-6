@@ -54,14 +54,17 @@ class WraperModel(nn.Module):
     def __init__(self, num_classes: int, feature_extraction: bool=True):
         super(WraperModel, self).__init__()
 
-        # Load pretrained VGG16 model
-        self.backbone = models.vgg16(weights='IMAGENET1K_V1')
+        # Load pretrained DenseNet-121 model
+        self.backbone = models.densenet121(weights='IMAGENET1K_V1')
         
         if feature_extraction:
             self.set_parameter_requires_grad(feature_extracting=feature_extraction)
 
         # Modify the classifier for the number of classes
-        self.backbone.classifier[-1] = nn.Linear(self.backbone.classifier[-1].in_features, num_classes)
+        # self.backbone.classifier[-1] = nn.Linear(self.backbone.classifier[-1].in_features, num_classes)
+        
+        # El classifier entero es una capa Linear en DenseNet-121
+        self.backbone.classifier = nn.Linear(self.backbone.classifier.in_features, num_classes)
 
     def forward(self, x):
         return self.backbone(x)
@@ -138,7 +141,7 @@ class WraperModel(nn.Module):
         Args:
             modify_fn (Callable[[nn.Module], nn.Module]): Function to modify a layer.
         """
-        self.vgg16 = modify_fn(self.vgg16)
+        self.backbone = modify_fn(self.backbone)
 
 
     def set_parameter_requires_grad(self, feature_extracting):
