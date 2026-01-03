@@ -139,6 +139,7 @@ if __name__ == "__main__":
         print(f"EXPERIMENT {exp_idx + 1}/{num_experiments}")
         if num_layers == 0:
             print(f"Training: Classifier ONLY")
+            continue
         else:
             # Determine which layers are unfrozen
             unfrozen_layer_names = []
