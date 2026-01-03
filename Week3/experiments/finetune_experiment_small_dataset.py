@@ -99,8 +99,8 @@ if __name__ == "__main__":
         resize_train=True,
         resize_test=True,
         train_batch_size=64,
-        train_folder="~/mcv/datasets/C3/2425/MIT_large_train/train",
-        test_folder="~/mcv/datasets/C3/2425/MIT_large_train/test"
+        train_folder="~/mcv/datasets/C3/2425/MIT_small_train_1/train",
+        test_folder="~/mcv/datasets/C3/2425/MIT_small_train_1/test"
     )
 
     # Get a reference model to extract layer structure (for printing only)
@@ -178,16 +178,16 @@ if __name__ == "__main__":
         
         # Create experiment name
         if num_layers == 0:
-            experiment_name = f"finetune_classifier_only"
+            experiment_name = f"finetune_classifier_only_small_dataset"
         else:
-            experiment_name = f"finetune_classifier_plus_{num_layers}_layers"
+            experiment_name = f"finetune_classifier_plus_{num_layers}_layers_small_dataset"
         
         # Initialize wandb for this experiment
         run = utils.init_wandb_run(
             dry=dry,
             entity="mcv-team-6",
             project="C3-Week3",
-            name=f"FT-{num_layers}-layers",
+            name=f"FT-{num_layers}-layers_small_dataset",
             config={
                 "architecture": "DenseNet121-FineTuning",
                 "num_unfrozen_layers": num_layers,

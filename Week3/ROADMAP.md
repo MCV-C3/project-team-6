@@ -5,7 +5,7 @@
 1. Preparar codigo para que vaya con al wandb
 2. Mejor modelo Week 2
 
-## 1 - Fine Tune con nuestra arquitectura (DenseNet-121) -> WORK IN PROGRESS (ADRIÀ)
+## 1 - Fine Tune con nuestra arquitectura (DenseNet-121) -> DONE! (ADRIÀ)
 
 1. Cambiar ultima capa para que saque 8 outputs
 2. Congelar todo menos ultima capa
