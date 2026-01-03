@@ -1,0 +1,9 @@
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run ggb2hnxc
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260103_173114-ggb2hnxc
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Progressive-FineTuning-DenseNet121
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/ggb2hnxc
+Training Classifier Only:   0%|          | 0/100 [00:00<?, ?it/s]Training Classifier Only:   1%|          | 1/100 [00:03<05:23,  3.27s/it]Training Classifier Only:   2%|▏         | 2/100 [00:05<04:24,  2.70s/it]Training Classifier Only:   3%|▎         | 3/100 [00:07<04:03,  2.51s/it]Training Classifier Only:   4%|▍         | 4/100 [00:10<03:52,  2.42s/it]Training Classifier Only:   5%|▌         | 5/100 [00:12<03:45,  2.38s/it]Training Classifier Only:   6%|▌         | 6/100 [00:14<03:40,  2.35s/it]Training Classifier Only:   7%|▋         | 7/100 [00:17<03:40,  2.37s/it]Training Classifier Only:   8%|▊         | 8/100 [00:19<03:37,  2.36s/it]Training Classifier Only:   9%|▉         | 9/100 [00:21<03:34,  2.36s/it]Training Classifier Only:  10%|█         | 10/100 [00:24<03:36,  2.40s/it]Training Classifier Only:  11%|█         | 11/100 [00:26<03:32,  2.39s/it]Training Classifier Only:  12%|█▏        | 12/100 [00:29<03:29,  2.38s/it]Training Classifier Only:  13%|█▎        | 13/100 [00:31<03:27,  2.38s/it]Training Classifier Only:  14%|█▍        | 14/100 [00:33<03:25,  2.39s/it]Training Classifier Only:  15%|█▌        | 15/100 [00:36<03:24,  2.40s/it]Training Classifier Only:  16%|█▌        | 16/100 [00:38<03:21,  2.40s/it]Training Classifier Only:  17%|█▋        | 17/100 [00:41<03:20,  2.41s/it]

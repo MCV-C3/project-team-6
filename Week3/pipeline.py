@@ -100,43 +100,6 @@ def plot_metrics(train_metrics: Dict, test_metrics: Dict, metric_name: str, dire
 
     plt.close()  # Close the figure to free memory
 
-def plot_multi_stage_comparison(all_stages_metrics: List[Dict], metric_name: str, directory: str):
-    """
-    Plots comparison of metrics across multiple training stages.
-    
-    Args:
-        all_stages_metrics: List of dicts, each containing 'stage_name', 'train_metrics', 'test_metrics'
-        metric_name: The metric to plot ('loss' or 'accuracy')
-        directory: Directory to save the plot
-    """
-    plt.figure(figsize=(14, 8))
-    
-    colors = plt.cm.tab10(range(len(all_stages_metrics)))
-    
-    for idx, stage_data in enumerate(all_stages_metrics):
-        stage_name = stage_data['stage_name']
-        train_values = stage_data['train_metrics'][metric_name]
-        test_values = stage_data['test_metrics'][metric_name]
-        
-        epochs_offset = sum(len(s['train_metrics'][metric_name]) for s in all_stages_metrics[:idx])
-        epochs = range(epochs_offset, epochs_offset + len(train_values))
-        
-        plt.plot(epochs, train_values, '--', color=colors[idx], alpha=0.6, label=f'{stage_name} (Train)')
-        plt.plot(epochs, test_values, '-', color=colors[idx], linewidth=2, label=f'{stage_name} (Test)')
-    
-    plt.xlabel('Epoch (Cumulative)')
-    plt.ylabel(metric_name.capitalize())
-    plt.title(f'{metric_name.capitalize()} Across Training Stages')
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    
-    filename = f"multi_stage_{metric_name}.png"
-    filepath = directory + filename
-    plt.savefig(filepath, bbox_inches='tight', dpi=150)
-    print(f"Multi-stage comparison plot saved as {filepath}")
-    plt.close()
-
 def plot_computational_graph(model: torch.nn.Module, input_size: tuple, filename: str = "computational_graph"):
     """
     Generates and saves a plot of the computational graph of the model.
@@ -264,38 +227,86 @@ def experiment(model_folder: str, *,
     plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "loss", directory=f"trained_models/{model_folder}/metrics/")
     plot_metrics({"loss": train_losses, "accuracy": train_accuracies}, {"loss": test_losses, "accuracy": test_accuracies}, "accuracy", directory=f"trained_models/{model_folder}/metrics/")
 
-def multi_stage_experiment(
-        experiment_folder: str, *,
-        stages_config: List[Dict],
+def plot_stages_comparison(stages_metrics: List[Dict], metric_name: str, directory: str):
+    plt.figure(figsize=(14, 8))
+    
+    cumulative_epochs = 0
+    colors = plt.cm.viridis(np.linspace(0, 1, len(stages_metrics)))
+    
+    for i, stage_data in enumerate(stages_metrics):
+        stage_name = stage_data.get("stage_name", f"Stage {i+1}")
+        train_values = stage_data["train"][metric_name]
+        test_values = stage_data["test"][metric_name]
+        epochs = list(range(cumulative_epochs, cumulative_epochs + len(train_values)))
+        
+        plt.plot(epochs, train_values, linestyle='-', color=colors[i], 
+                 label=f'{stage_name} Train', alpha=0.7)
+        plt.plot(epochs, test_values, linestyle='--', color=colors[i], 
+                 label=f'{stage_name} Test', alpha=0.7)
+        
+        # Add vertical line to separate stages
+        if i > 0:
+            plt.axvline(x=cumulative_epochs, color='gray', linestyle=':', alpha=0.5)
+        
+        cumulative_epochs += len(train_values)
+    
+    plt.xlabel('Epoch')
+    plt.ylabel(metric_name.capitalize())
+    plt.title(f'{metric_name.capitalize()} Across Training Stages')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+    filename = f"{directory}stages_{metric_name}.png"
+    plt.savefig(filename)
+    print(f"Stages comparison plot saved as {filename}")
+    plt.close()
+
+#Run a multi-stage experiment where each stage can modify the model (e.g., unfreeze layers).
+def experiment_stages(model_folder: str, *,
+        model: nn.Module,
+        optimizer_fn: Callable[[nn.Module], torch.optim.Optimizer],
+        criterion,
+        epochs_per_stage: int,
         train_loader: DataLoader,
         test_loader: DataLoader,
         augmentation: Optional[nn.Module],
         wandb_run: wandb.Run,
+        stage_callbacks: List[Callable[[nn.Module, int], None]],
+        stage_names: Optional[List[str]] = None,
         device = None,
         early_stopping_patience: int = 50,
         early_stopping_min_delta: float = 0.0001,
         checkpoint_save_interval: int = 10
     ):
-    
-    os.makedirs(f"trained_models/{experiment_folder}", exist_ok=True)
-    os.makedirs(f"trained_models/{experiment_folder}/metrics", exist_ok=True)
+
+    os.makedirs(f"trained_models/{model_folder}", exist_ok=True)
+    os.makedirs(f"trained_models/{model_folder}/metrics", exist_ok=True)
     
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    all_stages_metrics = []
-    cumulative_epoch = 0
+    model = model.to(device)
     
-    for stage_idx, stage_config in enumerate(stages_config):
-        stage_name = stage_config['stage_name']
-        model = stage_config['model'].to(device)
-        optimizer = stage_config['optimizer']
-        criterion = stage_config['criterion']
-        epochs = stage_config['epochs']
-        
+    all_stages_metrics = []
+    global_best_test_accuracy = 0
+    global_best_test_loss = float('inf')
+    global_best_accuracy_checkpoint = None
+    global_best_loss_checkpoint = None
+    
+    total_epochs = 0
+    
+    for stage_idx, stage_callback in enumerate(stage_callbacks):
+        stage_name = stage_names[stage_idx] if stage_names else f"Stage {stage_idx + 1}"
         print(f"\n{'='*60}")
         print(f"Starting {stage_name}")
         print(f"{'='*60}\n")
+        
+        # Apply stage callback (e.g., unfreeze layers)
+        stage_callback(model, stage_idx)
+        
+        # Create new optimizer for this stage (to include newly unfrozen params)
+        optimizer = optimizer_fn(model)
         
         train_losses, train_accuracies = [], []
         test_losses, test_accuracies = [], []
@@ -308,7 +319,7 @@ def multi_stage_experiment(
         best_accuracy_checkpoint = None
         best_loss_checkpoint = None
         
-        for epoch in tqdm.tqdm(range(epochs), desc=f"Training {stage_name}"):
+        for epoch in tqdm.tqdm(range(epochs_per_stage), desc=f"Training {stage_name}"):
             train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
             test_loss, test_accuracy = test(model, test_loader, criterion, device)
             
@@ -317,39 +328,49 @@ def multi_stage_experiment(
             test_losses.append(test_loss)
             test_accuracies.append(test_accuracy)
             
-            print(f"Epoch {epoch + 1}/{epochs} (Cumulative: {cumulative_epoch + epoch + 1}) - "
+            print(f"[{stage_name}] Epoch {epoch + 1}/{epochs_per_stage} - "
                   f"Train Loss: {train_loss:.4f}, Train Accuracy: {train_accuracy:.4f}, "
                   f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
             
             wandb_run.log({
-                "stage": stage_name,
+                "epoch": total_epochs + epoch,
+                "stage": stage_idx,
                 "stage_epoch": epoch,
-                "cumulative_epoch": cumulative_epoch + epoch,
                 "train_accuracy": train_accuracy,
                 "test_accuracy": test_accuracy,
                 "train_loss": train_loss,
                 "test_loss": test_loss,
             })
             
-            is_best_accuracy = best_test_accuracy < test_accuracy and epoch > 10
-            is_best_loss = best_test_loss > test_loss and epoch > 10
+            is_best_accuracy = best_test_accuracy < test_accuracy and epoch > 5
+            is_best_loss = best_test_loss > test_loss and epoch > 5
             
             if is_best_accuracy or is_best_loss:
-                checkpoint = make_checkpoint(cumulative_epoch + epoch, model, optimizer, criterion)
+                checkpoint = make_checkpoint(total_epochs + epoch, model, optimizer, criterion)
+                checkpoint['stage'] = stage_idx
+                checkpoint['stage_name'] = stage_name
                 
                 if is_best_accuracy:
                     best_accuracy_checkpoint = checkpoint
                     best_test_accuracy = test_accuracy
+                    
+                    if test_accuracy > global_best_test_accuracy:
+                        global_best_test_accuracy = test_accuracy
+                        global_best_accuracy_checkpoint = checkpoint
                 
                 if is_best_loss:
                     best_loss_checkpoint = checkpoint
                     best_test_loss = test_loss
+                    
+                    if test_loss < global_best_test_loss:
+                        global_best_test_loss = test_loss
+                        global_best_loss_checkpoint = checkpoint
             
             if (epoch + 1) % checkpoint_save_interval == 0:
                 if best_accuracy_checkpoint is not None:
-                    torch.save(best_accuracy_checkpoint, f"trained_models/{experiment_folder}/{stage_name}_best_accuracy.pt")
+                    torch.save(best_accuracy_checkpoint, f"trained_models/{model_folder}/stage{stage_idx}_best_accuracy.pt")
                 if best_loss_checkpoint is not None:
-                    torch.save(best_loss_checkpoint, f"trained_models/{experiment_folder}/{stage_name}_best_loss.pt")
+                    torch.save(best_loss_checkpoint, f"trained_models/{model_folder}/stage{stage_idx}_best_loss.pt")
             
             # Early stopping check
             if test_loss < best_test_loss_for_early_stopping - early_stopping_min_delta:
@@ -362,46 +383,53 @@ def multi_stage_experiment(
                 print(f"\nEarly stopping triggered at epoch {epoch + 1} of {stage_name}")
                 break
         
-        # Save stage results
-        all_stages_metrics.append({
-            'stage_name': stage_name,
-            'train_metrics': {'loss': train_losses, 'accuracy': train_accuracies},
-            'test_metrics': {'loss': test_losses, 'accuracy': test_accuracies},
-            'best_test_loss': best_test_loss,
-            'best_test_accuracy': best_test_accuracy,
-        })
+        total_epochs += len(train_losses)
         
-        # Save final checkpoints for this stage
+        # Save stage metrics
+        stage_metrics = {
+            "stage_name": stage_name,
+            "train": {"loss": train_losses, "accuracy": train_accuracies},
+            "test": {"loss": test_losses, "accuracy": test_accuracies},
+            "best_test_loss": best_test_loss,
+            "best_test_accuracy": best_test_accuracy,
+        }
+        all_stages_metrics.append(stage_metrics)
+        
+        # Save stage checkpoint
         if best_accuracy_checkpoint is not None:
-            torch.save(best_accuracy_checkpoint, f"trained_models/{experiment_folder}/{stage_name}_best_accuracy.pt")
+            torch.save(best_accuracy_checkpoint, f"trained_models/{model_folder}/stage{stage_idx}_best_accuracy.pt")
         if best_loss_checkpoint is not None:
-            torch.save(best_loss_checkpoint, f"trained_models/{experiment_folder}/{stage_name}_best_loss.pt")
+            torch.save(best_loss_checkpoint, f"trained_models/{model_folder}/stage{stage_idx}_best_loss.pt")
         
-        # Plot individual stage metrics
-        plot_metrics(
-            {"loss": train_losses, "accuracy": train_accuracies},
-            {"loss": test_losses, "accuracy": test_accuracies},
-            "loss",
-            directory=f"trained_models/{experiment_folder}/metrics/{stage_name}_"
-        )
-        plot_metrics(
-            {"loss": train_losses, "accuracy": train_accuracies},
-            {"loss": test_losses, "accuracy": test_accuracies},
-            "accuracy",
-            directory=f"trained_models/{experiment_folder}/metrics/{stage_name}_"
-        )
-        
-        cumulative_epoch += len(train_losses)
-        
-        print(f"\n{stage_name} completed:")
-        print(f"  Best test loss: {best_test_loss:.4f}")
-        print(f"  Best test accuracy: {best_test_accuracy:.4f}\n")
+        print(f"\n{stage_name} completed - Best Loss: {best_test_loss:.4f}, Best Accuracy: {best_test_accuracy:.4f}")
     
-    # Plot multi-stage comparison
-    plot_multi_stage_comparison(all_stages_metrics, "loss", directory=f"trained_models/{experiment_folder}/metrics/")
-    plot_multi_stage_comparison(all_stages_metrics, "accuracy", directory=f"trained_models/{experiment_folder}/metrics/")
+    # Save global best checkpoints
+    if global_best_accuracy_checkpoint is not None:
+        torch.save(global_best_accuracy_checkpoint, f"trained_models/{model_folder}/global_best_accuracy.pt")
+    if global_best_loss_checkpoint is not None:
+        torch.save(global_best_loss_checkpoint, f"trained_models/{model_folder}/global_best_loss.pt")
     
-    print("Experiment completed")
+    print(f"All stages completed")
+    print(f"Global best test loss: {global_best_test_loss:.4f}")
+    print(f"Global best test accuracy: {global_best_test_accuracy:.4f}")
+    
+    # Plot stage comparisons
+    plot_stages_comparison(all_stages_metrics, "loss", directory=f"trained_models/{model_folder}/metrics/")
+    plot_stages_comparison(all_stages_metrics, "accuracy", directory=f"trained_models/{model_folder}/metrics/")
+    
+    # Also plot combined metrics (all stages concatenated)
+    combined_train = {"loss": [], "accuracy": []}
+    combined_test = {"loss": [], "accuracy": []}
+    for stage_data in all_stages_metrics:
+        combined_train["loss"].extend(stage_data["train"]["loss"])
+        combined_train["accuracy"].extend(stage_data["train"]["accuracy"])
+        combined_test["loss"].extend(stage_data["test"]["loss"])
+        combined_test["accuracy"].extend(stage_data["test"]["accuracy"])
+    
+    plot_metrics(combined_train, combined_test, "loss", directory=f"trained_models/{model_folder}/metrics/")
+    plot_metrics(combined_train, combined_test, "accuracy", directory=f"trained_models/{model_folder}/metrics/")
+    
+    return all_stages_metrics
 
 if __name__ == "__main__":
 
@@ -421,8 +449,8 @@ if __name__ == "__main__":
         # F.Resize(size=(128, 128)),
         F.Resize(size=FINAL_SIZE),
     ])
-    data_train = ImageFolder("../data/places_reduced/train", transform=train_transformation)
-    data_test = ImageFolder("../data/places_reduced/val", transform=test_transformation)
+    data_train = ImageFolder("~/mcv/datasets/C3/2425/MIT_large_train/train", transform=train_transformation)
+    data_test = ImageFolder("~/mcv/datasets/C3/2425/MIT_large_train/test", transform=test_transformation)
 
     train_loader = DataLoader(data_train, batch_size=256, pin_memory=True, shuffle=True, num_workers=8, prefetch_factor=4, persistent_workers=True)
     test_loader = DataLoader(data_test, batch_size=128, pin_memory=True, shuffle=False, num_workers=8, prefetch_factor=4, persistent_workers=True)
