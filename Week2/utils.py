@@ -84,8 +84,8 @@ def get_loaders(image_size : Optional[Tuple[int, int]] = None, train_batch_size:
     test_transformation = F.Compose(test_transforms)
     
     # This dataset is very small, we can store it fully in VRAM!!!!!
-    data_train = InMemoryDataset(ImageFolder("../data/places_reduced/train"), "cuda", transform=train_transformation)
-    data_test = InMemoryDataset(ImageFolder("../data/places_reduced/val"), "cuda", transform=test_transformation)
+    data_train = InMemoryDataset(ImageFolder("/ghome/group06/mcv/datasets/C3/2425/MIT_large_train/train"), "cuda", transform=train_transformation)
+    data_test = InMemoryDataset(ImageFolder("/ghome/group06/mcv/datasets/C3/2425/MIT_large_train/test"), "cuda", transform=test_transformation)
 
     train_loader = DataLoader(data_train, batch_size=train_batch_size, pin_memory=False, shuffle=True, num_workers=0, prefetch_factor=None, persistent_workers=False)
     test_loader = DataLoader(data_test, batch_size=128, pin_memory=False, shuffle=False, num_workers=0, prefetch_factor=None, persistent_workers=False)

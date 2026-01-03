@@ -17,7 +17,12 @@ dry = args.dry
 device = utils.set_device(args.gpu_id)
 
 # se le puede pasar train_folder y test_folder para cambiar el dataset
-train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE), resize_train=True)
+train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE), 
+                                              resize_train=True, 
+                                              resize_test=True, 
+                                              train_batch_size=64, 
+                                              train_folder="~/mcv/datasets/C3/2425/MIT_large_train/train", 
+                                              test_folder="~/mcv/datasets/C3/2425/MIT_large_train/test")
 
 model = WraperModel(8, feature_extraction=True)
 

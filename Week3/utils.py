@@ -60,7 +60,12 @@ class InMemoryDataset(Dataset):
         return self.images[idx], self.targets[idx]
 
 
-def get_loaders(image_size : Optional[Tuple[int, int]] = None, train_batch_size: int = 256, resize_train: bool = False, resize_test: bool = True, train_folder: str = "../data/MIT_small_train_1/train", test_folder: str = "../data/MIT_small_train_1/test"):
+def get_loaders(image_size : Optional[Tuple[int, int]] = None, 
+                train_batch_size: int = 256, 
+                resize_train: bool = False, 
+                resize_test: bool = True, 
+                train_folder: str = "~/mcv/datasets/C3/2425/MIT_small_train_1/train", 
+                test_folder: str = "~/mcv/datasets/C3/2425/MIT_small_train_1/test"):
 
     torch.manual_seed(42)
 

@@ -24,7 +24,7 @@ device = utils.set_device(args.gpu_id)
 
 train_loader, test_loader = utils.get_loaders(image_size=(IMG_SIZE, IMG_SIZE), resize_train=False)
 
-model = make_double_descriptor_prototype(dropout=DROPOUT)
+model = make_double_descriptor_prototype(dropout=DROPOUT, num_classes=8)
 loss = torch.nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=WEIGHT_DECAY)
 
@@ -33,7 +33,7 @@ augmentation = make_full_augmentation((IMG_SIZE, IMG_SIZE))
 run = utils.init_wandb_run(
     dry=dry,
     entity="mcv-team-6",
-    project="C3-Week2",
+    project="C3-Week3",
     name=f"Pyramidal Double Default (dropout={DROPOUT} wd={WEIGHT_DECAY} ls={LABEL_SMOOTHING})",
     config={
         "architecture": "PyramidalDoubleDefault",

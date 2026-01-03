@@ -1,17 +1,17 @@
 # Work to do
 
-## 0 - Recolectar resultados best config entregas anteriores con nuevo dataset
+## 0 - Recolectar resultados best config entregas anteriores con nuevo dataset -> DONE! (ARNAU)
 
 1. Preparar codigo para que vaya con al wandb
 2. Mejor modelo Week 2
 
-## 1 - Fine Tune con nuestra arquitectura (DenseNet-121)
+## 1 - Fine Tune con nuestra arquitectura (DenseNet-121) -> WORK IN PROGRESS (ADRIÀ)
 
 1. Cambiar ultima capa para que saque 8 outputs
 2. Congelar todo menos ultima capa
-3. Entrenar hasta que la loss pare ce mejorar
+3. Entrenar hasta que la loss pare de mejorar
 4. Descongelar la capa anterior
-5. Repetir hasta descongelar todas las capas de los ultimos dos bloques o hasta que deje de mejorar
+5. Repetir hasta descongelar todas las capas de los ultimos dos bloques
 
 ## 2 - Set a new model
 
