@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-from models import SimpleModel, WraperModel
+from models.base import WraperModel, SimpleModel
 import torchvision.transforms.v2  as F
 from torchviz import make_dot
 import tqdm
@@ -137,13 +137,13 @@ if __name__ == "__main__":
                                     F.Resize(size=(224, 224)),
                                 ])
     
-    data_train = ImageFolder("~/data/Master/MIT_split/train", transform=transformation)
-    data_test = ImageFolder("~/data/Master/MIT_split/test", transform=transformation) 
+    data_train = ImageFolder("~/mcv/datasets/C3/2425/MIT_large_train/train", transform=transformation)
+    data_test = ImageFolder("~/mcv/datasets/C3/2425/MIT_large_train/test", transform=transformation) 
 
     train_loader = DataLoader(data_train, batch_size=16, pin_memory=True, shuffle=True, num_workers=8)
     test_loader = DataLoader(data_test, batch_size=1, pin_memory=True, shuffle=False, num_workers=8)
 
-    C, H, W = np.array(data_train[0][0]).shape
+    C, H, W = data_train[0][0].shape
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
