@@ -52,17 +52,22 @@ train_loader, test_loader = utils.get_loaders(
     resize_train=True,
     resize_test=True,
     train_batch_size=64,
-    train_folder="~/mcv/datasets/C3/2425/MIT_large_train/train",
-    test_folder="~/mcv/datasets/C3/2425/MIT_large_train/test"
-)
+    train_folder="~/mcv/datasets/C3/2425/MIT_small_train_1/train",
+    test_folder="~/mcv/datasets/C3/2425/MIT_small_train_1/test"
+    )
 
 model = WraperModel(num_classes=8, feature_extraction=True)
 in_features = model.backbone.classifier.in_features
 loss = torch.nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
 
-for neurons in [[512],[1024],[2048], [1024, 512], [2048, 1024, 512]]:
+for neurons in [[],[512],[1024],[2048], [1024, 512], [2048, 1024, 512]]:
     head = create_head_n_classifier_layers(in_features, neurons, 8)
-    id_exp = "new_model_classifier_" + "x".join(str(l.out_features) for l in head if isinstance(l, nn.Linear) and l.out_features != 8)
+    hidden = [
+    l.out_features for l in head.modules()
+    if isinstance(l, nn.Linear) and l.out_features != 8
+    ]
+    id_exp = "new_model_classifier_" + ("x".join(map(str, hidden)) if hidden else "linear")
+
     model_copy = deepcopy(model)
     model_copy = set_classifier(model_copy, head)
     model_copy = model_copy.to(device)
@@ -99,6 +104,7 @@ for neurons in [[512],[1024],[2048], [1024, 512], [2048, 1024, 512]]:
         epochs=EPOCHS,
         train_loader=train_loader,
         test_loader=test_loader,
+        augmentation=None,
         wandb_run=run,
         device=device,
     )
