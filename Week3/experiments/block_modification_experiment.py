@@ -166,8 +166,8 @@ if __name__ == "__main__":
         resize_train=True,
         resize_test=True,
         train_batch_size=64,
-        train_folder="/home/arnau-marcos-almansa/workspace/C3/data/MIT_large_train/train",
-        test_folder="/home/arnau-marcos-almansa/workspace/C3/data/MIT_large_train/test"
+        train_folder=args.train_folder,
+        test_folder=args.test_folder,
     )
 
     loss = nn.CrossEntropyLoss(label_smoothing=0.1)
