@@ -112,6 +112,7 @@ def get_experiment_argument_parser():
     parser.add_argument('--epochs', type=int, default=100, help='Number of training epochs')
     parser.add_argument('--gpu-id', type=int, default=0, help='GPU ID to use (default: 0)')
     parser.add_argument('--dry', default=False, action='store_true', help="If present, do not log to wandb nor save or generate any file.")
+    parser.add_argument('--augmentation', default=False, action='store_true', help="If present, does data augmentation on the training.")
     parser.add_argument('--train_folder', default="~/mcv/datasets/C3/2425/MIT_small_train_1/train", help="The folder that contains the training data.")
     parser.add_argument('--test_folder', default="~/mcv/datasets/C3/2425/MIT_small_train_1/test", help="The folder that contains the training data.")
     

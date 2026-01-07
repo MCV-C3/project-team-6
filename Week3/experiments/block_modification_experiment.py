@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 import utils
+from augmentation import make_full_augmentation
 import wandb
 from copy import deepcopy
 
@@ -192,6 +193,13 @@ if __name__ == "__main__":
 
     num_experiments = len(experiments_config)
     print(f"Will run {num_experiments} block modification experiments\n")
+
+
+    augmentation = None
+    
+    if args.augmentation:
+        print("Added data augmentation")
+        augmentation = make_full_augmentation((IMG_SIZE, IMG_SIZE))
 
     for exp_idx, exp_config in enumerate(experiments_config):
         print(f"\n{'='*80}")
