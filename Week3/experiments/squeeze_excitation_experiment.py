@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 from models.squeeze_escitation import SqueezeExcitation
+from augmentation import make_full_augmentation
 import utils
 import wandb
 from copy import deepcopy
@@ -112,9 +113,15 @@ if __name__ == "__main__":
         {
             'type': 'add_squeeze_excitation',
             'name': 'Add Squeeze and Excitation after each denseblock',
-            'wandb_name': 'Squeeze-and-Excitation'
+            'wandb_name': 'Squeeze-and-Excitation WDA'
         },
     ]
+
+    augmentation = None
+    
+    if args.augmentation:
+        print("Added data augmentation")
+        augmentation = make_full_augmentation((IMG_SIZE, IMG_SIZE))
 
     num_experiments = len(experiments_config)
     print(f"Will run {num_experiments} Squeeze and Excitation experiments\n")
