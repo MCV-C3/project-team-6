@@ -173,7 +173,7 @@ if __name__ == "__main__":
             epochs=EPOCHS,
             train_loader=train_loader,
             test_loader=test_loader,
-            augmentation=None,
+            augmentation=augmentation,
             wandb_run=run,
             device=device,
             early_stopping_patience=15,
