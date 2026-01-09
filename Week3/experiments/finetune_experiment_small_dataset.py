@@ -3,6 +3,7 @@ import torch.nn as nn
 from torchvision import models
 import utils
 import wandb
+from models.base import WraperModel
 from copy import deepcopy
 
 from pipeline import experiment
@@ -10,7 +11,7 @@ from pipeline import experiment
 
 def get_densenet_layers_to_unfreeze(model):
     """
-    Get layers from DenseNet-121's last two dense blocks in reverse order.
+    Get layers from DenseNet-121's in reverse order.
     Returns layers grouped by block for step-by-step unfreezing.
     """
     layers_to_unfreeze = []
@@ -27,28 +28,34 @@ def get_densenet_layers_to_unfreeze(model):
     denseblock3 = model.features.denseblock3
     for name, layer in reversed(list(denseblock3.named_children())):
         layers_to_unfreeze.append((f"features.denseblock3.{name}", layer, "block3"))
-    
+
+    # Get transition2 (between denseblock2 and denseblock3)
+    layers_to_unfreeze.append(("features.transition2", model.features.transition2, "transition"))
+
+    # Get denseblock2 layers - 12 layers
+    denseblock2 = model.features.denseblock2
+    for name, layer in reversed(list(denseblock2.named_children())):
+        layers_to_unfreeze.append((f"features.denseblock2.{name}", layer, "block2"))
+
+    # Get transition1 (between denseblock1 and denseblock2)
+    layers_to_unfreeze.append(("features.transition1", model.features.transition1, "transition"))
+
+    # Get denseblock1 layers - 6 layers
+    denseblock1 = model.features.denseblock1
+    for name, layer in reversed(list(denseblock1.named_children())):
+        layers_to_unfreeze.append((f"features.denseblock1.{name}", layer, "block1"))
+
     return layers_to_unfreeze
 
 
-def freeze_all_except_classifier(model):
-    for param in model.parameters():
-        param.requires_grad = False
-    for param in model.classifier.parameters():
-        param.requires_grad = True
-
-
-def unfreeze_up_to_layer(model, layers_to_unfreeze, num_layers_to_unfreeze):
+def unfreeze_up_to_layer(backbone, layers_to_unfreeze, num_layers_to_unfreeze):
     # First freeze everything
-    for param in model.parameters():
+    for param in backbone.parameters():
         param.requires_grad = False
     
     # Unfreeze classifier
-    for param in model.classifier.parameters():
+    for param in backbone.classifier.parameters():
         param.requires_grad = True
-    
-    # Count block4 and block3 layers
-    block4_count = sum(1 for _, _, block_type in layers_to_unfreeze if block_type == "block4")
     
     # Determine which layers to unfreeze
     unfrozen_count = 0
@@ -58,30 +65,46 @@ def unfreeze_up_to_layer(model, layers_to_unfreeze, num_layers_to_unfreeze):
             
         # Special handling for transition layer
         if block_type == "transition":
-            # Only unfreeze transition if we're starting to unfreeze block3
-            # i.e., if we've unfrozen all of block4 (16 layers)
-            if num_layers_to_unfreeze > block4_count:
-                for param in layer.parameters():
-                    param.requires_grad = True
+            for param in layer.parameters():
+                param.requires_grad = True
             # Don't count transition in the unfrozen count
             continue
         
         # Unfreeze this layer
         for param in layer.parameters():
             param.requires_grad = True
+
         unfrozen_count += 1
 
 
 def create_fresh_model(num_layers_to_unfreeze):
-    model = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)
-    num_features = model.classifier.in_features
-    model.classifier = nn.Linear(num_features, 8)
+    model = WraperModel(num_classes=8, feature_extraction=False)
     
     # Get layers from THIS model, not a reference model
-    layers_to_unfreeze = get_densenet_layers_to_unfreeze(model)
-    unfreeze_up_to_layer(model, layers_to_unfreeze, num_layers_to_unfreeze)
+    layers_to_unfreeze = get_densenet_layers_to_unfreeze(model.backbone)
+    unfreeze_up_to_layer(model.backbone, layers_to_unfreeze, num_layers_to_unfreeze)
     
     return model
+
+def print_trainable_summary(model):
+    backbone = model.backbone if hasattr(model, "backbone") else model
+
+    def any_trainable(substr):
+        return any(p.requires_grad for n, p in backbone.named_parameters() if substr in n)
+
+    blocks = [
+        "features.denseblock4", "features.transition3",
+        "features.denseblock3", "features.transition2",
+        "features.denseblock2", "features.transition1",
+        "features.denseblock1",
+    ]
+
+    print("Trainable summary:")
+    for b in blocks:
+        print(f"  {b}: {'TRAINABLE' if any_trainable(b) else 'frozen'}")
+
+    print(f"  classifier: {'TRAINABLE' if any(p.requires_grad for p in backbone.classifier.parameters()) else 'frozen'}")
+
 
 if __name__ == "__main__":
     argparser = utils.get_experiment_argument_parser()
@@ -99,8 +122,8 @@ if __name__ == "__main__":
         resize_train=True,
         resize_test=True,
         train_batch_size=64,
-        train_folder="~/mcv/datasets/C3/2425/MIT_small_train_1/train",
-        test_folder="~/mcv/datasets/C3/2425/MIT_small_train_1/test"
+        train_folder=args.train_folder,
+        test_folder=args.test_folder
     )
 
     # Get a reference model to extract layer structure (for printing only)
@@ -118,8 +141,8 @@ if __name__ == "__main__":
     # Run independent experiments unfreezing every 4 layers
     # 0 = only classifier, 4 = classifier + 4 layers, 8 = classifier + 8 layers, etc.
     step_size = 4
-    # We have 16 (block4) + 1 (transition) + 24 (block3) = 41 total
-    # But we only count dense layers (40), so max is 40
+    # We have 16 (block4) + 1 (transition) + 24 (block3) + 1 (transition) + 12 (block2) + 1 (transition) + 6 (block1) = 61 total
+    # But we only count dense layers (58), so max is 58
     max_layers = sum(1 for _, _, block_type in layers_info if block_type != "transition")
     
     experiments_to_run = [0]  # Start with classifier only
@@ -137,36 +160,17 @@ if __name__ == "__main__":
     for exp_idx, num_layers in enumerate(experiments_to_run):
         print(f"\n{'='*80}")
         print(f"EXPERIMENT {exp_idx + 1}/{num_experiments}")
+
         if num_layers == 0:
-            print(f"Training: Classifier ONLY")
+            print("Training: Classifier ONLY")
         else:
-            # Determine which layers are unfrozen
-            unfrozen_layer_names = []
-            transition_unfrozen = False
-            count = 0
-            for name, _, block_type in layers_info:
-                if count >= num_layers:
-                    break
-                if block_type == "transition":
-                    if num_layers > 16:  # Block4 has 16 layers
-                        transition_unfrozen = True
-                    continue
-                unfrozen_layer_names.append(name)
-                count += 1
-            
-            if transition_unfrozen:
-                # Insert transition in its proper position (after block4)
-                block4_end = next(i for i, name in enumerate(unfrozen_layer_names) 
-                                 if not name.startswith("features.denseblock4"))
-                unfrozen_layer_names.insert(block4_end, "features.transition3")
-            
-            print(f"Training: Classifier + {num_layers} layer(s)")
-            print(f"Unfrozen layers: {', '.join(unfrozen_layer_names)}")
-        print(f"{'='*80}\n")
-        
+            print(f"Training: Classifier + {num_layers} denselayer(s)")
+
         # Create fresh model for this experiment
         model = create_fresh_model(num_layers)
-        
+        print_trainable_summary(model)
+        print(f"{'='*80}\n")
+            
         # Count and display trainable parameters
         trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
         total = sum(p.numel() for p in model.parameters())
