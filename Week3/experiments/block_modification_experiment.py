@@ -177,17 +177,17 @@ if __name__ == "__main__":
         {
             'type': 'remove_1_block',
             'name': 'Remove Last Block (DB4+T3)',
-            'wandb_name': 'Remove-1-Block'
+            'wandb_name': 'Remove-1-Block Unfreezed'
         },
         {
             'type': 'remove_2_blocks',
             'name': 'Remove Last 2 Blocks (DB4+T3+DB3+T2)',
-            'wandb_name': 'Remove-2-Blocks'
+            'wandb_name': 'Remove-2-Blocks Unfreezed'
         },
         {
             'type': 'add_block',
             'name': 'Add New Block (DB5 after DB4)',
-            'wandb_name': 'Add-New-Block'
+            'wandb_name': 'Add-New-Block Unfreezed'
         }
     ]
 
