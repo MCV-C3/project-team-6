@@ -80,7 +80,7 @@ def unfreeze_stage3(backbone: models.densenet.DenseNet):
     return backbone
 
 def create_model_for_experiment(experiment_type, num_classes=8):
-    model = WraperModel(num_classes=num_classes, feature_extraction=True)
+    model = WraperModel(num_classes=num_classes, feature_extraction=False)
 
     model.modify_layers(add_squeeze_excitation_blocks)
     
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         {
             'type': 'add_squeeze_excitation',
             'name': 'Add Squeeze and Excitation after each denseblock',
-            'wandb_name': 'Squeeze-and-Excitation WDA'
+            'wandb_name': 'Squeeze-and-Excitation Unfreezed'
         },
     ]
 
@@ -180,65 +180,65 @@ if __name__ == "__main__":
             early_stopping_min_delta=0.001,
         )
         
-        model.modify_layers(unfreeze_stage1)
+        # model.modify_layers(unfreeze_stage1)
 
-        trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-        optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=1e-5)
+        # trainable_params = filter(lambda p: p.requires_grad, model.parameters())
+        # optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=1e-5)
 
-        experiment(
-            experiment_name,
-            model=model,
-            optimizer=optimizer,
-            criterion=loss,
-            epochs=EPOCHS,
-            train_loader=train_loader,
-            test_loader=test_loader,
-            augmentation=None,
-            wandb_run=run,
-            device=device,
-            early_stopping_patience=15,
-            early_stopping_min_delta=0.001,
-        )
+        # experiment(
+        #     experiment_name,
+        #     model=model,
+        #     optimizer=optimizer,
+        #     criterion=loss,
+        #     epochs=EPOCHS,
+        #     train_loader=train_loader,
+        #     test_loader=test_loader,
+        #     augmentation=None,
+        #     wandb_run=run,
+        #     device=device,
+        #     early_stopping_patience=15,
+        #     early_stopping_min_delta=0.001,
+        # )
         
-        model.modify_layers(unfreeze_stage2)
+        # model.modify_layers(unfreeze_stage2)
 
-        trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-        optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=1e-5)
+        # trainable_params = filter(lambda p: p.requires_grad, model.parameters())
+        # optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=1e-5)
         
-        experiment(
-            experiment_name,
-            model=model,
-            optimizer=optimizer,
-            criterion=loss,
-            epochs=EPOCHS,
-            train_loader=train_loader,
-            test_loader=test_loader,
-            augmentation=None,
-            wandb_run=run,
-            device=device,
-            early_stopping_patience=15,
-            early_stopping_min_delta=0.001,
-        )
+        # experiment(
+        #     experiment_name,
+        #     model=model,
+        #     optimizer=optimizer,
+        #     criterion=loss,
+        #     epochs=EPOCHS,
+        #     train_loader=train_loader,
+        #     test_loader=test_loader,
+        #     augmentation=None,
+        #     wandb_run=run,
+        #     device=device,
+        #     early_stopping_patience=15,
+        #     early_stopping_min_delta=0.001,
+        # )
         
-        model.modify_layers(unfreeze_stage3)
+        # model.modify_layers(unfreeze_stage3)
         
-        trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-        optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=1e-5)
+        # trainable_params = filter(lambda p: p.requires_grad, model.parameters())
+        # optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=1e-5)
         
-        experiment(
-            experiment_name,
-            model=model,
-            optimizer=optimizer,
-            criterion=loss,
-            epochs=EPOCHS,
-            train_loader=train_loader,
-            test_loader=test_loader,
-            augmentation=None,
-            wandb_run=run,
-            device=device,
-            early_stopping_patience=15,
-            early_stopping_min_delta=0.001,
-        )
+        # experiment(
+        #     experiment_name,
+        #     model=model,
+        #     optimizer=optimizer,
+        #     criterion=loss,
+        #     epochs=EPOCHS,
+        #     train_loader=train_loader,
+        #     test_loader=test_loader,
+        #     augmentation=None,
+        #     wandb_run=run,
+        #     device=device,
+        #     early_stopping_patience=15,
+        #     early_stopping_min_delta=0.001,
+        # )
         
 
         run.finish()
