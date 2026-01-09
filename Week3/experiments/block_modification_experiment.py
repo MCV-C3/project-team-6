@@ -138,13 +138,13 @@ def create_model_for_experiment(experiment_type, num_classes=8):
 
     if experiment_type == 'remove_1_block':
         model.modify_layers(remove_last_block)
-        freeze_pretrained_layers(model, unfreeze_new_block=False)
+        #freeze_pretrained_layers(model, unfreeze_new_block=False)
     elif experiment_type == 'remove_2_blocks':
         model.modify_layers(remove_last_two_blocks)
-        freeze_pretrained_layers(model, unfreeze_new_block=False)
+        #freeze_pretrained_layers(model, unfreeze_new_block=False)
     elif experiment_type == 'add_block':
         model.modify_layers(add_new_block)
-        freeze_pretrained_layers(model, unfreeze_new_block=True)
+        #freeze_pretrained_layers(model, unfreeze_new_block=True)
     else:
         raise ValueError(f"Unknown experiment type: {experiment_type}")
 
