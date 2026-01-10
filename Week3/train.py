@@ -59,33 +59,32 @@ train_loader, test_loader = utils.get_loaders(
 )
 
 model = create_model_for_experiment("Sweep", num_classes=8)
-trainable_params = filter(lambda p: p.requires_grad, model.parameters())
 
 loss = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
-optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=weight_decay)
+optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=weight_decay)
 
 match optimizer_name:
     
     case 'RMSprop':
-        optimizer = torch.optim.RMSprop(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=LR, weight_decay=weight_decay)
         
     case 'Adagrad':
-        optimizer = torch.optim.Adagrad(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.Adagrad(model.parameters(), lr=LR, weight_decay=weight_decay)
         
     case 'Adadelta':
-        optimizer = torch.optim.Adadelta(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.Adadelta(model.parameters(), lr=LR, weight_decay=weight_decay)
         
     case 'Adam':
-        optimizer = torch.optim.Adam(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=weight_decay)
     
     case 'Adamax':
-        optimizer = torch.optim.Adamax(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.Adamax(model.parameters(), lr=LR, weight_decay=weight_decay)
         
     case 'Nadam':
-        optimizer = torch.optim.NAdam(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.NAdam(model.parameters(), lr=LR, weight_decay=weight_decay)
         
     case 'AdamW':
-        optimizer = torch.optim.AdamW(trainable_params, lr=LR, weight_decay=weight_decay)
+        optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=weight_decay)
         
 
 experiment_name = "Sweep run"
