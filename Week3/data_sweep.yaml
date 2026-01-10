@@ -1,6 +1,6 @@
 program: train_data.py
 name: sweep_data_augmentation
-method: bayes
+method: random
 metric:
   name: test_loss
   goal: minimize
