@@ -109,7 +109,7 @@ def get_loaders(image_size : Optional[Tuple[int, int]] = None,
 def get_experiment_argument_parser():
     parser = argparse.ArgumentParser(description="Experiment parameters")
 
-    parser.add_argument('--epochs', type=int, default=100, help='Number of training epochs')
+    parser.add_argument('--epochs', type=int, default=500, help='Number of training epochs')
     parser.add_argument('--gpu-id', type=int, default=0, help='GPU ID to use (default: 0)')
     parser.add_argument('--dry', default=False, action='store_true', help="If present, do not log to wandb nor save or generate any file.")
     parser.add_argument('--augmentation', default=False, action='store_true', help="If present, does data augmentation on the training.")

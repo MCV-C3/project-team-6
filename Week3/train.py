@@ -11,7 +11,20 @@ from models.base import WraperModel
 from pipeline import experiment
 
 argparser = utils.get_experiment_argument_parser()
-args = argparser.parse_args()
+
+args, unknown = argparser.parse_known_args()
+sweep_config = {}
+for arg in unknown:
+    if arg.startswith("--"):
+        key, val = arg[2:].split("=")
+        try:
+            # Convert numeric values automatically
+            val = float(val)
+            if val.is_integer():
+                val = int(val)
+        except ValueError:
+            pass  # leave as string
+        sweep_config[key] = val
 
 EPOCHS = args.epochs
 IMG_SIZE = 224
@@ -23,12 +36,7 @@ run = utils.init_wandb_run(
             entity="mcv-team-6",
             project="C3-Week3",
             name="Sweep run",
-            config={
-                "architecture": f"DenseNet121",
-                "experiment_type": "Squeeze-and-Excite",
-                "epochs": EPOCHS,
-                "image_size": IMG_SIZE,
-            }
+            config=sweep_config
         )
 
 cfg = wandb.config
