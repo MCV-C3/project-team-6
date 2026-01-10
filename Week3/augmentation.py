@@ -48,14 +48,11 @@ full_augmentation = nn.Sequential(
 
 def make_full_augmentation(final_size: tuple[int, int]):
     return ka.AugmentationSequential(
-        ka.RandomHorizontalFlip(),
-        ka.RandomRotation(degrees=(-10, 10)),
-        ka.RandomAffine(degrees=0, shear=cfg.shear,
-                            translate=(cfg.translate_x, cfg.translate_y),
-                            scale=(cfg.scale, cfg.scale)),
-        ka.RandomResizedCrop(size=final_size, scale=(0.5, 1.0), ratio=(1.0, 1.0)),
         ka.RandomGaussianBlur(kernel_size=(7, 7), sigma=(0.5, 0.5), p=0.1),
+        ka.RandomRotation(degrees=(-10, 10)),
+        ka.RandomResizedCrop(size=final_size, scale=(0.5, 1.0), ratio=(1.0, 1.0)),
         ka.ColorJiggle(0.2, 0.2, 0.2, 0.2, p=0.5),
+        ka.RandomHorizontalFlip(),
         ka.RandomGrayscale(),
-        ka.Resize(size=final_size)
+        # # ka.Resize(size=FINAL_SIZE)
     )
