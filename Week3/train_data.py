@@ -44,11 +44,11 @@ model = create_model_for_experiment("Sweep", num_classes=8)
 
 cfg = wandb.config
 
-LR = 0.00004037030818574088
+LR = 2.1729679390519813e-05
 batch_size = 32
-weight_decay = 0.0003625524454634211
-label_smoothing = 0.05754955518817498
-optimizer = torch.optim.Adamax(model.parameters(), lr=LR, weight_decay=weight_decay)
+weight_decay = 1.461506239963124e-05
+label_smoothing = 0.02254139921835141
+optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=weight_decay)
 
 augmentation = ka.AugmentationSequential(
         ka.RandomHorizontalFlip(p=cfg.flip),

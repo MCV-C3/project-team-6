@@ -6,4 +6,4 @@
 #SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
 #SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
 
-wandb agent mcv-team-6/C3-Week3/g5vb4edr
+wandb agent mcv-team-6/C3-Week3/8yeenlu8
