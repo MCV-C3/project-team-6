@@ -47,7 +47,7 @@ augmentation = ka.AugmentationSequential(
                           p=0.13009412985538538),
         ka.RandomAffine(degrees=0, shear=29,
                             translate=(0.3584182906605954, 0.035543949656199385),
-                            scale=(1, 1)),
+                            scale=(0.999217703073204, 0.999217703073204)),
         ka.RandomResizedCrop(size=(IMG_SIZE,IMG_SIZE), scale=(0.4382924444152586, 1.0), ratio=(1.0, 1.0), p=0.1939592095722116),
         ka.RandomGaussianBlur(kernel_size=(9, 9), sigma=(1.190437323963532, 1.190437323963532), p=0.442038986973481),
         ka.ColorJitter(brightness=1.1237698676931558,
