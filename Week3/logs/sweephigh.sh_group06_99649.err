@@ -1,0 +1,306 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 20:50:01,198 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 20:50:01,600 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:50:01,601 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.7636091706819581
+	blur: 0.8820518079074692
+	brightness: 1.2767157570846588
+	contrast: 1.034693458814362
+	crop: 0.45252390097893047
+	crop_scale: 0.2543200473905922
+	flip: 0.5506050652603917
+	gaussian_blur_kernel: 3
+	gaussian_noise_std: 2.4336847241335025
+	grey: 0.9760755337327408
+	hue: -0.09652161467642006
+	jiggle: 0.024149678631484317
+	rotate: 0.7126299387919168
+	rotation: 30
+	saturation: 1.0767637205005989
+	scale: 1.0356191616598351
+	shear: 40
+	translate_x: 0.11584965911695388
+	translate_y: 0.09535584409381316
+2026-01-10 20:50:01,604 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.7636091706819581 --blur=0.8820518079074692 --brightness=1.2767157570846588 --contrast=1.034693458814362 --crop=0.45252390097893047 --crop_scale=0.2543200473905922 --flip=0.5506050652603917 --gaussian_blur_kernel=3 --gaussian_noise_std=2.4336847241335025 --grey=0.9760755337327408 --hue=-0.09652161467642006 --jiggle=0.024149678631484317 --rotate=0.7126299387919168 --rotation=30 --saturation=1.0767637205005989 --scale=1.0356191616598351 --shear=40 --translate_x=0.11584965911695388 --translate_y=0.09535584409381316
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:50:06,611 - wandb.wandb_agent - INFO - Running runs: ['i7980ve7']
+wandb: setting up run i7980ve7
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205005-i7980ve7
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/i7980ve7
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train_data.py", line 61, in <module>
+    ka.ColorJitter(brightness=cfg.brightness,
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/_2d/intensity/color_jitter.py", line 105, in __init__
+    self._param_generator = rg.ColorJitterGenerator(brightness, contrast, saturation, hue)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 34, in __call__
+    obj.__post_init__()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 48, in __post_init__
+    self.set_rng_device_and_dtype()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 64, in set_rng_device_and_dtype
+    self.make_samplers(device, dtype)
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/_2d/color_jitter.py", line 86, in make_samplers
+    hue: Tensor = _range_bound(self.hue, "hue", bounds=(-0.5, 0.5), device=device, dtype=dtype)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/utils/param_validation.py", line 53, in _range_bound
+    raise ValueError(f"If {name} is a single number, it must be non negative. Got {factor}.")
+ValueError: If hue is a single number, it must be non negative. Got -0.09652161598205566.
+2026-01-10 20:50:11,758 - wandb.wandb_agent - INFO - Cleaning up finished run: i7980ve7
+2026-01-10 20:50:12,245 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:50:12,245 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.1044652082501818
+	blur: 0.8117648264478038
+	brightness: 0.7931435719050131
+	contrast: 1.1890717604248509
+	crop: 0.9743546556231952
+	crop_scale: 0.5585045260938571
+	flip: 0.1044295375810722
+	gaussian_blur_kernel: 3
+	gaussian_noise_std: 0.6822795155834035
+	grey: 0.6862498524994798
+	hue: -0.06591890549345343
+	jiggle: 0.31898675636735463
+	rotate: 0.1414624783233619
+	rotation: 1
+	saturation: 1.1923087848421146
+	scale: 0.8158805988737442
+	shear: 38
+	translate_x: 0.015985038751910485
+	translate_y: 0.3710882084958704
+2026-01-10 20:50:12,249 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.1044652082501818 --blur=0.8117648264478038 --brightness=0.7931435719050131 --contrast=1.1890717604248509 --crop=0.9743546556231952 --crop_scale=0.5585045260938571 --flip=0.1044295375810722 --gaussian_blur_kernel=3 --gaussian_noise_std=0.6822795155834035 --grey=0.6862498524994798 --hue=-0.06591890549345343 --jiggle=0.31898675636735463 --rotate=0.1414624783233619 --rotation=1 --saturation=1.1923087848421146 --scale=0.8158805988737442 --shear=38 --translate_x=0.015985038751910485 --translate_y=0.3710882084958704
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:50:17,255 - wandb.wandb_agent - INFO - Running runs: ['51afabm4']
+wandb: setting up run 51afabm4
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205016-51afabm4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/51afabm4
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train_data.py", line 61, in <module>
+    ka.ColorJitter(brightness=cfg.brightness,
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/_2d/intensity/color_jitter.py", line 105, in __init__
+    self._param_generator = rg.ColorJitterGenerator(brightness, contrast, saturation, hue)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 34, in __call__
+    obj.__post_init__()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 48, in __post_init__
+    self.set_rng_device_and_dtype()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 64, in set_rng_device_and_dtype
+    self.make_samplers(device, dtype)
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/_2d/color_jitter.py", line 86, in make_samplers
+    hue: Tensor = _range_bound(self.hue, "hue", bounds=(-0.5, 0.5), device=device, dtype=dtype)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/utils/param_validation.py", line 53, in _range_bound
+    raise ValueError(f"If {name} is a single number, it must be non negative. Got {factor}.")
+ValueError: If hue is a single number, it must be non negative. Got -0.06591890752315521.
+2026-01-10 20:50:22,416 - wandb.wandb_agent - INFO - Cleaning up finished run: 51afabm4
+2026-01-10 20:50:22,724 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:50:22,724 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.6449888354020588
+	blur: 0.526212654524153
+	brightness: 1.3879934137499246
+	contrast: 0.6871276882168735
+	crop: 0.0011425640697733108
+	crop_scale: 0.5487235350846699
+	flip: 0.3967471698749465
+	gaussian_blur_kernel: 5
+	gaussian_noise_std: 2.2992261053046548
+	grey: 0.7770381774799012
+	hue: 0.004270990290830917
+	jiggle: 0.9101074060903313
+	rotate: 0.8416616419408517
+	rotation: 25
+	saturation: 0.8827292486362872
+	scale: 1.0232900520554844
+	shear: 1
+	translate_x: 0.20109734181739347
+	translate_y: 0.03002626925125025
+2026-01-10 20:50:22,727 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.6449888354020588 --blur=0.526212654524153 --brightness=1.3879934137499246 --contrast=0.6871276882168735 --crop=0.0011425640697733108 --crop_scale=0.5487235350846699 --flip=0.3967471698749465 --gaussian_blur_kernel=5 --gaussian_noise_std=2.2992261053046548 --grey=0.7770381774799012 --hue=0.004270990290830917 --jiggle=0.9101074060903313 --rotate=0.8416616419408517 --rotation=25 --saturation=0.8827292486362872 --scale=1.0232900520554844 --shear=1 --translate_x=0.20109734181739347 --translate_y=0.03002626925125025
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:50:27,734 - wandb.wandb_agent - INFO - Running runs: ['nonodxbh']
+wandb: setting up run nonodxbh
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205027-nonodxbh
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/nonodxbh
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<36:34,  4.40s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<31:06,  3.75s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<29:09,  3.52s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:14<28:06,  3.40s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<27:25,  3.32s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<27:17,  3.32s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:56,  3.28s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:27<26:44,  3.26s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:30<26:36,  3.25s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:33<26:35,  3.26s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:36<26:27,  3.25s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:40<27:27,  3.38s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:43<27:35,  3.40s/it]TRAINING THE MODEL:   3%|▎         | 14/500 [00:47<27:10,  3.35s/it]TRAINING THE MODEL:   3%|▎         | 15/500 [00:50<26:53,  3.33s/it]TRAINING THE MODEL:   3%|▎         | 16/500 [00:53<26:35,  3.30s/it]TRAINING THE MODEL:   3%|▎         | 17/500 [00:57<27:14,  3.38s/it]TRAINING THE MODEL:   4%|▎         | 18/500 [01:00<26:58,  3.36s/it]TRAINING THE MODEL:   4%|▍         | 19/500 [01:03<26:35,  3.32s/it]TRAINING THE MODEL:   4%|▍         | 20/500 [01:07<27:42,  3.46s/it]TRAINING THE MODEL:   4%|▍         | 21/500 [01:10<27:16,  3.42s/it]TRAINING THE MODEL:   4%|▍         | 22/500 [01:14<26:50,  3.37s/it]TRAINING THE MODEL:   5%|▍         | 23/500 [01:17<26:45,  3.37s/it]TRAINING THE MODEL:   5%|▍         | 24/500 [01:20<26:30,  3.34s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:24<26:11,  3.31s/it]TRAINING THE MODEL:   5%|▌         | 26/500 [01:27<25:55,  3.28s/it]TRAINING THE MODEL:   5%|▌         | 27/500 [01:30<25:40,  3.26s/it]TRAINING THE MODEL:   6%|▌         | 28/500 [01:33<25:35,  3.25s/it]TRAINING THE MODEL:   6%|▌         | 29/500 [01:36<25:37,  3.26s/it]TRAINING THE MODEL:   6%|▌         | 30/500 [01:40<26:34,  3.39s/it]TRAINING THE MODEL:   6%|▌         | 31/500 [01:43<26:10,  3.35s/it]TRAINING THE MODEL:   6%|▋         | 32/500 [01:47<25:49,  3.31s/it]TRAINING THE MODEL:   7%|▋         | 33/500 [01:50<25:31,  3.28s/it]TRAINING THE MODEL:   7%|▋         | 34/500 [01:53<25:19,  3.26s/it]TRAINING THE MODEL:   7%|▋         | 35/500 [01:56<25:09,  3.25s/it]TRAINING THE MODEL:   7%|▋         | 36/500 [02:00<25:20,  3.28s/it]TRAINING THE MODEL:   7%|▋         | 37/500 [02:03<25:07,  3.26s/it]TRAINING THE MODEL:   8%|▊         | 38/500 [02:06<24:57,  3.24s/it]TRAINING THE MODEL:   8%|▊         | 39/500 [02:09<24:46,  3.22s/it]TRAINING THE MODEL:   8%|▊         | 40/500 [02:13<26:01,  3.39s/it]TRAINING THE MODEL:   8%|▊         | 41/500 [02:16<25:49,  3.38s/it]TRAINING THE MODEL:   8%|▊         | 42/500 [02:20<25:47,  3.38s/it]TRAINING THE MODEL:   9%|▊         | 43/500 [02:23<25:28,  3.34s/it]TRAINING THE MODEL:   9%|▉         | 44/500 [02:26<25:17,  3.33s/it]TRAINING THE MODEL:   9%|▉         | 45/500 [02:29<24:58,  3.29s/it]TRAINING THE MODEL:   9%|▉         | 46/500 [02:33<24:54,  3.29s/it]TRAINING THE MODEL:   9%|▉         | 47/500 [02:36<24:46,  3.28s/it]TRAINING THE MODEL:  10%|▉         | 48/500 [02:39<24:46,  3.29s/it]TRAINING THE MODEL:  10%|▉         | 49/500 [02:43<24:43,  3.29s/it]TRAINING THE MODEL:  10%|█         | 50/500 [02:47<26:02,  3.47s/it]TRAINING THE MODEL:  10%|█         | 51/500 [02:50<25:24,  3.39s/it]TRAINING THE MODEL:  10%|█         | 52/500 [02:53<24:56,  3.34s/it]TRAINING THE MODEL:  11%|█         | 53/500 [02:56<24:49,  3.33s/it]TRAINING THE MODEL:  11%|█         | 54/500 [03:00<24:39,  3.32s/it]TRAINING THE MODEL:  11%|█         | 55/500 [03:03<24:31,  3.31s/it]TRAINING THE MODEL:  11%|█         | 56/500 [03:06<24:19,  3.29s/it]TRAINING THE MODEL:  11%|█▏        | 57/500 [03:09<24:13,  3.28s/it]TRAINING THE MODEL:  12%|█▏        | 58/500 [03:13<24:01,  3.26s/it]TRAINING THE MODEL:  12%|█▏        | 58/500 [03:16<24:55,  3.38s/it]
+wandb: updating run metadata
+wandb: uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁▁▁▁▁▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇████
+wandb:  test_accuracy ▁▂▃▄▅▆▇▇▇▇██████████████████████████████
+wandb:      test_loss ██▇▆▅▄▄▃▃▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: train_accuracy ▁▂▃▄▅▆▇▇▇▇▇▇▇▇▇▇▇▇██████████████████████
+wandb:     train_loss █▇▇▆▅▄▄▃▃▃▂▂▂▂▂▂▂▂▂▁▁▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 58
+wandb:  test_accuracy 0.93706
+wandb:      test_loss 0.32179
+wandb: train_accuracy 0.97
+wandb:     train_loss 0.25001
+wandb: 
+wandb: 🚀 View run Sweep run at: https://wandb.ai/mcv-team-6/C3-Week3/runs/nonodxbh
+wandb: ⭐️ View project at: https://wandb.ai/mcv-team-6/C3-Week3
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260110_205027-nonodxbh/logs
+2026-01-10 20:53:53,643 - wandb.wandb_agent - INFO - Cleaning up finished run: nonodxbh
+2026-01-10 20:53:54,320 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:53:54,320 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.9795457629549936
+	blur: 0.9901902342172544
+	brightness: 0.90882990042222
+	contrast: 0.9813553241442052
+	crop: 0.5840966461691508
+	crop_scale: 0.7786960831487078
+	flip: 0.7905589375669181
+	gaussian_blur_kernel: 7
+	gaussian_noise_std: 0.40914331366366896
+	grey: 0.8172439583981496
+	hue: -0.009191962271909037
+	jiggle: 0.9941050561056236
+	rotate: 0.08563809910212739
+	rotation: 11
+	saturation: 1.1853875722832885
+	scale: 1.0200675041878762
+	shear: 6
+	translate_x: 0.2504741508542261
+	translate_y: 0.17058439792327784
+2026-01-10 20:53:54,323 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.9795457629549936 --blur=0.9901902342172544 --brightness=0.90882990042222 --contrast=0.9813553241442052 --crop=0.5840966461691508 --crop_scale=0.7786960831487078 --flip=0.7905589375669181 --gaussian_blur_kernel=7 --gaussian_noise_std=0.40914331366366896 --grey=0.8172439583981496 --hue=-0.009191962271909037 --jiggle=0.9941050561056236 --rotate=0.08563809910212739 --rotation=11 --saturation=1.1853875722832885 --scale=1.0200675041878762 --shear=6 --translate_x=0.2504741508542261 --translate_y=0.17058439792327784
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+wandb: setting up run myuac4uq
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205358-myuac4uq
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/myuac4uq
+2026-01-10 20:53:59,328 - wandb.wandb_agent - INFO - Running runs: ['myuac4uq']
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train_data.py", line 61, in <module>
+    ka.ColorJitter(brightness=cfg.brightness,
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/_2d/intensity/color_jitter.py", line 105, in __init__
+    self._param_generator = rg.ColorJitterGenerator(brightness, contrast, saturation, hue)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 34, in __call__
+    obj.__post_init__()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 48, in __post_init__
+    self.set_rng_device_and_dtype()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 64, in set_rng_device_and_dtype
+    self.make_samplers(device, dtype)
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/_2d/color_jitter.py", line 86, in make_samplers
+    hue: Tensor = _range_bound(self.hue, "hue", bounds=(-0.5, 0.5), device=device, dtype=dtype)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/utils/param_validation.py", line 53, in _range_bound
+    raise ValueError(f"If {name} is a single number, it must be non negative. Got {factor}.")
+ValueError: If hue is a single number, it must be non negative. Got -0.009191961959004402.
+2026-01-10 20:54:04,469 - wandb.wandb_agent - INFO - Cleaning up finished run: myuac4uq
+2026-01-10 20:54:04,899 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:54:04,900 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.3396681545945619
+	blur: 0.3402115935012664
+	brightness: 0.6347893020746654
+	contrast: 1.2250991154599986
+	crop: 0.29023104516543585
+	crop_scale: 0.46308583404277104
+	flip: 0.4433296136630698
+	gaussian_blur_kernel: 5
+	gaussian_noise_std: 1.488299928273201
+	grey: 0.5547309821941278
+	hue: -0.01074696955584338
+	jiggle: 0.6639259374457621
+	rotate: 0.6174271788304175
+	rotation: 25
+	saturation: 0.7204576418412529
+	scale: 0.9017732568266088
+	shear: 31
+	translate_x: 0.13355289313367277
+	translate_y: 0.017253760472858072
+2026-01-10 20:54:04,903 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.3396681545945619 --blur=0.3402115935012664 --brightness=0.6347893020746654 --contrast=1.2250991154599986 --crop=0.29023104516543585 --crop_scale=0.46308583404277104 --flip=0.4433296136630698 --gaussian_blur_kernel=5 --gaussian_noise_std=1.488299928273201 --grey=0.5547309821941278 --hue=-0.01074696955584338 --jiggle=0.6639259374457621 --rotate=0.6174271788304175 --rotation=25 --saturation=0.7204576418412529 --scale=0.9017732568266088 --shear=31 --translate_x=0.13355289313367277 --translate_y=0.017253760472858072
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:54:09,910 - wandb.wandb_agent - INFO - Running runs: ['90f71hq4']
+wandb: setting up run 90f71hq4
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205409-90f71hq4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/90f71hq4
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train_data.py", line 61, in <module>
+    ka.ColorJitter(brightness=cfg.brightness,
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/_2d/intensity/color_jitter.py", line 105, in __init__
+    self._param_generator = rg.ColorJitterGenerator(brightness, contrast, saturation, hue)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 34, in __call__
+    obj.__post_init__()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 48, in __post_init__
+    self.set_rng_device_and_dtype()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 64, in set_rng_device_and_dtype
+    self.make_samplers(device, dtype)
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/_2d/color_jitter.py", line 86, in make_samplers
+    hue: Tensor = _range_bound(self.hue, "hue", bounds=(-0.5, 0.5), device=device, dtype=dtype)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/utils/param_validation.py", line 53, in _range_bound
+    raise ValueError(f"If {name} is a single number, it must be non negative. Got {factor}.")
+ValueError: If hue is a single number, it must be non negative. Got -0.01074696984142065.
+2026-01-10 20:54:15,045 - wandb.wandb_agent - INFO - Cleaning up finished run: 90f71hq4
+2026-01-10 20:54:15,306 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:54:15,307 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.9602528781248456
+	blur: 0.43617840006951614
+	brightness: 0.67556691537435
+	contrast: 1.2892218548277945
+	crop: 0.0814097489228125
+	crop_scale: 0.5321240416320228
+	flip: 0.8732018874094668
+	gaussian_blur_kernel: 3
+	gaussian_noise_std: 0.4593617486271198
+	grey: 0.2567316053044525
+	hue: 0.040128312991656645
+	jiggle: 0.11301119565792228
+	rotate: 0.20700794587089677
+	rotation: 12
+	saturation: 0.705355971511114
+	scale: 0.9938092314166338
+	shear: 22
+	translate_x: 0.1203416405192214
+	translate_y: 0.15199233856430938
+2026-01-10 20:54:15,310 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.9602528781248456 --blur=0.43617840006951614 --brightness=0.67556691537435 --contrast=1.2892218548277945 --crop=0.0814097489228125 --crop_scale=0.5321240416320228 --flip=0.8732018874094668 --gaussian_blur_kernel=3 --gaussian_noise_std=0.4593617486271198 --grey=0.2567316053044525 --hue=0.040128312991656645 --jiggle=0.11301119565792228 --rotate=0.20700794587089677 --rotation=12 --saturation=0.705355971511114 --scale=0.9938092314166338 --shear=22 --translate_x=0.1203416405192214 --translate_y=0.15199233856430938
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:54:20,317 - wandb.wandb_agent - INFO - Running runs: ['lea2o5gc']
+wandb: setting up run lea2o5gc
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205419-lea2o5gc
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/lea2o5gc
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<36:33,  4.40s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<30:43,  3.70s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<28:44,  3.47s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:13<27:43,  3.35s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<27:20,  3.31s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<27:05,  3.29s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:57,  3.28s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:27<26:54,  3.28s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:30<26:49,  3.28s/it]slurmstepd: error: *** JOB 99649 ON dcc3090 CANCELLED AT 2026-01-10T20:54:55 ***

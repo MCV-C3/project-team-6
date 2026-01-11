@@ -1,0 +1,45 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 17:41:37,995 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 17:41:38,599 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 17:41:38,600 - wandb.wandb_agent - INFO - Agent starting run with config:
+	batch_size: 128
+	label_smoothing: 0.036819099858585405
+	lr: 0.000278015532244856
+	optimizer: Adagrad
+	weight_decay: 0.00017002663299652872
+2026-01-10 17:41:38,601 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train.py --batch_size=128 --label_smoothing=0.036819099858585405 --lr=0.000278015532244856 --optimizer=Adagrad --weight_decay=0.00017002663299652872
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 17:41:43,608 - wandb.wandb_agent - INFO - Running runs: ['p7muxssl']
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_174142-p7muxssl
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/k5ns8jzl
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/p7muxssl
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 0/500 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train.py", line 91, in <module>
+    experiment(
+  File "/export/home/group06/workspace/project-team-6/Week3/pipeline.py", line 168, in experiment
+    train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/export/home/group06/workspace/project-team-6/Week3/pipeline.py", line 40, in train
+    optimizer.step()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/optimizer.py", line 484, in wrapper
+    out = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/optimizer.py", line 89, in _use_grad
+    ret = func(self, *args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/adagrad.py", line 169, in step
+    adagrad(
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/adagrad.py", line 299, in adagrad
+    func(
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/adagrad.py", line 470, in _multi_tensor_adagrad
+    torch._foreach_addcmul_(device_state_sums, device_grads, device_grads, value=1)
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
+2026-01-10 17:41:53,899 - wandb.wandb_agent - INFO - Cleaning up finished run: p7muxssl
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

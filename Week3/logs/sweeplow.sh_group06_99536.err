@@ -1,0 +1,60 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 20:02:22,974 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 20:02:23,318 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:02:23,318 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.31520340552071713
+	blur: 0.8719169255683377
+	brightness: 1.000466641418413
+	contrast: 1.1986428240978932
+	crop: 0.5933871694342422
+	crop_scale: 0.337268332240364
+	flip: 0.2690835124854606
+	gaussian_blur_kernel: 7
+	gaussian_noise_std: 1.5693659332864285
+	grey: 0.05863016308748714
+	hue: 0.068862106646533
+	jiggle: 0.5410487227688618
+	rotate: 0.6005180245815549
+	rotation: 4
+	saturation: 0.8223342509375674
+	scale: 0.8183526644469046
+	shear: 26
+	translate_x: 0.08227372237084558
+	translate_y: 0.14767002163071502
+2026-01-10 20:02:23,322 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.31520340552071713 --blur=0.8719169255683377 --brightness=1.000466641418413 --contrast=1.1986428240978932 --crop=0.5933871694342422 --crop_scale=0.337268332240364 --flip=0.2690835124854606 --gaussian_blur_kernel=7 --gaussian_noise_std=1.5693659332864285 --grey=0.05863016308748714 --hue=0.068862106646533 --jiggle=0.5410487227688618 --rotate=0.6005180245815549 --rotation=4 --saturation=0.8223342509375674 --scale=0.8183526644469046 --shear=26 --translate_x=0.08227372237084558 --translate_y=0.14767002163071502
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:02:28,328 - wandb.wandb_agent - INFO - Running runs: ['emuhm2i5']
+wandb: setting up run emuhm2i5
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_200227-emuhm2i5
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/g5vb4edr
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/emuhm2i5
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<38:38,  4.65s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<31:27,  3.79s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:11<29:08,  3.52s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:14<27:58,  3.38s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<27:20,  3.31s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<26:54,  3.27s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:35,  3.24s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:26<26:27,  3.23s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:30<26:29,  3.24s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:33<26:18,  3.22s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:36<26:14,  3.22s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:40<27:27,  3.38s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:43<27:16,  3.36s/it]TRAINING THE MODEL:   3%|▎         | 14/500 [00:46<26:52,  3.32s/it]TRAINING THE MODEL:   3%|▎         | 15/500 [00:50<26:34,  3.29s/it]TRAINING THE MODEL:   3%|▎         | 16/500 [00:53<26:24,  3.27s/it]TRAINING THE MODEL:   3%|▎         | 17/500 [00:56<26:17,  3.27s/it]TRAINING THE MODEL:   4%|▎         | 18/500 [00:59<26:08,  3.25s/it]TRAINING THE MODEL:   4%|▍         | 19/500 [01:03<26:02,  3.25s/it]TRAINING THE MODEL:   4%|▍         | 20/500 [01:06<27:23,  3.42s/it]TRAINING THE MODEL:   4%|▍         | 21/500 [01:10<26:54,  3.37s/it]TRAINING THE MODEL:   4%|▍         | 22/500 [01:13<26:40,  3.35s/it]TRAINING THE MODEL:   5%|▍         | 23/500 [01:16<26:23,  3.32s/it]TRAINING THE MODEL:   5%|▍         | 24/500 [01:20<26:20,  3.32s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:23<26:11,  3.31s/it]TRAINING THE MODEL:   5%|▌         | 26/500 [01:26<26:04,  3.30s/it]TRAINING THE MODEL:   5%|▌         | 27/500 [01:30<26:30,  3.36s/it]TRAINING THE MODEL:   6%|▌         | 28/500 [01:33<27:37,  3.51s/it]TRAINING THE MODEL:   6%|▌         | 29/500 [01:37<27:48,  3.54s/it]TRAINING THE MODEL:   6%|▌         | 30/500 [01:41<28:49,  3.68s/it]TRAINING THE MODEL:   6%|▌         | 31/500 [01:45<28:38,  3.66s/it]TRAINING THE MODEL:   6%|▋         | 32/500 [01:48<28:00,  3.59s/it]TRAINING THE MODEL:   7%|▋         | 33/500 [01:52<27:31,  3.54s/it]TRAINING THE MODEL:   7%|▋         | 34/500 [01:55<26:52,  3.46s/it]TRAINING THE MODEL:   7%|▋         | 35/500 [01:58<26:27,  3.41s/it]TRAINING THE MODEL:   7%|▋         | 36/500 [02:02<26:29,  3.43s/it]TRAINING THE MODEL:   7%|▋         | 37/500 [02:05<26:47,  3.47s/it]TRAINING THE MODEL:   8%|▊         | 38/500 [02:08<26:16,  3.41s/it]TRAINING THE MODEL:   8%|▊         | 39/500 [02:12<26:04,  3.39s/it]TRAINING THE MODEL:   8%|▊         | 40/500 [02:16<27:43,  3.62s/it]TRAINING THE MODEL:   8%|▊         | 41/500 [02:19<27:12,  3.56s/it]TRAINING THE MODEL:   8%|▊         | 42/500 [02:23<26:44,  3.50s/it]TRAINING THE MODEL:   9%|▊         | 43/500 [02:26<26:11,  3.44s/it]TRAINING THE MODEL:   9%|▉         | 44/500 [02:29<25:50,  3.40s/it]TRAINING THE MODEL:   9%|▉         | 45/500 [02:33<25:31,  3.37s/it]TRAINING THE MODEL:   9%|▉         | 46/500 [02:36<25:40,  3.39s/it]TRAINING THE MODEL:   9%|▉         | 47/500 [02:39<25:22,  3.36s/it]TRAINING THE MODEL:  10%|▉         | 48/500 [02:43<26:36,  3.53s/it]TRAINING THE MODEL:  10%|▉         | 49/500 [02:47<26:04,  3.47s/it]TRAINING THE MODEL:  10%|█         | 50/500 [02:51<27:28,  3.66s/it]TRAINING THE MODEL:  10%|█         | 51/500 [02:54<26:57,  3.60s/it]TRAINING THE MODEL:  10%|█         | 52/500 [02:57<26:10,  3.50s/it]TRAINING THE MODEL:  11%|█         | 53/500 [03:01<25:38,  3.44s/it]TRAINING THE MODEL:  11%|█         | 54/500 [03:04<25:31,  3.43s/it]TRAINING THE MODEL:  11%|█         | 55/500 [03:09<28:26,  3.83s/it]TRAINING THE MODEL:  11%|█         | 56/500 [03:12<27:12,  3.68s/it]TRAINING THE MODEL:  11%|█▏        | 57/500 [03:16<26:29,  3.59s/it]TRAINING THE MODEL:  12%|█▏        | 58/500 [03:19<25:39,  3.48s/it]TRAINING THE MODEL:  12%|█▏        | 59/500 [03:22<25:05,  3.41s/it]TRAINING THE MODEL:  12%|█▏        | 60/500 [03:26<26:12,  3.57s/it]TRAINING THE MODEL:  12%|█▏        | 61/500 [03:29<25:30,  3.49s/it]TRAINING THE MODEL:  12%|█▏        | 62/500 [03:33<24:48,  3.40s/it]TRAINING THE MODEL:  13%|█▎        | 63/500 [03:36<24:18,  3.34s/it]TRAINING THE MODEL:  13%|█▎        | 64/500 [03:39<23:56,  3.30s/it]TRAINING THE MODEL:  13%|█▎        | 65/500 [03:42<23:41,  3.27s/it]TRAINING THE MODEL:  13%|█▎        | 66/500 [03:45<23:30,  3.25s/it]TRAINING THE MODEL:  13%|█▎        | 67/500 [03:49<23:20,  3.23s/it]TRAINING THE MODEL:  14%|█▎        | 68/500 [03:52<23:22,  3.25s/it]TRAINING THE MODEL:  14%|█▍        | 69/500 [03:55<23:14,  3.24s/it]TRAINING THE MODEL:  14%|█▍        | 70/500 [03:59<24:16,  3.39s/it]TRAINING THE MODEL:  14%|█▍        | 71/500 [04:02<23:50,  3.34s/it]TRAINING THE MODEL:  14%|█▍        | 72/500 [04:05<23:33,  3.30s/it]TRAINING THE MODEL:  15%|█▍        | 73/500 [04:08<23:16,  3.27s/it]TRAINING THE MODEL:  15%|█▍        | 74/500 [04:12<23:04,  3.25s/it]TRAINING THE MODEL:  15%|█▌        | 75/500 [04:15<22:57,  3.24s/it]TRAINING THE MODEL:  15%|█▌        | 76/500 [04:18<22:50,  3.23s/it]TRAINING THE MODEL:  15%|█▌        | 77/500 [04:21<22:44,  3.23s/it]TRAINING THE MODEL:  16%|█▌        | 78/500 [04:24<22:38,  3.22s/it]TRAINING THE MODEL:  16%|█▌        | 79/500 [04:28<22:32,  3.21s/it]TRAINING THE MODEL:  16%|█▌        | 80/500 [04:31<23:52,  3.41s/it]TRAINING THE MODEL:  16%|█▌        | 81/500 [04:35<23:23,  3.35s/it]TRAINING THE MODEL:  16%|█▋        | 82/500 [04:38<23:00,  3.30s/it]TRAINING THE MODEL:  16%|█▋        | 82/500 [04:41<23:56,  3.44s/it]
+wandb: uploading history steps 78-82, summary, console lines 79-87; updating run metadata
+wandb: uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▅▅▅▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇█
+wandb:  test_accuracy ▁▃▄▅▆▇▇▇████████████████████████████████
+wandb:      test_loss █▇▆▆▅▄▃▃▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: train_accuracy ▁▂▅▆▆▆▆▇▇▇▇▇▇▇▇█▇███████████████████████
+wandb:     train_loss █▆▅▅▄▃▃▃▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 82
+wandb:  test_accuracy 0.94231
+wandb:      test_loss 0.4723
+wandb: train_accuracy 0.9825
+wandb:     train_loss 0.38607
+wandb: 
+wandb: 🚀 View run Sweep run at: https://wandb.ai/mcv-team-6/C3-Week3/runs/emuhm2i5
+wandb: ⭐️ View project at: https://wandb.ai/mcv-team-6/C3-Week3
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260110_200227-emuhm2i5/logs
+2026-01-10 20:07:16,679 - wandb.wandb_agent - INFO - Cleaning up finished run: emuhm2i5
+wandb: Terminating and syncing runs. Press ctrl-c to kill.
