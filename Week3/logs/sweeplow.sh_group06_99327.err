@@ -1,0 +1,47 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 17:07:40,146 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 17:07:40,790 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 17:07:40,790 - wandb.wandb_agent - INFO - Agent starting run with config:
+	batch_size: 64
+	label_smoothing: 0.009840895961065478
+	lr: 0.003255824706517976
+	optimizer: Nadam
+	weight_decay: 5.464705994181495e-06
+2026-01-10 17:07:40,792 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train.py --batch_size=64 --label_smoothing=0.009840895961065478 --lr=0.003255824706517976 --optimizer=Nadam --weight_decay=5.464705994181495e-06
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+wandb: setting up run ixgkkocw
+2026-01-10 17:07:45,799 - wandb.wandb_agent - INFO - Running runs: ['ixgkkocw']
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_170745-ixgkkocw
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/k5ns8jzl
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/ixgkkocw
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<36:37,  4.40s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<29:54,  3.60s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<27:42,  3.34s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:13<26:42,  3.23s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:16<26:38,  3.23s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:19<26:29,  3.22s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:18,  3.20s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:26<26:16,  3.20s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:29<26:27,  3.23s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:32<26:19,  3.22s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:36<26:12,  3.22s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:39<26:21,  3.24s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:42<26:41,  3.29s/it]TRAINING THE MODEL:   3%|▎         | 14/500 [00:46<26:53,  3.32s/it]TRAINING THE MODEL:   3%|▎         | 15/500 [00:49<26:53,  3.33s/it]TRAINING THE MODEL:   3%|▎         | 16/500 [00:52<26:34,  3.29s/it]TRAINING THE MODEL:   3%|▎         | 17/500 [00:55<26:20,  3.27s/it]TRAINING THE MODEL:   4%|▎         | 18/500 [00:59<26:09,  3.26s/it]TRAINING THE MODEL:   4%|▍         | 19/500 [01:02<26:57,  3.36s/it]TRAINING THE MODEL:   4%|▍         | 20/500 [01:06<27:57,  3.49s/it]TRAINING THE MODEL:   4%|▍         | 21/500 [01:10<28:08,  3.52s/it]TRAINING THE MODEL:   4%|▍         | 22/500 [01:13<27:19,  3.43s/it]TRAINING THE MODEL:   5%|▍         | 23/500 [01:16<26:44,  3.36s/it]TRAINING THE MODEL:   5%|▍         | 24/500 [01:19<26:47,  3.38s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:23<27:00,  3.41s/it]TRAINING THE MODEL:   5%|▌         | 26/500 [01:26<26:52,  3.40s/it]TRAINING THE MODEL:   5%|▌         | 27/500 [01:30<26:21,  3.34s/it]TRAINING THE MODEL:   6%|▌         | 28/500 [01:33<26:01,  3.31s/it]TRAINING THE MODEL:   6%|▌         | 29/500 [01:36<25:48,  3.29s/it]TRAINING THE MODEL:   6%|▌         | 29/500 [01:40<27:09,  3.46s/it]
+wandb: updating run metadata
+wandb: uploading config.yaml
+wandb: uploading console lines 4-36
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁▁▁▂▂▂▂▃▃▃▃▄▄▄▄▅▅▅▅▆▆▆▆▇▇▇▇███
+wandb:  test_accuracy ▁▂▂▅▅▂▂▆▅▆▆▆▃▇█▆▇▃▇▃▅█▆▇▄▆▇▇▆▇
+wandb:      test_loss █▄▄▂▂▆▆▁▂▁▁▁▃▂▁▂▂▃▁▃▂▁▂▁▂▂▁▁▂▁
+wandb: train_accuracy ▁▁▅▄▅▆▆▅▆▆▇▇▇▆▇▇▇▇▆█▇▇█▇█████▇
+wandb:     train_loss ██▄▅▄▃▃▄▂▃▂▂▂▄▁▂▁▂▂▁▂▂▁▂▁▁▁▁▁▂
+wandb: 
+wandb: Run summary:
+wandb:          epoch 29
+wandb:  test_accuracy 0.70935
+wandb:      test_loss 1.06579
+wandb: train_accuracy 0.88
+wandb:     train_loss 0.43456
+wandb: 
+wandb: 🚀 View run Sweep run at: https://wandb.ai/mcv-team-6/C3-Week3/runs/ixgkkocw
+wandb: ⭐️ View project at: https://wandb.ai/mcv-team-6/C3-Week3
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260110_170745-ixgkkocw/logs
+2026-01-10 17:09:33,894 - wandb.wandb_agent - INFO - Cleaning up finished run: ixgkkocw
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

@@ -1,0 +1,74 @@
+Using GPU 0: NVIDIA GeForce RTX 3090
+Epoch 1/500 - Train Loss: 2.0333, Train Accuracy: 0.1900, Test Loss: 2.0108, Test Accuracy: 0.2456
+Epoch 2/500 - Train Loss: 1.8246, Train Accuracy: 0.3300, Test Loss: 1.7626, Test Accuracy: 0.4344
+Epoch 3/500 - Train Loss: 1.6303, Train Accuracy: 0.4950, Test Loss: 1.5276, Test Accuracy: 0.6202
+Epoch 4/500 - Train Loss: 1.4564, Train Accuracy: 0.6575, Test Loss: 1.3239, Test Accuracy: 0.7303
+Epoch 5/500 - Train Loss: 1.3072, Train Accuracy: 0.7225, Test Loss: 1.1502, Test Accuracy: 0.7806
+Epoch 6/500 - Train Loss: 1.1556, Train Accuracy: 0.7950, Test Loss: 1.0134, Test Accuracy: 0.8291
+Epoch 7/500 - Train Loss: 1.0263, Train Accuracy: 0.8450, Test Loss: 0.8805, Test Accuracy: 0.8575
+Epoch 8/500 - Train Loss: 0.9054, Train Accuracy: 0.8625, Test Loss: 0.7706, Test Accuracy: 0.8750
+Epoch 9/500 - Train Loss: 0.8614, Train Accuracy: 0.8525, Test Loss: 0.6891, Test Accuracy: 0.8942
+Epoch 10/500 - Train Loss: 0.7610, Train Accuracy: 0.8700, Test Loss: 0.6121, Test Accuracy: 0.8955
+Epoch 11/500 - Train Loss: 0.7075, Train Accuracy: 0.8775, Test Loss: 0.5457, Test Accuracy: 0.9043
+Epoch 12/500 - Train Loss: 0.6259, Train Accuracy: 0.8950, Test Loss: 0.4906, Test Accuracy: 0.9174
+Epoch 13/500 - Train Loss: 0.5743, Train Accuracy: 0.9025, Test Loss: 0.4559, Test Accuracy: 0.9240
+Epoch 14/500 - Train Loss: 0.5073, Train Accuracy: 0.9400, Test Loss: 0.4237, Test Accuracy: 0.9274
+Epoch 15/500 - Train Loss: 0.5021, Train Accuracy: 0.9300, Test Loss: 0.3947, Test Accuracy: 0.9349
+Epoch 16/500 - Train Loss: 0.4822, Train Accuracy: 0.9175, Test Loss: 0.3812, Test Accuracy: 0.9349
+Epoch 17/500 - Train Loss: 0.4287, Train Accuracy: 0.9325, Test Loss: 0.3687, Test Accuracy: 0.9384
+Epoch 18/500 - Train Loss: 0.4226, Train Accuracy: 0.9575, Test Loss: 0.3565, Test Accuracy: 0.9388
+Epoch 19/500 - Train Loss: 0.3679, Train Accuracy: 0.9525, Test Loss: 0.3455, Test Accuracy: 0.9423
+Epoch 20/500 - Train Loss: 0.4018, Train Accuracy: 0.9475, Test Loss: 0.3353, Test Accuracy: 0.9406
+Epoch 21/500 - Train Loss: 0.3717, Train Accuracy: 0.9550, Test Loss: 0.3346, Test Accuracy: 0.9401
+Epoch 22/500 - Train Loss: 0.3456, Train Accuracy: 0.9525, Test Loss: 0.3211, Test Accuracy: 0.9462
+Epoch 23/500 - Train Loss: 0.3447, Train Accuracy: 0.9525, Test Loss: 0.3157, Test Accuracy: 0.9480
+Epoch 24/500 - Train Loss: 0.3321, Train Accuracy: 0.9625, Test Loss: 0.3071, Test Accuracy: 0.9462
+Epoch 25/500 - Train Loss: 0.3259, Train Accuracy: 0.9525, Test Loss: 0.3131, Test Accuracy: 0.9423
+Epoch 26/500 - Train Loss: 0.3180, Train Accuracy: 0.9525, Test Loss: 0.3127, Test Accuracy: 0.9441
+Epoch 27/500 - Train Loss: 0.2980, Train Accuracy: 0.9625, Test Loss: 0.3149, Test Accuracy: 0.9406
+Epoch 28/500 - Train Loss: 0.2935, Train Accuracy: 0.9650, Test Loss: 0.3128, Test Accuracy: 0.9432
+Epoch 29/500 - Train Loss: 0.3134, Train Accuracy: 0.9475, Test Loss: 0.2947, Test Accuracy: 0.9497
+Epoch 30/500 - Train Loss: 0.2753, Train Accuracy: 0.9625, Test Loss: 0.2948, Test Accuracy: 0.9480
+Epoch 31/500 - Train Loss: 0.2941, Train Accuracy: 0.9600, Test Loss: 0.3011, Test Accuracy: 0.9462
+Epoch 32/500 - Train Loss: 0.2621, Train Accuracy: 0.9725, Test Loss: 0.2969, Test Accuracy: 0.9484
+Epoch 33/500 - Train Loss: 0.2641, Train Accuracy: 0.9700, Test Loss: 0.2938, Test Accuracy: 0.9471
+Epoch 34/500 - Train Loss: 0.2704, Train Accuracy: 0.9750, Test Loss: 0.2909, Test Accuracy: 0.9458
+Epoch 35/500 - Train Loss: 0.2372, Train Accuracy: 0.9750, Test Loss: 0.2901, Test Accuracy: 0.9502
+Epoch 36/500 - Train Loss: 0.2491, Train Accuracy: 0.9700, Test Loss: 0.2891, Test Accuracy: 0.9497
+Epoch 37/500 - Train Loss: 0.2564, Train Accuracy: 0.9625, Test Loss: 0.2835, Test Accuracy: 0.9502
+Epoch 38/500 - Train Loss: 0.2416, Train Accuracy: 0.9750, Test Loss: 0.2825, Test Accuracy: 0.9480
+Epoch 39/500 - Train Loss: 0.2438, Train Accuracy: 0.9750, Test Loss: 0.2835, Test Accuracy: 0.9493
+Epoch 40/500 - Train Loss: 0.2217, Train Accuracy: 0.9775, Test Loss: 0.2931, Test Accuracy: 0.9445
+Epoch 41/500 - Train Loss: 0.2347, Train Accuracy: 0.9850, Test Loss: 0.2937, Test Accuracy: 0.9454
+Epoch 42/500 - Train Loss: 0.2282, Train Accuracy: 0.9800, Test Loss: 0.2921, Test Accuracy: 0.9436
+Epoch 43/500 - Train Loss: 0.2323, Train Accuracy: 0.9775, Test Loss: 0.2934, Test Accuracy: 0.9406
+Epoch 44/500 - Train Loss: 0.2153, Train Accuracy: 0.9825, Test Loss: 0.2970, Test Accuracy: 0.9462
+Epoch 45/500 - Train Loss: 0.2095, Train Accuracy: 0.9900, Test Loss: 0.2852, Test Accuracy: 0.9484
+Epoch 46/500 - Train Loss: 0.2120, Train Accuracy: 0.9875, Test Loss: 0.2845, Test Accuracy: 0.9454
+Epoch 47/500 - Train Loss: 0.2171, Train Accuracy: 0.9800, Test Loss: 0.2943, Test Accuracy: 0.9419
+Epoch 48/500 - Train Loss: 0.2121, Train Accuracy: 0.9850, Test Loss: 0.2843, Test Accuracy: 0.9458
+Epoch 49/500 - Train Loss: 0.2097, Train Accuracy: 0.9875, Test Loss: 0.2811, Test Accuracy: 0.9480
+Epoch 50/500 - Train Loss: 0.1932, Train Accuracy: 0.9875, Test Loss: 0.2829, Test Accuracy: 0.9458
+Epoch 51/500 - Train Loss: 0.2079, Train Accuracy: 0.9775, Test Loss: 0.2806, Test Accuracy: 0.9467
+Epoch 52/500 - Train Loss: 0.2121, Train Accuracy: 0.9800, Test Loss: 0.2791, Test Accuracy: 0.9506
+Epoch 53/500 - Train Loss: 0.2043, Train Accuracy: 0.9850, Test Loss: 0.2877, Test Accuracy: 0.9462
+Epoch 54/500 - Train Loss: 0.2063, Train Accuracy: 0.9750, Test Loss: 0.2882, Test Accuracy: 0.9436
+Epoch 55/500 - Train Loss: 0.1850, Train Accuracy: 0.9900, Test Loss: 0.2992, Test Accuracy: 0.9379
+Epoch 56/500 - Train Loss: 0.1868, Train Accuracy: 0.9975, Test Loss: 0.2873, Test Accuracy: 0.9462
+Epoch 57/500 - Train Loss: 0.1781, Train Accuracy: 0.9975, Test Loss: 0.2922, Test Accuracy: 0.9445
+Epoch 58/500 - Train Loss: 0.1946, Train Accuracy: 0.9825, Test Loss: 0.2875, Test Accuracy: 0.9476
+Epoch 59/500 - Train Loss: 0.2063, Train Accuracy: 0.9750, Test Loss: 0.3043, Test Accuracy: 0.9379
+Epoch 60/500 - Train Loss: 0.1953, Train Accuracy: 0.9850, Test Loss: 0.2972, Test Accuracy: 0.9423
+Epoch 61/500 - Train Loss: 0.1835, Train Accuracy: 0.9850, Test Loss: 0.2910, Test Accuracy: 0.9436
+Epoch 62/500 - Train Loss: 0.1891, Train Accuracy: 0.9850, Test Loss: 0.2967, Test Accuracy: 0.9419
+Epoch 63/500 - Train Loss: 0.2039, Train Accuracy: 0.9800, Test Loss: 0.3024, Test Accuracy: 0.9397
+Epoch 64/500 - Train Loss: 0.1847, Train Accuracy: 0.9900, Test Loss: 0.3153, Test Accuracy: 0.9301
+Epoch 65/500 - Train Loss: 0.2045, Train Accuracy: 0.9800, Test Loss: 0.3145, Test Accuracy: 0.9353
+Epoch 66/500 - Train Loss: 0.1766, Train Accuracy: 0.9950, Test Loss: 0.3098, Test Accuracy: 0.9353
+Epoch 67/500 - Train Loss: 0.1907, Train Accuracy: 0.9875, Test Loss: 0.3047, Test Accuracy: 0.9366
+
+Early stopping triggered at epoch 67
+Best test loss: 0.2791
+Best test accuracy: 0.9506
+Plot saved as trained_models/Sweep_data run/metrics/loss.png
+Plot saved as trained_models/Sweep_data run/metrics/metrics.png

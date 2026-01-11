@@ -1,0 +1,1 @@
+Best model w=512 d=5            zuocr27r

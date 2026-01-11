@@ -1,0 +1,45 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 17:04:17,639 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 17:04:18,219 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 17:04:18,219 - wandb.wandb_agent - INFO - Agent starting run with config:
+	batch_size: 32
+	label_smoothing: 0.05163429295562268
+	lr: 0.004910175715422517
+	optimizer: AdamW
+	weight_decay: 3.3769461030018674e-05
+2026-01-10 17:04:18,221 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train.py --batch_size=32 --label_smoothing=0.05163429295562268 --lr=0.004910175715422517 --optimizer=AdamW --weight_decay=3.3769461030018674e-05
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 17:04:23,227 - wandb.wandb_agent - INFO - Running runs: ['p2slywvw']
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_170422-p2slywvw
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/k5ns8jzl
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/p2slywvw
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<37:00,  4.45s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<30:43,  3.70s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<28:39,  3.46s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:14<28:07,  3.40s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<28:07,  3.41s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<27:41,  3.36s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:24<27:29,  3.35s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:27<27:34,  3.36s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:30<27:26,  3.35s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:34<27:52,  3.41s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:37<27:38,  3.39s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:41<27:44,  3.41s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:44<27:52,  3.43s/it]TRAINING THE MODEL:   3%|▎         | 14/500 [00:48<28:15,  3.49s/it]TRAINING THE MODEL:   3%|▎         | 15/500 [00:52<29:10,  3.61s/it]TRAINING THE MODEL:   3%|▎         | 16/500 [00:55<29:02,  3.60s/it]TRAINING THE MODEL:   3%|▎         | 17/500 [00:59<28:37,  3.56s/it]TRAINING THE MODEL:   4%|▎         | 18/500 [01:02<28:04,  3.50s/it]TRAINING THE MODEL:   4%|▍         | 19/500 [01:06<28:12,  3.52s/it]TRAINING THE MODEL:   4%|▍         | 20/500 [01:10<29:15,  3.66s/it]TRAINING THE MODEL:   4%|▍         | 21/500 [01:13<29:22,  3.68s/it]TRAINING THE MODEL:   4%|▍         | 22/500 [01:17<28:42,  3.60s/it]TRAINING THE MODEL:   5%|▍         | 23/500 [01:20<28:10,  3.54s/it]TRAINING THE MODEL:   5%|▍         | 24/500 [01:24<27:49,  3.51s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:27<28:00,  3.54s/it]TRAINING THE MODEL:   5%|▌         | 26/500 [01:31<27:32,  3.49s/it]TRAINING THE MODEL:   5%|▌         | 27/500 [01:34<27:30,  3.49s/it]TRAINING THE MODEL:   6%|▌         | 28/500 [01:38<27:31,  3.50s/it]TRAINING THE MODEL:   6%|▌         | 29/500 [01:41<27:21,  3.49s/it]TRAINING THE MODEL:   6%|▌         | 30/500 [01:45<28:31,  3.64s/it]TRAINING THE MODEL:   6%|▌         | 31/500 [01:48<27:51,  3.56s/it]TRAINING THE MODEL:   6%|▋         | 32/500 [01:52<28:09,  3.61s/it]TRAINING THE MODEL:   7%|▋         | 33/500 [01:56<27:51,  3.58s/it]TRAINING THE MODEL:   7%|▋         | 34/500 [01:59<27:50,  3.59s/it]TRAINING THE MODEL:   7%|▋         | 35/500 [02:03<27:14,  3.52s/it]TRAINING THE MODEL:   7%|▋         | 36/500 [02:06<27:20,  3.54s/it]TRAINING THE MODEL:   7%|▋         | 37/500 [02:10<27:39,  3.58s/it]TRAINING THE MODEL:   8%|▊         | 38/500 [02:14<27:42,  3.60s/it]TRAINING THE MODEL:   8%|▊         | 39/500 [02:17<27:05,  3.53s/it]TRAINING THE MODEL:   8%|▊         | 40/500 [02:21<27:57,  3.65s/it]TRAINING THE MODEL:   8%|▊         | 41/500 [02:24<27:48,  3.64s/it]TRAINING THE MODEL:   8%|▊         | 42/500 [02:28<27:38,  3.62s/it]TRAINING THE MODEL:   9%|▊         | 43/500 [02:32<28:00,  3.68s/it]TRAINING THE MODEL:   9%|▉         | 44/500 [02:35<27:52,  3.67s/it]TRAINING THE MODEL:   9%|▉         | 45/500 [02:39<27:03,  3.57s/it]TRAINING THE MODEL:   9%|▉         | 46/500 [02:42<26:28,  3.50s/it]TRAINING THE MODEL:   9%|▉         | 47/500 [02:45<26:00,  3.45s/it]TRAINING THE MODEL:  10%|▉         | 48/500 [02:49<25:43,  3.42s/it]TRAINING THE MODEL:  10%|▉         | 49/500 [02:52<25:27,  3.39s/it]TRAINING THE MODEL:  10%|█         | 50/500 [02:56<26:38,  3.55s/it]TRAINING THE MODEL:  10%|█         | 51/500 [03:00<26:31,  3.55s/it]TRAINING THE MODEL:  10%|█         | 51/500 [03:03<26:59,  3.61s/it]
+wandb: updating run metadata
+wandb: uploading config.yaml
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇███
+wandb:  test_accuracy ▁▁▄▄▄▄▃▅▅▃▆▆▆▆▂▆▆▆▇█▆██▇▇▇▇▇█▇▇▆▇█▆█▇▇▇█
+wandb:      test_loss █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: train_accuracy ▁▂▃▃▄▄▄▄▅▅▆▆▆▆▆▇▆▇▇▆▇▇▇▇▇▇▇▇▇▇█▇▇▇██████
+wandb:     train_loss █▅▅▄▄▅▄▃▃▃▃▃▃▃▃▂▂▂▂▂▂▂▂▂▂▂▂▁▁▂▁▁▂▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 51
+wandb:  test_accuracy 0.79065
+wandb:      test_loss 0.90693
+wandb: train_accuracy 0.8425
+wandb:     train_loss 0.66
+wandb: 
+wandb: 🚀 View run Sweep run at: https://wandb.ai/mcv-team-6/C3-Week3/runs/p2slywvw
+wandb: ⭐️ View project at: https://wandb.ai/mcv-team-6/C3-Week3
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260110_170422-p2slywvw/logs
+2026-01-10 17:07:33,755 - wandb.wandb_agent - INFO - Cleaning up finished run: p2slywvw
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

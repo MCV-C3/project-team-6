@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/p3rzival/miniconda3/envs/c3/lib/python3.11/site-packages/wandb/sdk/wandb_config.py", line 165, in __getattr__
+    return self.__getitem__(key)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/p3rzival/miniconda3/envs/c3/lib/python3.11/site-packages/wandb/sdk/wandb_config.py", line 130, in __getitem__
+    return self._items[key]
+           ~~~~~~~~~~~^^^^^
+KeyError: 'lr'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/p3rzival/MCV/project-team-6/Week3/train.py", line 36, in <module>
+    LR = cfg.lr
+         ^^^^^^
+  File "/home/p3rzival/miniconda3/envs/c3/lib/python3.11/site-packages/wandb/sdk/wandb_config.py", line 167, in __getattr__
+    raise AttributeError(
+AttributeError: <class 'wandb.sdk.wandb_config.Config'> object has no attribute 'lr'

@@ -1,0 +1,46 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 17:19:16,269 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 17:19:16,847 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 17:19:16,847 - wandb.wandb_agent - INFO - Agent starting run with config:
+	batch_size: 32
+	label_smoothing: 0.003067199906811058
+	lr: 0.0007515562110366412
+	optimizer: Adamax
+	weight_decay: 6.391097520958456e-06
+2026-01-10 17:19:16,849 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train.py --batch_size=32 --label_smoothing=0.003067199906811058 --lr=0.0007515562110366412 --optimizer=Adamax --weight_decay=6.391097520958456e-06
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+wandb: setting up run v2fodpmv
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_171920-v2fodpmv
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/k5ns8jzl
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/v2fodpmv
+2026-01-10 17:19:21,854 - wandb.wandb_agent - INFO - Running runs: ['v2fodpmv']
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<38:43,  4.66s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<31:22,  3.78s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<28:57,  3.50s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:14<27:48,  3.36s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<27:10,  3.29s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<26:46,  3.25s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:29,  3.22s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:26<26:20,  3.21s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:30<26:12,  3.20s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:33<26:06,  3.20s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:36<25:58,  3.19s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:39<25:59,  3.20s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:42<25:50,  3.18s/it]TRAINING THE MODEL:   3%|▎         | 14/500 [00:45<25:47,  3.18s/it]TRAINING THE MODEL:   3%|▎         | 15/500 [00:49<25:43,  3.18s/it]TRAINING THE MODEL:   3%|▎         | 16/500 [00:52<25:42,  3.19s/it]TRAINING THE MODEL:   3%|▎         | 17/500 [00:55<25:38,  3.19s/it]TRAINING THE MODEL:   4%|▎         | 18/500 [00:58<25:36,  3.19s/it]TRAINING THE MODEL:   4%|▍         | 19/500 [01:01<25:30,  3.18s/it]TRAINING THE MODEL:   4%|▍         | 20/500 [01:05<26:33,  3.32s/it]TRAINING THE MODEL:   4%|▍         | 21/500 [01:08<26:10,  3.28s/it]TRAINING THE MODEL:   4%|▍         | 22/500 [01:11<25:52,  3.25s/it]TRAINING THE MODEL:   5%|▍         | 23/500 [01:15<25:41,  3.23s/it]TRAINING THE MODEL:   5%|▍         | 24/500 [01:18<25:39,  3.23s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:21<25:36,  3.23s/it]TRAINING THE MODEL:   5%|▌         | 26/500 [01:24<25:35,  3.24s/it]TRAINING THE MODEL:   5%|▌         | 26/500 [01:28<26:44,  3.38s/it]
+wandb: updating run metadata
+wandb: uploading console lines 3-33
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁▁▂▂▂▂▃▃▃▃▄▄▄▅▅▅▅▆▆▆▆▇▇▇▇██
+wandb:  test_accuracy ▁▇▇██▇██████▇▆▇████▇▇▇██▇██
+wandb:      test_loss █▂▂▁▁▂▁▁▁▁▁▁▁▃▂▁▁▁▁▁▁▁▁▁▂▁▁
+wandb: train_accuracy ▁▆▇▇▇▇▇████████████████████
+wandb:     train_loss █▃▂▂▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 26
+wandb:  test_accuracy 0.93575
+wandb:      test_loss 0.2433
+wandb: train_accuracy 0.99
+wandb:     train_loss 0.05175
+wandb: 
+wandb: 🚀 View run Sweep run at: https://wandb.ai/mcv-team-6/C3-Week3/runs/v2fodpmv
+wandb: ⭐️ View project at: https://wandb.ai/mcv-team-6/C3-Week3
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260110_171920-v2fodpmv/logs
+2026-01-10 17:20:59,682 - wandb.wandb_agent - INFO - Cleaning up finished run: v2fodpmv
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

@@ -1,0 +1,37 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 20:54:01,339 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 20:54:01,637 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:54:01,638 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.6687920140090076
+	blur: 0.07138832980859666
+	brightness: 0.6879295690118157
+	contrast: 0.7341974612827247
+	crop: 0.5660600774939143
+	crop_scale: 0.636976815780399
+	flip: 0.12325474656863034
+	gaussian_blur_kernel: 9
+	gaussian_noise_std: 1.5536008970434183
+	grey: 0.32487373326453284
+	hue: 0.04906138491676576
+	jiggle: 0.07957807124172356
+	rotate: 0.45500306443282645
+	rotation: 42
+	saturation: 0.6208054937868229
+	scale: 1.071279740115625
+	shear: 9
+	translate_x: 0.24301990182897
+	translate_y: 0.2310309405841929
+2026-01-10 20:54:01,642 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.6687920140090076 --blur=0.07138832980859666 --brightness=0.6879295690118157 --contrast=0.7341974612827247 --crop=0.5660600774939143 --crop_scale=0.636976815780399 --flip=0.12325474656863034 --gaussian_blur_kernel=9 --gaussian_noise_std=1.5536008970434183 --grey=0.32487373326453284 --hue=0.04906138491676576 --jiggle=0.07957807124172356 --rotate=0.45500306443282645 --rotation=42 --saturation=0.6208054937868229 --scale=1.071279740115625 --shear=9 --translate_x=0.24301990182897 --translate_y=0.2310309405841929
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:54:06,648 - wandb.wandb_agent - INFO - Running runs: ['posfism2']
+wandb: setting up run posfism2
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_205405-posfism2
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/posfism2
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<37:20,  4.49s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<30:55,  3.73s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<28:46,  3.47s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:14<27:43,  3.35s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<27:07,  3.29s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<26:48,  3.26s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:37,  3.24s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:26<26:22,  3.22s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:29<26:15,  3.21s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:33<26:10,  3.21s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:36<26:08,  3.21s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:39<26:09,  3.22s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:42<26:08,  3.22s/it]slurmstepd: error: *** JOB 99658 ON dcc3090 CANCELLED AT 2026-01-10T20:54:55 ***

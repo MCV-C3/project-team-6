@@ -1,0 +1,56 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 20:01:13,832 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 20:01:14,155 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:01:14,155 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.15250784043777754
+	blur: 0.35662580934071486
+	brightness: 0.9990524915234936
+	contrast: 0.8051918096661614
+	crop: 0.1816779826756768
+	crop_scale: 0.5643889752731096
+	flip: 0.6446644573476107
+	gaussian_blur_kernel: 9
+	gaussian_noise_std: 0.34027114710247197
+	grey: 0.1553743955726864
+	hue: -0.08182033872942991
+	jiggle: 0.4942473656724742
+	rotate: 0.7339426760290149
+	rotation: 6
+	saturation: 0.6141083815109263
+	scale: 0.9783542197880114
+	shear: 17
+	translate_x: 0.3789108808840479
+	translate_y: 0.20048792615831276
+2026-01-10 20:01:14,159 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.15250784043777754 --blur=0.35662580934071486 --brightness=0.9990524915234936 --contrast=0.8051918096661614 --crop=0.1816779826756768 --crop_scale=0.5643889752731096 --flip=0.6446644573476107 --gaussian_blur_kernel=9 --gaussian_noise_std=0.34027114710247197 --grey=0.1553743955726864 --hue=-0.08182033872942991 --jiggle=0.4942473656724742 --rotate=0.7339426760290149 --rotation=6 --saturation=0.6141083815109263 --scale=0.9783542197880114 --shear=17 --translate_x=0.3789108808840479 --translate_y=0.20048792615831276
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 20:01:19,166 - wandb.wandb_agent - INFO - Running runs: ['olkiw0jq']
+wandb: setting up run olkiw0jq
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_200118-olkiw0jq
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/g5vb4edr
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/olkiw0jq
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train_data.py", line 61, in <module>
+    ka.ColorJitter(brightness=cfg.brightness,
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/_2d/intensity/color_jitter.py", line 105, in __init__
+    self._param_generator = rg.ColorJitterGenerator(brightness, contrast, saturation, hue)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 34, in __call__
+    obj.__post_init__()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 48, in __post_init__
+    self.set_rng_device_and_dtype()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 64, in set_rng_device_and_dtype
+    self.make_samplers(device, dtype)
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/_2d/color_jitter.py", line 86, in make_samplers
+    hue: Tensor = _range_bound(self.hue, "hue", bounds=(-0.5, 0.5), device=device, dtype=dtype)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/utils/param_validation.py", line 53, in _range_bound
+    raise ValueError(f"If {name} is a single number, it must be non negative. Got {factor}.")
+ValueError: If hue is a single number, it must be non negative. Got -0.08182033896446228.
+2026-01-10 20:01:24,311 - wandb.wandb_agent - INFO - Cleaning up finished run: olkiw0jq
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

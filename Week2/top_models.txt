@@ -1,0 +1,517 @@
+🚀 Analyzing experiments from W&B project: mcv-team-6/C3-Week2
+📊 Using top 10 epochs for averaging
+
+📄 Reading report/first_experiments_with_augmentation.txt...
+📄 Reading report/first_experiments_witouht_augmentation.txt...
+📄 Reading report/depth_experiments_without_augmentation.txt...
+📄 Reading report/depth_experiments_with_augmentation.txt...
+📄 Reading report/experiment_best_depth_width.txt...
+📄 Reading report/experiments_d5_image_size.txt...
+📄 Reading report/experiments_w512_image_size.txt...
+📄 Reading report/experiments_patch_based_patch_size.txt...
+📄 Reading report/experiments_cool_cnns.txt...
+📄 Reading report/experiments_patch_based_descriptor_size.txt...
+
+✅ Found 51 experiments total
+
+📥 Loading Width only variation : 2048 (run: xvtvm68c)...
+   ✓ Avg top-10 test accuracy: 0.2765 (train: 0.3235, gap: 0.0470)
+   ✓ Avg top-10 test loss: 2.0442 (train: 1.9254, gap: 0.1187)
+📥 Loading Width only variation : 1024 (run: u1rt9n4y)...
+   ✓ Avg top-10 test accuracy: 0.2724 (train: 0.3167, gap: 0.0443)
+   ✓ Avg top-10 test loss: 2.0542 (train: 1.9441, gap: 0.1101)
+📥 Loading Width only variation : 512 (run: cn3s6xtu)...
+   ✓ Avg top-10 test accuracy: 0.2710 (train: 0.2945, gap: 0.0235)
+   ✓ Avg top-10 test loss: 2.0416 (train: 2.0026, gap: 0.0390)
+📥 Loading Width only variation : 256 (run: o1swfx43)...
+   ✓ Avg top-10 test accuracy: 0.2748 (train: 0.2863, gap: 0.0115)
+   ✓ Avg top-10 test loss: 2.0431 (train: 2.0264, gap: 0.0167)
+📥 Loading Width only variation : 128 (run: xlfxfbf2)...
+   ✓ Avg top-10 test accuracy: 0.2630 (train: 0.2507, gap: -0.0124)
+   ✓ Avg top-10 test loss: 2.0565 (train: 2.1054, gap: -0.0489)
+📥 Loading Width only variation : 64 (run: dugin74s)...
+   ✓ Avg top-10 test accuracy: 0.2234 (train: 0.2052, gap: -0.0182)
+   ✓ Avg top-10 test loss: 2.1339 (train: 2.1936, gap: -0.0596)
+📥 Loading Width only variation : 32 (run: ggus5s10)...
+   ✓ Avg top-10 test accuracy: 0.2445 (train: 0.2176, gap: -0.0269)
+   ✓ Avg top-10 test loss: 2.1013 (train: 2.1789, gap: -0.0775)
+📥 Loading Baseline (run: isy097iu)...
+   ✓ Avg top-10 test accuracy: 0.2717 (train: 0.2723, gap: 0.0006)
+   ✓ Avg top-10 test loss: 2.0449 (train: 2.0599, gap: -0.0150)
+📥 Loading Width only variation : 2048 (run: 1rpb33kr)...
+   ✓ Avg top-10 test accuracy: 0.2650 (train: 0.8193, gap: 0.5544)
+   ✓ Avg top-10 test loss: 2.0711 (train: 0.6052, gap: 1.4659)
+📥 Loading Width only variation : 1024 (run: i8tzerxg)...
+   ✓ Avg top-10 test accuracy: 0.2612 (train: 0.7991, gap: 0.5380)
+   ✓ Avg top-10 test loss: 2.0798 (train: 0.6841, gap: 1.3957)
+📥 Loading Width only variation : 512 (run: cigw6c8h)...
+   ✓ Avg top-10 test accuracy: 0.2652 (train: 0.7489, gap: 0.4837)
+   ✓ Avg top-10 test loss: 2.0741 (train: 0.8573, gap: 1.2168)
+📥 Loading Width only variation : 256 (run: wl2ojpph)...
+   ✓ Avg top-10 test accuracy: 0.2627 (train: 0.6953, gap: 0.4326)
+   ✓ Avg top-10 test loss: 2.0745 (train: 1.0230, gap: 1.0516)
+📥 Loading Width only variation : 128 (run: 6w9c5xea)...
+   ✓ Avg top-10 test accuracy: 0.2670 (train: 0.5670, gap: 0.3000)
+   ✓ Avg top-10 test loss: 2.0570 (train: 1.3808, gap: 0.6762)
+📥 Loading Width only variation : 64 (run: bmz0luyy)...
+   ✓ Avg top-10 test accuracy: 0.2182 (train: 0.3382, gap: 0.1201)
+   ✓ Avg top-10 test loss: 2.1226 (train: 1.8296, gap: 0.2930)
+📥 Loading Width only variation : 32 (run: b7j8fml4)...
+   ✓ Avg top-10 test accuracy: 0.2084 (train: 0.2966, gap: 0.0882)
+   ✓ Avg top-10 test loss: 2.1287 (train: 1.9092, gap: 0.2195)
+📥 Loading Baseline (run: gr9uwr6f)...
+   ✓ Avg top-10 test accuracy: 0.2604 (train: 0.7082, gap: 0.4478)
+   ✓ Avg top-10 test loss: 2.0842 (train: 0.9784, gap: 1.1058)
+📥 Loading Depth only variation : 6 (run: 1a0lg8et)...
+   ✓ Avg top-10 test accuracy: 0.2733 (train: 0.7261, gap: 0.4528)
+   ✓ Avg top-10 test loss: 2.0305 (train: 0.8279, gap: 1.2026)
+📥 Loading Depth only variation : 5 (run: c35siow3)...
+   ✓ Avg top-10 test accuracy: 0.2750 (train: 0.7804, gap: 0.5055)
+   ✓ Avg top-10 test loss: 2.0257 (train: 0.6914, gap: 1.3343)
+📥 Loading Depth only variation : 4 (run: 26m5brl0)...
+   ✓ Avg top-10 test accuracy: 0.2761 (train: 0.7884, gap: 0.5122)
+   ✓ Avg top-10 test loss: 2.0377 (train: 0.6907, gap: 1.3470)
+📥 Loading Depth only variation : 3 (run: k9wayn54)...
+   ✓ Avg top-10 test accuracy: 0.2714 (train: 0.7483, gap: 0.4769)
+   ✓ Avg top-10 test loss: 2.0451 (train: 0.8393, gap: 1.2058)
+📥 Loading Depth only variation : 2 (run: 8ha2s3iz)...
+   ✓ Avg top-10 test accuracy: 0.2625 (train: 0.7103, gap: 0.4478)
+   ✓ Avg top-10 test loss: 2.0732 (train: 0.9800, gap: 1.0932)
+📥 Loading Depth only variation : 1 (run: 829culej)...
+   ✓ Avg top-10 test accuracy: 0.2553 (train: 0.5956, gap: 0.3403)
+   ✓ Avg top-10 test loss: 2.1225 (train: 1.3166, gap: 0.8059)
+📥 Loading Depth only variation : 6 (run: yxbb09kh)...
+   ✓ Avg top-10 test accuracy: 0.2691 (train: 0.3272, gap: 0.0581)
+   ✓ Avg top-10 test loss: 2.0448 (train: 1.9124, gap: 0.1325)
+📥 Loading Depth only variation : 5 (run: 9xkg97hm)...
+   ✓ Avg top-10 test accuracy: 0.2748 (train: 0.3307, gap: 0.0559)
+   ✓ Avg top-10 test loss: 2.0420 (train: 1.9077, gap: 0.1342)
+📥 Loading Depth only variation : 4 (run: e4oe63fk)...
+   ✓ Avg top-10 test accuracy: 0.2737 (train: 0.3120, gap: 0.0383)
+   ✓ Avg top-10 test loss: 2.0424 (train: 1.9547, gap: 0.0877)
+📥 Loading Depth only variation : 3 (run: 3qlrunpy)...
+   ✓ Avg top-10 test accuracy: 0.2784 (train: 0.3250, gap: 0.0466)
+   ✓ Avg top-10 test loss: 2.0455 (train: 1.9272, gap: 0.1184)
+📥 Loading Depth only variation : 2 (run: 9b7yko47)...
+   ✓ Avg top-10 test accuracy: 0.2771 (train: 0.2906, gap: 0.0135)
+   ✓ Avg top-10 test loss: 2.0452 (train: 2.0113, gap: 0.0339)
+📥 Loading Depth only variation : 1 (run: ldgnwlvm)...
+   ✓ Avg top-10 test accuracy: 0.2687 (train: 0.2578, gap: -0.0109)
+   ✓ Avg top-10 test loss: 2.0499 (train: 2.0882, gap: -0.0383)
+📥 Loading Best model w=512 d=5 (run: zuocr27r)...
+   ✓ Avg top-10 test accuracy: 0.2646 (train: 0.3122, gap: 0.0476)
+   ✓ Avg top-10 test loss: 2.0498 (train: 1.9490, gap: 0.1009)
+📥 Loading (w=300 d=5) Imsize variation : 224x224 (run: m9zjxxo0)...
+   ✓ Avg top-10 test accuracy: 0.2718 (train: 0.3044, gap: 0.0327)
+   ✓ Avg top-10 test loss: 2.0472 (train: 1.9712, gap: 0.0759)
+📥 Loading (w=300 d=5) Imsize variation : 128x128 (run: 4itl6tay)...
+   ✓ Avg top-10 test accuracy: 0.2741 (train: 0.2892, gap: 0.0151)
+   ✓ Avg top-10 test loss: 2.0389 (train: 2.0081, gap: 0.0308)
+📥 Loading (w=300 d=5) Imsize variation : 64x64 (run: 5fsmm2r8)...
+   ✓ Avg top-10 test accuracy: 0.2823 (train: 0.3099, gap: 0.0276)
+   ✓ Avg top-10 test loss: 2.0272 (train: 1.9545, gap: 0.0728)
+📥 Loading (w=300 d=5) Imsize variation : 32x32 (run: mwvfla6j)...
+   ✓ Avg top-10 test accuracy: 0.2911 (train: 0.3096, gap: 0.0185)
+   ✓ Avg top-10 test loss: 2.0010 (train: 1.9517, gap: 0.0493)
+📥 Loading (w=300 d=5) Imsize variation : 16x16 (run: vvkwnsp8)...
+   ✓ Avg top-10 test accuracy: 0.2876 (train: 0.2898, gap: 0.0022)
+   ✓ Avg top-10 test loss: 2.0067 (train: 1.9983, gap: 0.0085)
+📥 Loading (w=512 d=2) Imsize variation : 224x224 (run: k9xqtycb)...
+   ✓ Avg top-10 test accuracy: 0.2681 (train: 0.2878, gap: 0.0197)
+   ✓ Avg top-10 test loss: 2.0467 (train: 2.0188, gap: 0.0279)
+📥 Loading (w=512 d=2) Imsize variation : 128x128 (run: 2rvjltid)...
+   ✓ Avg top-10 test accuracy: 0.2815 (train: 0.3015, gap: 0.0200)
+   ✓ Avg top-10 test loss: 2.0328 (train: 1.9838, gap: 0.0490)
+📥 Loading (w=512 d=2) Imsize variation : 64x64 (run: kt3snrik)...
+   ✓ Avg top-10 test accuracy: 0.2860 (train: 0.3335, gap: 0.0476)
+   ✓ Avg top-10 test loss: 2.0262 (train: 1.9108, gap: 0.1154)
+📥 Loading (w=512 d=2) Imsize variation : 32x32 (run: q4fses58)...
+   ✓ Avg top-10 test accuracy: 0.2881 (train: 0.3136, gap: 0.0255)
+   ✓ Avg top-10 test loss: 2.0106 (train: 1.9555, gap: 0.0551)
+📥 Loading (w=512 d=2) Imsize variation : 16x16 (run: w2qndlmd)...
+   ✓ Avg top-10 test accuracy: 0.2952 (train: 0.3105, gap: 0.0153)
+   ✓ Avg top-10 test loss: 1.9999 (train: 1.9622, gap: 0.0377)
+📥 Loading PatchModel: patch=4 non-overlap merge=mean w=512 d=2 (run: 8pe3oaru)...
+   ✓ Avg top-10 test accuracy: 0.3286 (train: 0.3108, gap: -0.0178)
+   ✓ Avg top-10 test loss: 1.8974 (train: 1.9695, gap: -0.0720)
+📥 Loading PatchModel: patch=8 non-overlap merge=mean w=512 d=2 (run: 2gub0r0e)...
+   ✓ Avg top-10 test accuracy: 0.3542 (train: 0.3330, gap: -0.0211)
+   ✓ Avg top-10 test loss: 1.8313 (train: 1.8997, gap: -0.0685)
+📥 Loading PatchModel: patch=16 non-overlap merge=mean w=512 d=2 (run: stri55ry)...
+   ✓ Avg top-10 test accuracy: 0.3795 (train: 0.3483, gap: -0.0312)
+   ✓ Avg top-10 test loss: 1.7862 (train: 1.8570, gap: -0.0708)
+📥 Loading PatchModel: patch=32 non-overlap merge=mean w=512 d=2 (run: 5n1eu3ay)...
+   ✓ Avg top-10 test accuracy: 0.3831 (train: 0.3522, gap: -0.0309)
+   ✓ Avg top-10 test loss: 1.7839 (train: 1.8473, gap: -0.0635)
+📥 Loading LeNet (run: z4tk9gzx)...
+   ✓ Avg top-10 test accuracy: 0.2882 (train: 0.2923, gap: 0.0041)
+   ✓ Avg top-10 test loss: 2.0048 (train: 2.0126, gap: -0.0078)
+📥 Loading AlexNet (run: 9n75jgtv)...
+   ✓ Avg top-10 test accuracy: 0.4769 (train: 0.7092, gap: 0.2323)
+   ✓ Avg top-10 test loss: 1.5321 (train: 0.8404, gap: 0.6917)
+📥 Loading LastLayerWidth: patch=32 non-overlap merge=mean last_w=32 d=2 (run: 075go4qv)...
+   ✓ Avg top-10 test accuracy: 0.3330 (train: 0.3014, gap: -0.0316)
+   ✓ Avg top-10 test loss: 1.9043 (train: 1.9739, gap: -0.0696)
+📥 Loading LastLayerWidth: patch=32 non-overlap merge=mean last_w=64 d=2 (run: 1eufbkhr)...
+   ✓ Avg top-10 test accuracy: 0.3458 (train: 0.3150, gap: -0.0308)
+   ✓ Avg top-10 test loss: 1.8719 (train: 1.9440, gap: -0.0721)
+📥 Loading LastLayerWidth: patch=32 non-overlap merge=mean last_w=128 d=2 (run: ex78lfny)...
+   ✓ Avg top-10 test accuracy: 0.3610 (train: 0.3310, gap: -0.0300)
+   ✓ Avg top-10 test loss: 1.8421 (train: 1.9107, gap: -0.0686)
+📥 Loading LastLayerWidth: patch=32 non-overlap merge=mean last_w=256 d=2 (run: 4ykc4ady)...
+   ✓ Avg top-10 test accuracy: 0.3719 (train: 0.3407, gap: -0.0312)
+   ✓ Avg top-10 test loss: 1.8104 (train: 1.8770, gap: -0.0666)
+📥 Loading LastLayerWidth: patch=32 non-overlap merge=mean last_w=512 d=2 (run: gepl494y)...
+   ✓ Avg top-10 test accuracy: 0.3814 (train: 0.3506, gap: -0.0308)
+   ✓ Avg top-10 test loss: 1.7881 (train: 1.8522, gap: -0.0641)
+📥 Loading LastLayerWidth: patch=32 non-overlap merge=mean last_w=1024 d=2 (run: x15vsg7e)...
+   ✓ Avg top-10 test accuracy: 0.3891 (train: 0.3594, gap: -0.0297)
+   ✓ Avg top-10 test loss: 1.7673 (train: 1.8248, gap: -0.0575)
+
+================================================================================
+📈 TOP 10 MODELS BY TEST ACCURACY
+================================================================================
+
+1. AlexNet
+   Run ID: 9n75jgtv
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.4769
+      Avg Top-10 Loss: 1.5321
+      Best Accuracy: 0.4805
+      Final Accuracy: 0.4550
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.7092
+      Avg Top-10 Loss: 0.8404
+      Final Accuracy: 0.7387
+      Final Loss: 0.7604
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): +0.2323 ⚠️ OVERFITTING
+      Loss Gap (test-train): +0.6917 ⚠️ OVERFITTING
+
+2. LastLayerWidth: patch=32 non-overlap merge=mean last_w=1024 d=2
+   Run ID: x15vsg7e
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3891
+      Avg Top-10 Loss: 1.7673
+      Best Accuracy: 0.3918
+      Final Accuracy: 0.3636
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3594
+      Avg Top-10 Loss: 1.8248
+      Final Accuracy: 0.3498
+      Final Loss: 1.8352
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0297 ✓ Good
+      Loss Gap (test-train): -0.0575 ✓ Good
+
+3. PatchModel: patch=32 non-overlap merge=mean w=512 d=2
+   Run ID: 5n1eu3ay
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3831
+      Avg Top-10 Loss: 1.7839
+      Best Accuracy: 0.3864
+      Final Accuracy: 0.3850
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3522
+      Avg Top-10 Loss: 1.8473
+      Final Accuracy: 0.3379
+      Final Loss: 1.8643
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0309 ✓ Good
+      Loss Gap (test-train): -0.0635 ✓ Good
+
+4. LastLayerWidth: patch=32 non-overlap merge=mean last_w=512 d=2
+   Run ID: gepl494y
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3814
+      Avg Top-10 Loss: 1.7881
+      Best Accuracy: 0.3855
+      Final Accuracy: 0.3836
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3506
+      Avg Top-10 Loss: 1.8522
+      Final Accuracy: 0.3398
+      Final Loss: 1.8694
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0308 ✓ Good
+      Loss Gap (test-train): -0.0641 ✓ Good
+
+5. PatchModel: patch=16 non-overlap merge=mean w=512 d=2
+   Run ID: stri55ry
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3795
+      Avg Top-10 Loss: 1.7862
+      Best Accuracy: 0.3823
+      Final Accuracy: 0.3732
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3483
+      Avg Top-10 Loss: 1.8570
+      Final Accuracy: 0.3457
+      Final Loss: 1.8559
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0312 ✓ Good
+      Loss Gap (test-train): -0.0708 ✓ Good
+
+6. LastLayerWidth: patch=32 non-overlap merge=mean last_w=256 d=2
+   Run ID: 4ykc4ady
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3719
+      Avg Top-10 Loss: 1.8104
+      Best Accuracy: 0.3755
+      Final Accuracy: 0.3614
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3407
+      Avg Top-10 Loss: 1.8770
+      Final Accuracy: 0.3361
+      Final Loss: 1.8851
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0312 ✓ Good
+      Loss Gap (test-train): -0.0666 ✓ Good
+
+7. LastLayerWidth: patch=32 non-overlap merge=mean last_w=128 d=2
+   Run ID: ex78lfny
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3610
+      Avg Top-10 Loss: 1.8421
+      Best Accuracy: 0.3668
+      Final Accuracy: 0.3568
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3310
+      Avg Top-10 Loss: 1.9107
+      Final Accuracy: 0.3268
+      Final Loss: 1.9132
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0300 ✓ Good
+      Loss Gap (test-train): -0.0686 ✓ Good
+
+8. PatchModel: patch=8 non-overlap merge=mean w=512 d=2
+   Run ID: 2gub0r0e
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3542
+      Avg Top-10 Loss: 1.8313
+      Best Accuracy: 0.3564
+      Final Accuracy: 0.3541
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3330
+      Avg Top-10 Loss: 1.8997
+      Final Accuracy: 0.3295
+      Final Loss: 1.8975
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0211 ✓ Good
+      Loss Gap (test-train): -0.0685 ✓ Good
+
+9. LastLayerWidth: patch=32 non-overlap merge=mean last_w=64 d=2
+   Run ID: 1eufbkhr
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3458
+      Avg Top-10 Loss: 1.8719
+      Best Accuracy: 0.3491
+      Final Accuracy: 0.3409
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3150
+      Avg Top-10 Loss: 1.9440
+      Final Accuracy: 0.3107
+      Final Loss: 1.9513
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0308 ✓ Good
+      Loss Gap (test-train): -0.0721 ✓ Good
+
+10. LastLayerWidth: patch=32 non-overlap merge=mean last_w=32 d=2
+   Run ID: 075go4qv
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Accuracy: 0.3330
+      Avg Top-10 Loss: 1.9043
+      Best Accuracy: 0.3359
+      Final Accuracy: 0.3277
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3014
+      Avg Top-10 Loss: 1.9739
+      Final Accuracy: 0.2954
+      Final Loss: 1.9723
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0316 ✓ Good
+      Loss Gap (test-train): -0.0696 ✓ Good
+
+================================================================================
+📉 TOP 10 MODELS BY TEST LOSS
+================================================================================
+
+1. AlexNet
+   Run ID: 9n75jgtv
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.5321
+      Avg Top-10 Accuracy: 0.4769
+      Best Loss: 1.5105
+      Final Loss: 1.9684
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.7092
+      Avg Top-10 Loss: 0.8404
+      Final Accuracy: 0.7387
+      Final Loss: 0.7604
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): +0.2323 ⚠️ OVERFITTING
+      Loss Gap (test-train): +0.6917 ⚠️ OVERFITTING
+
+2. LastLayerWidth: patch=32 non-overlap merge=mean last_w=1024 d=2
+   Run ID: x15vsg7e
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.7673
+      Avg Top-10 Accuracy: 0.3891
+      Best Loss: 1.7617
+      Final Loss: 1.7991
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3594
+      Avg Top-10 Loss: 1.8248
+      Final Accuracy: 0.3498
+      Final Loss: 1.8352
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0297 ✓ Good
+      Loss Gap (test-train): -0.0575 ✓ Good
+
+3. PatchModel: patch=32 non-overlap merge=mean w=512 d=2
+   Run ID: 5n1eu3ay
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.7839
+      Avg Top-10 Accuracy: 0.3831
+      Best Loss: 1.7786
+      Final Loss: 1.7956
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3522
+      Avg Top-10 Loss: 1.8473
+      Final Accuracy: 0.3379
+      Final Loss: 1.8643
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0309 ✓ Good
+      Loss Gap (test-train): -0.0635 ✓ Good
+
+4. PatchModel: patch=16 non-overlap merge=mean w=512 d=2
+   Run ID: stri55ry
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.7862
+      Avg Top-10 Accuracy: 0.3795
+      Best Loss: 1.7826
+      Final Loss: 1.7846
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3483
+      Avg Top-10 Loss: 1.8570
+      Final Accuracy: 0.3457
+      Final Loss: 1.8559
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0312 ✓ Good
+      Loss Gap (test-train): -0.0708 ✓ Good
+
+5. LastLayerWidth: patch=32 non-overlap merge=mean last_w=512 d=2
+   Run ID: gepl494y
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.7881
+      Avg Top-10 Accuracy: 0.3814
+      Best Loss: 1.7852
+      Final Loss: 1.8011
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3506
+      Avg Top-10 Loss: 1.8522
+      Final Accuracy: 0.3398
+      Final Loss: 1.8694
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0308 ✓ Good
+      Loss Gap (test-train): -0.0641 ✓ Good
+
+6. LastLayerWidth: patch=32 non-overlap merge=mean last_w=256 d=2
+   Run ID: 4ykc4ady
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.8104
+      Avg Top-10 Accuracy: 0.3719
+      Best Loss: 1.8058
+      Final Loss: 1.8124
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3407
+      Avg Top-10 Loss: 1.8770
+      Final Accuracy: 0.3361
+      Final Loss: 1.8851
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0312 ✓ Good
+      Loss Gap (test-train): -0.0666 ✓ Good
+
+7. PatchModel: patch=8 non-overlap merge=mean w=512 d=2
+   Run ID: 2gub0r0e
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.8313
+      Avg Top-10 Accuracy: 0.3542
+      Best Loss: 1.8271
+      Final Loss: 1.8336
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3330
+      Avg Top-10 Loss: 1.8997
+      Final Accuracy: 0.3295
+      Final Loss: 1.8975
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0211 ✓ Good
+      Loss Gap (test-train): -0.0685 ✓ Good
+
+8. LastLayerWidth: patch=32 non-overlap merge=mean last_w=128 d=2
+   Run ID: ex78lfny
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.8421
+      Avg Top-10 Accuracy: 0.3610
+      Best Loss: 1.8396
+      Final Loss: 1.8407
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3310
+      Avg Top-10 Loss: 1.9107
+      Final Accuracy: 0.3268
+      Final Loss: 1.9132
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0300 ✓ Good
+      Loss Gap (test-train): -0.0686 ✓ Good
+
+9. LastLayerWidth: patch=32 non-overlap merge=mean last_w=64 d=2
+   Run ID: 1eufbkhr
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.8719
+      Avg Top-10 Accuracy: 0.3458
+      Best Loss: 1.8678
+      Final Loss: 1.8936
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3150
+      Avg Top-10 Loss: 1.9440
+      Final Accuracy: 0.3107
+      Final Loss: 1.9513
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0308 ✓ Good
+      Loss Gap (test-train): -0.0721 ✓ Good
+
+10. PatchModel: patch=4 non-overlap merge=mean w=512 d=2
+   Run ID: 8pe3oaru
+   Tags: AUGMENTED, IMPORTANT DO NOT DELETE
+   📊 Test Metrics:
+      Avg Top-10 Loss: 1.8974
+      Avg Top-10 Accuracy: 0.3286
+      Best Loss: 1.8942
+      Final Loss: 1.8973
+   📊 Train Metrics:
+      Avg Top-10 Accuracy: 0.3108
+      Avg Top-10 Loss: 1.9695
+      Final Accuracy: 0.3092
+      Final Loss: 1.9756
+   ⚠️  Overfitting Indicators:
+      Accuracy Gap (train-test): -0.0178 ✓ Good
+      Loss Gap (test-train): -0.0720 ✓ Good
+
+================================================================================

@@ -1,0 +1,37 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 20:35:51,025 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 20:35:51,361 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:35:51,361 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.18804196268518503
+	blur: 0.4517341645044287
+	brightness: 1.3532041938125303
+	contrast: 1.248729797639271
+	crop: 0.4496377830480198
+	crop_scale: 0.4926144809948819
+	flip: 0.3142993203822152
+	gaussian_blur_kernel: 5
+	gaussian_noise_std: 0.4863765401686029
+	grey: 0.7315135859429284
+	hue: 0.08918856126580985
+	jiggle: 0.020930314314176135
+	rotate: 0.11688148982908052
+	rotation: 33
+	saturation: 1.314011917845298
+	scale: 1.1519686357189265
+	shear: 31
+	translate_x: 0.3308023365177646
+	translate_y: 0.30814548924444474
+2026-01-10 20:35:51,365 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.18804196268518503 --blur=0.4517341645044287 --brightness=1.3532041938125303 --contrast=1.248729797639271 --crop=0.4496377830480198 --crop_scale=0.4926144809948819 --flip=0.3142993203822152 --gaussian_blur_kernel=5 --gaussian_noise_std=0.4863765401686029 --grey=0.7315135859429284 --hue=0.08918856126580985 --jiggle=0.020930314314176135 --rotate=0.11688148982908052 --rotation=33 --saturation=1.314011917845298 --scale=1.1519686357189265 --shear=31 --translate_x=0.3308023365177646 --translate_y=0.30814548924444474
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+wandb: setting up run lr7wh1yr
+2026-01-10 20:35:56,371 - wandb.wandb_agent - INFO - Running runs: ['lr7wh1yr']
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_203555-lr7wh1yr
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/g5vb4edr
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/lr7wh1yr
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<38:28,  4.63s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<31:22,  3.78s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<29:02,  3.51s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:14<27:58,  3.39s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<27:29,  3.33s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<27:33,  3.35s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:24<27:35,  3.36s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:27<27:26,  3.35s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:30<27:13,  3.33s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:34<27:07,  3.32s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:37<27:03,  3.32s/it]slurmstepd: error: *** JOB 99608 ON dcc3090 CANCELLED AT 2026-01-10T20:36:39 ***

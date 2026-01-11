@@ -1,0 +1,6 @@
+LastLayerWidth: patch=32 non-overlap merge=mean last_w=32 d=2           075go4qv
+LastLayerWidth: patch=32 non-overlap merge=mean last_w=64 d=2           1eufbkhr
+LastLayerWidth: patch=32 non-overlap merge=mean last_w=128 d=2          ex78lfny
+LastLayerWidth: patch=32 non-overlap merge=mean last_w=256 d=2          4ykc4ady
+LastLayerWidth: patch=32 non-overlap merge=mean last_w=512 d=2          gepl494y
+LastLayerWidth: patch=32 non-overlap merge=mean last_w=1024 d=2         x15vsg7e
