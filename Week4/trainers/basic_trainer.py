@@ -70,8 +70,8 @@ class BasicTrainingModule(pl.LightningModule):
         
 
     def on_validation_epoch_end(self):
-        self.log("val_loss", self.val_loss.compute(), on_step=False, on_epoch=True)
-        self.log("val_acc", self.val_acc.compute(), on_step=False, on_epoch=True)
+        self.log("test_loss", self.val_loss.compute(), on_step=False, on_epoch=True)
+        self.log("test_acc", self.val_acc.compute(), on_step=False, on_epoch=True)
         self.val_loss.reset()
         self.val_acc.reset()
         
