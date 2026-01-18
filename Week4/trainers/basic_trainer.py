@@ -64,13 +64,13 @@ class BasicTrainingModule(pl.LightningModule):
         loss = self.loss_fn(y_hat, y)
         
         self.val_acc.update(y_hat, y)
-        return {"val_loss": loss}
+        return {"test_loss": loss}
         
     def validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x["val_loss"] for x in outputs]).mean()
+        avg_loss = torch.stack([x["test_loss"] for x in outputs]).mean()
         acc = self.val_acc.compute()
-        self.log("val_loss", avg_loss)
-        self.log("val_acc", acc)
+        self.log("test_loss", avg_loss)
+        self.log("test_acc", acc)
         self.val_acc.reset()
         
     def configure_optimizers(self):
