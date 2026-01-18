@@ -1,0 +1,138 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torchinfo import summary
+from models.layers import DepthwiseSeparableConv
+
+class ResidualBlock(nn.Module):
+    
+    def __init__(self, channels : int, kernel_size : int):
+        super().__init__()
+        
+        self.layer = nn.Sequential(
+            nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
+            nn.BatchNorm2d(num_features=channels),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
+            nn.BatchNorm2d(num_features=channels)
+        )
+        
+        
+    def forward(self, x):
+        return F.relu(self.layer(x) + x)
+
+class SmallResnet(nn.Module):
+    
+    def __init__(self, in_channels : int = 3, num_class : int = 8):
+        super().__init__()
+        
+        self.model = nn.Sequential(
+            
+            nn.Conv2d(in_channels=in_channels, out_channels=64, kernel_size=7, padding=3, stride=2),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            
+            ResidualBlock(channels=64, kernel_size=3),
+            
+            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(num_features=128),
+            nn.ReLU(),
+            
+            ResidualBlock(channels=128, kernel_size=3),
+            
+            nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(num_features=256),
+            nn.ReLU(),
+            
+            ResidualBlock(channels=256, kernel_size=3),
+            
+            nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(num_features=512),
+            nn.ReLU(),
+            
+            ResidualBlock(channels=512, kernel_size=3),
+            
+            nn.AvgPool2d(kernel_size=3, stride=2, padding=1),
+            
+            nn.Flatten()
+        )
+        
+        self.head = nn.Sequential(
+            nn.Linear(in_features=512 * 4 * 4, out_features=1000),
+            nn.ReLU(),
+            nn.Linear(in_features=1000, out_features=num_class)
+        )
+        
+        
+    def forward(self, x):
+        
+        return self.head(self.model(x))
+    
+    
+    
+class ResidualBlockDepthwise(nn.Module):
+    
+    def __init__(self, channels : int, kernel_size : int):
+        super().__init__()
+        
+        self.layer = nn.Sequential(
+            DepthwiseSeparableConv(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
+            nn.BatchNorm2d(num_features=channels),
+            nn.ReLU(),
+            DepthwiseSeparableConv(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
+            nn.BatchNorm2d(num_features=channels)
+        )
+        
+        
+    def forward(self, x):
+        return F.relu(self.layer(x) + x)
+
+class SmallResnetDepthwise(nn.Module):
+    
+    def __init__(self, in_channels : int = 3, num_class : int = 8):
+        super().__init__()
+        
+        self.model = nn.Sequential(
+            
+            DepthwiseSeparableConv(in_channels=in_channels, out_channels=64, kernel_size=7, padding=3, stride=2),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            
+            ResidualBlockDepthwise(channels=64, kernel_size=3),
+            
+            DepthwiseSeparableConv(in_channels=64, out_channels=128, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(num_features=128),
+            nn.ReLU(),
+            
+            ResidualBlockDepthwise(channels=128, kernel_size=3),
+            
+            DepthwiseSeparableConv(in_channels=128, out_channels=256, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(num_features=256),
+            nn.ReLU(),
+            
+            ResidualBlockDepthwise(channels=256, kernel_size=3),
+            
+            DepthwiseSeparableConv(in_channels=256, out_channels=512, kernel_size=3, padding=1, stride=2),
+            nn.BatchNorm2d(num_features=512),
+            nn.ReLU(),
+            
+            ResidualBlockDepthwise(channels=512, kernel_size=3),
+            
+            nn.AvgPool2d(kernel_size=3, stride=2, padding=1),
+            
+            nn.Flatten()
+        )
+        
+        self.head = nn.Sequential(
+            nn.Linear(in_features=512 * 4 * 4, out_features=1000),
+            nn.ReLU(),
+            nn.Linear(in_features=1000, out_features=num_class)
+        )
+        
+        
+    def forward(self, x):
+        
+        return self.head(self.model(x))
+    
+    
+if __name__ == "__main__":
+    model = SmallResnetDepthwise()
+    print(summary(model, input_size=(1, 3, 224, 224), depth=2))
