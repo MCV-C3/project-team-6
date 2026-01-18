@@ -1,25 +1,0 @@
-Using GPU 0: NVIDIA GeForce RTX 3090
-Sanity Checking: |          | 0/? [00:00<?, ?it/s]Sanity Checking: |          | 0/? [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:  50%|█████     | 1/2 [00:00<00:00,  5.43it/s]Sanity Checking DataLoader 0: 100%|██████████| 2/2 [00:00<00:00,  8.73it/s]                                                                           Training: |          | 0/? [00:00<?, ?it/s]Training: |          | 0/? [00:00<?, ?it/s]Epoch 0:   0%|          | 0/7 [00:00<?, ?it/s]Epoch 0:  14%|█▍        | 1/7 [00:00<00:00,  8.11it/s]Epoch 0:  14%|█▍        | 1/7 [00:00<00:00,  8.07it/s, v_num=l1a3]Epoch 0:  29%|██▊       | 2/7 [00:00<00:00, 13.17it/s, v_num=l1a3]Epoch 0:  29%|██▊       | 2/7 [00:00<00:00, 13.15it/s, v_num=l1a3]Epoch 0:  43%|████▎     | 3/7 [00:00<00:00, 15.14it/s, v_num=l1a3]Epoch 0:  43%|████▎     | 3/7 [00:00<00:00, 15.12it/s, v_num=l1a3]Epoch 0:  57%|█████▋    | 4/7 [00:00<00:00, 16.34it/s, v_num=l1a3]Epoch 0:  57%|█████▋    | 4/7 [00:00<00:00, 16.32it/s, v_num=l1a3]Epoch 0:  71%|███████▏  | 5/7 [00:00<00:00, 17.22it/s, v_num=l1a3]Epoch 0:  71%|███████▏  | 5/7 [00:00<00:00, 17.21it/s, v_num=l1a3]Epoch 0:  86%|████████▌ | 6/7 [00:00<00:00, 17.88it/s, v_num=l1a3]Epoch 0:  86%|████████▌ | 6/7 [00:00<00:00, 17.87it/s, v_num=l1a3]Epoch 0: 100%|██████████| 7/7 [00:00<00:00, 18.83it/s, v_num=l1a3]Epoch 0: 100%|██████████| 7/7 [00:00<00:00, 18.82it/s, v_num=l1a3]
-Validation: |          | 0/? [00:00<?, ?it/s][A
-Validation: |          | 0/? [00:00<?, ?it/s][A
-Validation DataLoader 0:   0%|          | 0/18 [00:00<?, ?it/s][A
-Validation DataLoader 0:   6%|▌         | 1/18 [00:00<00:00, 32.98it/s][A
-Validation DataLoader 0:  11%|█         | 2/18 [00:00<00:00, 27.47it/s][A
-Validation DataLoader 0:  17%|█▋        | 3/18 [00:00<00:00, 25.99it/s][A
-Validation DataLoader 0:  22%|██▏       | 4/18 [00:00<00:00, 25.37it/s][A
-Validation DataLoader 0:  28%|██▊       | 5/18 [00:00<00:00, 24.98it/s][A
-Validation DataLoader 0:  33%|███▎      | 6/18 [00:00<00:00, 24.69it/s][A
-Validation DataLoader 0:  39%|███▉      | 7/18 [00:00<00:00, 24.51it/s][A
-Validation DataLoader 0:  44%|████▍     | 8/18 [00:00<00:00, 24.36it/s][A
-Validation DataLoader 0:  50%|█████     | 9/18 [00:00<00:00, 24.22it/s][A
-Validation DataLoader 0:  56%|█████▌    | 10/18 [00:00<00:00, 24.12it/s][A
-Validation DataLoader 0:  61%|██████    | 11/18 [00:00<00:00, 24.04it/s][A
-Validation DataLoader 0:  67%|██████▋   | 12/18 [00:00<00:00, 23.98it/s][A
-Validation DataLoader 0:  72%|███████▏  | 13/18 [00:00<00:00, 23.93it/s][A
-Validation DataLoader 0:  78%|███████▊  | 14/18 [00:00<00:00, 23.86it/s][A
-Validation DataLoader 0:  83%|████████▎ | 15/18 [00:00<00:00, 23.82it/s][A
-Validation DataLoader 0:  89%|████████▉ | 16/18 [00:00<00:00, 23.78it/s][A
-Validation DataLoader 0:  94%|█████████▍| 17/18 [00:00<00:00, 23.75it/s][A
-Validation DataLoader 0: 100%|██████████| 18/18 [00:00<00:00, 23.85it/s][A
-                                                                        [AEpoch 0: 100%|██████████| 7/7 [00:01<00:00,  6.09it/s, v_num=l1a3]Epoch 0: 100%|██████████| 7/7 [00:01<00:00,  6.09it/s, v_num=l1a3][1;34mwandb[0m: 
-[1;34mwandb[0m: 🚀 View run [33mTest run[0m at: [34mhttps://wandb.ai/mcv-team-6/C3-Week4/runs/nr2nl1a3[0m

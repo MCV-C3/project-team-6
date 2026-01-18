@@ -26,7 +26,8 @@ class BasicTrainingModule(pl.LightningModule):
                  loss_fn : nn.Module = nn.CrossEntropyLoss(), 
                  lr : float = 1e-5, 
                  optimizer_cls : optim.Optimizer = optim.AdamW,
-                 num_classes : int = 8
+                 num_classes : int = 8,
+                 augmentations = None
                  ):
         
         super().__init__()
@@ -40,12 +41,18 @@ class BasicTrainingModule(pl.LightningModule):
         self.val_loss = torchmetrics.MeanMetric()
         self.train_loss = torchmetrics.MeanMetric()
         
+        self.augmentation = augmentations
+        
         
     def forward(self, x):
         return self.model(x)
     
     def training_step(self, batch, batch_idx):
         x, y = batch
+        
+        if self.augmentation is not None:
+            x = self.augmentation(x)
+        
         y_hat = self(x)
         loss = self.loss_fn(y_hat, y)
 

@@ -146,7 +146,7 @@ def init_wandb_run(*args, **kwargs):
     else:
         return Null()
 
-def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs : int = 500):
+def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs : int = 500, model_name : str = "small_lenet"):
     
     # early_stop_callback = EarlyStopping(
     #     monitor="test_loss",  # metric to monitor
@@ -161,7 +161,7 @@ def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs :
         mode="max",                  # save the lowest val_loss
         save_top_k=1,                # only save the best model
         dirpath="checkpoints/",      # folder to save
-        filename="best_model"        # name of the checkpoint file
+        filename=f"{model_name}"        # name of the checkpoint file
     )
 
     trainer = pl.Trainer(

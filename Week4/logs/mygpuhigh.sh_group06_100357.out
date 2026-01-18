@@ -1,3 +1,0 @@
-Using GPU 0: NVIDIA GeForce RTX 3090
-Sanity Checking: |          | 0/? [00:00<?, ?it/s]Sanity Checking: |          | 0/? [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:  50%|█████     | 1/2 [00:00<00:00,  5.39it/s]Sanity Checking DataLoader 0: 100%|██████████| 2/2 [00:00<00:00,  8.69it/s][1;34mwandb[0m: 
-[1;34mwandb[0m: 🚀 View run [33mTest run[0m at: [34mhttps://wandb.ai/mcv-team-6/C3-Week4/runs/3r8r47z9[0m
