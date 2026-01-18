@@ -51,7 +51,7 @@ class BasicTrainingModule(pl.LightningModule):
 
         return {"loss": loss}
     
-    def training_epoch_end(self, outputs):
+    def on_train_epoch_end(self, outputs):
         avg_loss = torch.stack([x["loss"] for x in outputs]).mean()
         acc = self.train_acc.compute()
         self.log("train_loss", avg_loss)
@@ -66,7 +66,8 @@ class BasicTrainingModule(pl.LightningModule):
         self.val_acc.update(y_hat, y)
         return {"test_loss": loss}
         
-    def validation_epoch_end(self, outputs):
+
+    def on_validation_epoch_end(self, outputs):
         avg_loss = torch.stack([x["test_loss"] for x in outputs]).mean()
         acc = self.val_acc.compute()
         self.log("test_loss", avg_loss)
