@@ -23,7 +23,7 @@ class BasicTrainingModule(pl.LightningModule):
     
     def __init__(self, 
                  model : nn.Module, 
-                 loss_fn : nn.Module = nn.CrossEntropyLoss, 
+                 loss_fn : nn.Module = nn.CrossEntropyLoss(), 
                  lr : float = 1e-5, 
                  optimizer_cls : optim.Optimizer = optim.AdamW,
                  num_classes : int = 8
