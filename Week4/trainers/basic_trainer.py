@@ -37,6 +37,8 @@ class BasicTrainingModule(pl.LightningModule):
         
         self.train_acc = torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
         self.val_acc = torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
+        self.val_loss = torchmetrics.MeanMetric()
+        self.train_loss = torchmetrics.MeanMetric()
         
         
     def forward(self, x):
@@ -47,31 +49,30 @@ class BasicTrainingModule(pl.LightningModule):
         y_hat = self(x)
         loss = self.loss_fn(y_hat, y)
 
+        self.train_loss.update(loss)
         self.train_acc.update(y_hat, y)
 
         return {"loss": loss}
     
     def on_train_epoch_end(self, outputs):
-        avg_loss = torch.stack([x["loss"] for x in outputs]).mean()
-        acc = self.train_acc.compute()
-        self.log("train_loss", avg_loss)
-        self.log("train_acc", acc)
+        self.log("train_loss", self.train_loss.compute(), prog_bar=True)
+        self.log("train_acc", self.train_acc.compute(), prog_bar=True)
+        self.train_loss.reset()
         self.train_acc.reset()
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
         loss = self.loss_fn(y_hat, y)
-        
+        self.val_loss.update(loss)
         self.val_acc.update(y_hat, y)
         return {"test_loss": loss}
         
 
     def on_validation_epoch_end(self, outputs):
-        avg_loss = torch.stack([x["test_loss"] for x in outputs]).mean()
-        acc = self.val_acc.compute()
-        self.log("test_loss", avg_loss)
-        self.log("test_acc", acc)
+        self.log("val_loss", self.val_loss.compute(), prog_bar=True)
+        self.log("val_acc", self.val_acc.compute(), prog_bar=True)
+        self.val_loss.reset()
         self.val_acc.reset()
         
     def configure_optimizers(self):
