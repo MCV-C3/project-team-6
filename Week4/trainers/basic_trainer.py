@@ -35,8 +35,8 @@ class BasicTrainingModule(pl.LightningModule):
         self.lr = lr
         self.optimizer_cls = optimizer_cls
         
-        self.train_acc = torchmetrics.Accuracy(num_classes=num_classes)
-        self.val_acc = torchmetrics.Accuracy(num_classes=num_classes)
+        self.train_acc = torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
+        self.val_acc = torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
         
         
     def forward(self, x):

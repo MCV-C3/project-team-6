@@ -1,0 +1,68 @@
+_wandb:
+    value:
+        cli_version: 0.23.1
+        e:
+            g7pgh1cwfcf9f23cn2fzrytmed8l17w7:
+                codePath: Week4/train.py
+                codePathLocal: train.py
+                email: aleix.armero73@gmail.com
+                executable: /home/p3rzival/miniconda3/envs/c3/bin/python
+                git:
+                    commit: b02636ce1d73676c8d5cfbdd1b02f1c5d0913b04
+                    remote: https://github.com/MCV-C3/project-team-6.git
+                host: p3rzival
+                os: Linux-6.14.0-37-generic-x86_64-with-glibc2.39
+                program: /home/p3rzival/MCV/project-team-6/Week4/train.py
+                python: CPython 3.11.14
+                root: .
+                startedAt: "2026-01-18T15:12:23.484961Z"
+                writerId: g7pgh1cwfcf9f23cn2fzrytmed8l17w7
+        m:
+            - "1": trainer/global_step
+              "6":
+                - 3
+              "7": []
+            - "2": '*'
+              "5": 1
+              "6":
+                - 1
+              "7": []
+        python_version: 3.11.14
+        t:
+            "1":
+                - 1
+                - 5
+                - 9
+                - 11
+                - 41
+                - 49
+                - 53
+                - 103
+            "2":
+                - 1
+                - 5
+                - 9
+                - 11
+                - 41
+                - 49
+                - 53
+                - 103
+            "3":
+                - 7
+                - 13
+                - 66
+            "4": 3.11.14
+            "5": 0.23.1
+            "6": 4.51.3
+            "12": 0.23.1
+            "13": linux-x86_64
+architecture:
+    value: Small LeNet
+epochs:
+    value: 500
+image_size:
+    value: 224
+learning_rate:
+    value: 0.0001
+parameters:
+    value: 24328

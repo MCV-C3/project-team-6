@@ -1,0 +1,24 @@
+[34m[1mwandb[0m: Detected [huggingface_hub.inference] in use.
+[34m[1mwandb[0m: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+[34m[1mwandb[0m: For more information, check out the docs at: https://weave-docs.wandb.ai/
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+Traceback (most recent call last):
+  File "/home/p3rzival/MCV/project-team-6/Week4/train.py", line 38, in <module>
+    train_loader, test_loader = utils.get_loaders(
+                                ^^^^^^^^^^^^^^^^^^
+  File "/home/p3rzival/MCV/project-team-6/Week4/utils.py", line 94, in get_loaders
+    data_train = InMemoryDataset(ImageFolder(train_folder), "cuda", transform=train_transformation)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/p3rzival/.local/lib/python3.11/site-packages/torchvision/datasets/folder.py", line 328, in __init__
+    super().__init__(
+  File "/home/p3rzival/.local/lib/python3.11/site-packages/torchvision/datasets/folder.py", line 149, in __init__
+    classes, class_to_idx = self.find_classes(self.root)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/p3rzival/.local/lib/python3.11/site-packages/torchvision/datasets/folder.py", line 234, in find_classes
+    return find_classes(directory)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/p3rzival/.local/lib/python3.11/site-packages/torchvision/datasets/folder.py", line 41, in find_classes
+    classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
+                                             ^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/p3rzival/mcv/datasets/C3/2425/MIT_small_train_1/train'

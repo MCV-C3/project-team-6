@@ -15,15 +15,6 @@ LR = 0.0001
 dry = args.dry
 device = utils.set_device(args.gpu_id)
 
-train_loader, test_loader = utils.get_loaders(
-    image_size=(IMG_SIZE, IMG_SIZE),
-    resize_train=True,
-    resize_test=True,
-    train_batch_size=64,
-    train_folder=args.train_folder,
-    test_folder=args.test_folder,
-)
-
 model = SmallLeNet()
 total = sum(p.numel() for p in model.parameters())
 train_model = BasicTrainingModule(model=model)
@@ -43,5 +34,14 @@ wandb_logger.experiment.config.update({
             })
 
 trainer = utils.get_trainer(wandb_logger, patience=15, min_delta=0.001, epochs=EPOCHS)
+
+train_loader, test_loader = utils.get_loaders(
+    image_size=(IMG_SIZE, IMG_SIZE),
+    resize_train=True,
+    resize_test=True,
+    train_batch_size=64,
+    train_folder=args.train_folder,
+    test_folder=args.test_folder,
+)
 
 trainer.fit(train_model, train_loader, test_loader)
