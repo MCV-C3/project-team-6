@@ -69,8 +69,6 @@ def get_loaders(image_size : Optional[Tuple[int, int]] = None,
                 train_folder: str = "~/mcv/datasets/C3/2425/MIT_small_train_1/train", 
                 test_folder: str = "~/mcv/datasets/C3/2425/MIT_small_train_1/test"):
 
-    torch.manual_seed(42)
-
     # I do this to skip the image
     train_transforms = [
         # F.ToImage(),
@@ -150,13 +148,13 @@ def init_wandb_run(*args, **kwargs):
 
 def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs : int = 500):
     
-    early_stop_callback = EarlyStopping(
-        monitor="test_loss",  # metric to monitor
-        patience=patience,          # stop if no improvement for patience epochs
-        min_delta=min_delta,
-        verbose=True,
-        mode="min"           # because lower test_loss is better
-    )
+    # early_stop_callback = EarlyStopping(
+    #     monitor="test_loss",  # metric to monitor
+    #     patience=patience,          # stop if no improvement for patience epochs
+    #     min_delta=min_delta,
+    #     verbose=True,
+    #     mode="min"           # because lower test_loss is better
+    # )
 
     checkpoint_callback = ModelCheckpoint(
         monitor="test_acc",          # metric to monitor
@@ -171,7 +169,7 @@ def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs :
         accelerator="auto",
         devices=1,
         logger=logger,
-        callbacks=[early_stop_callback, checkpoint_callback],
+        callbacks=[checkpoint_callback],
         log_every_n_steps=1
     )
     
