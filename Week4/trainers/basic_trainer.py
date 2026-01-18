@@ -54,9 +54,9 @@ class BasicTrainingModule(pl.LightningModule):
 
         return {"loss": loss}
     
-    def on_train_epoch_end(self, outputs):
-        self.log("train_loss", self.train_loss.compute(), prog_bar=True)
-        self.log("train_acc", self.train_acc.compute(), prog_bar=True)
+    def on_train_epoch_end(self):
+        self.log("train_loss", self.train_loss.compute(), on_step=False, on_epoch=True)
+        self.log("train_acc", self.train_acc.compute(), on_step=False, on_epoch=True)
         self.train_loss.reset()
         self.train_acc.reset()
     
@@ -70,8 +70,8 @@ class BasicTrainingModule(pl.LightningModule):
         
 
     def on_validation_epoch_end(self):
-        self.log("val_loss", self.val_loss.compute(), prog_bar=True)
-        self.log("val_acc", self.val_acc.compute(), prog_bar=True)
+        self.log("val_loss", self.val_loss.compute(), on_step=False, on_epoch=True)
+        self.log("val_acc", self.val_acc.compute(), on_step=False, on_epoch=True)
         self.val_loss.reset()
         self.val_acc.reset()
         
