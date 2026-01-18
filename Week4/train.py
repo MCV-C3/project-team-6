@@ -1,5 +1,5 @@
 from trainers.basic_trainer import BasicTrainingModule
-from Week4.models.small_lenet import SmallLeNet
+from models.small_lenet import SmallLeNet
 import utils
 from pytorch_lightning.loggers import WandbLogger
 import pytorch_lightning as pl
