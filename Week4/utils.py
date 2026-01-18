@@ -152,9 +152,10 @@ def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs :
     
     early_stop_callback = EarlyStopping(
         monitor="test_loss",  # metric to monitor
-        patience=patience,          # stop if no improvement for 3 epochs
+        patience=patience,          # stop if no improvement for patience epochs
         min_delta=min_delta,
-        mode="min"           # because lower val_loss is better
+        verbose=True,
+        mode="min"           # because lower test_loss is better
     )
 
     checkpoint_callback = ModelCheckpoint(
@@ -170,7 +171,8 @@ def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs :
         accelerator="auto",
         devices=1,
         logger=logger,
-        callbacks=[early_stop_callback, checkpoint_callback]
+        callbacks=[early_stop_callback, checkpoint_callback],
+        log_every_n_steps=1
     )
     
     return trainer

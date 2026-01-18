@@ -1,0 +1,34 @@
+wandb: WARNING The anonymous setting has no effect and will be removed in a future version.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /ghome/group06/.netrc.
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 1lrssw9h
+wandb: Tracking run with wandb version 0.24.0
+wandb: Run data is saved locally in wandb/run-20260118_163532-1lrssw9h
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Test run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week4
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week4/runs/1lrssw9h
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week4/train.py", line 36, in <module>
+    trainer = utils.get_trainer(wandb_logger, patience=15, min_delta=0.001, epochs=EPOCHS)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/export/home/group06/workspace/project-team-6/Week4/utils.py", line 168, in get_trainer
+    trainer = pl.Trainer(
+              ^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/pytorch_lightning/utilities/argparse.py", line 70, in insert_env_defaults
+    return fn(self, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/pytorch_lightning/trainer/trainer.py", line 417, in __init__
+    self._accelerator_connector = _AcceleratorConnector(
+                                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py", line 148, in __init__
+    self.cluster_environment: ClusterEnvironment = self._choose_and_init_cluster_environment()
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/pytorch_lightning/trainer/connectors/accelerator_connector.py", line 397, in _choose_and_init_cluster_environment
+    return env_type()
+           ^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/lightning_fabric/plugins/environments/slurm.py", line 54, in __init__
+    self._validate_srun_variables()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/lightning_fabric/plugins/environments/slurm.py", line 221, in _validate_srun_variables
+    raise RuntimeError(
+RuntimeError: You set `--ntasks=8` in your SLURM bash script, but this variable is not supported. HINT: Use `--ntasks-per-node=8` instead.
