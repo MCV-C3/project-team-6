@@ -1,0 +1,16 @@
+/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/lightning_fabric/plugins/environments/slurm.py:204: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python /ghome/group06/workspace/project-team-6/Week4/train. ...
+GPU available: False, used: False
+TPU available: False, using: 0 TPU cores
+Traceback (most recent call last):
+  File "/ghome/group06/workspace/project-team-6/Week4/train.py", line 61, in <module>
+    train_loader, test_loader = utils.get_loaders(
+                                ^^^^^^^^^^^^^^^^^^
+  File "/export/home/group06/workspace/project-team-6/Week4/utils.py", line 92, in get_loaders
+    data_train = InMemoryDataset(ImageFolder(train_folder), "cuda", transform=train_transformation)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/export/home/group06/workspace/project-team-6/Week4/utils.py", line 53, in __init__
+    self.images = torch.stack(imgs).to(device)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.11/site-packages/torch/cuda/__init__.py", line 314, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: No CUDA GPUs are available

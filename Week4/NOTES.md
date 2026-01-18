@@ -43,3 +43,30 @@ as well.
 Let's try and see what happens if we put the depthwise convolutions here. The number of parameters will not be reduced that
 much, but that is because over half the parameters are actually inside the last linear layers. However, let's see first how
 does it go with the depthwise convolutions and then let's reduce the channels.
+
+It seems that using a small resnet with depthwise convolutions achieve a lower performance than using normal convolutions,
+but also makes the parameters go from 16M to 9M, from which 8M correspond to the last linear layers, which can be further
+decreased by decreasing the number of channels. So it seems that parameterwise, doing dephwise convolutions is much more
+efficient. Let's now see the efect of reducing the number of channels instead by adding layers that reduce the number of
+channels at the end. We will do the same with the depthwise version.
+
+From the behaviour observed in the WandB graphs, it seems that the depthwise convolution models are more stable in it's
+performance, while the losses for the models with the normal convolutions tend to vary a lot more. Also, it seems that
+adding the 1x1 convolution to reduce the channels from 512 to 64 reduces by 8M the number of parameters but preserves
+most of the performance of the model. Now, let's try putting more layers with a lower amount of channels instead of
+the bottleneck at the end.
+
+It seems that adding layers is not really doing much to the performance, also adding depth instead of augmenting
+channels reduced the number of parameters. However, it may seem that our model is kind of huge considering that
+the slides tell us to use compact models.
+
+Okay, let's now try to achieve similar performances we have until now (between 0.75 and 0.8) with a much lower
+number of parameters. It would be nice to keep it arround 100 to 300 thousand or lower. Let's first try with some
+tiny mobile net type architecture.
+
+Wow, the architecture with 100k parameters got the same performance than the one with 600k of them. And it seems
+it can do better if it's trained for longer, since neither the training or test losses became plain. Also, the
+overfitting now is inexistent and if I let it train for more time it may seem that there is no underfitting either.
+Let's test that and run it for a really huge amount of epochs for the night. If the model seems to underfit the data
+at the end while mantaining a low overfitting, then we may expand the model with more depth layers and add residual
+connections for them to be well trained.
