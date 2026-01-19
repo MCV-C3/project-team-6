@@ -39,14 +39,11 @@ class SmallLeNetDepthwise(nn.Module):
         
         self.model = nn.Sequential(
             DepthwiseSeparableConv(in_channels=in_channels, out_channels=16, kernel_size=3, padding='same'),
-            nn.BatchNorm2d(16),
             nn.ReLU(),
             DepthwiseSeparableConv(in_channels=16, out_channels=32, kernel_size=3, padding='same'),
-            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2),
             DepthwiseSeparableConv(in_channels=32, out_channels=64, kernel_size=3, padding='same'),
-            nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.AdaptiveMaxPool2d((1,1)),
         )

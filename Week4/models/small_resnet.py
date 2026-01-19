@@ -1,25 +1,7 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torchinfo import summary
-from models.layers import DepthwiseSeparableConv
-
-class ResidualBlock(nn.Module):
-    
-    def __init__(self, channels : int, kernel_size : int):
-        super().__init__()
-        
-        self.layer = nn.Sequential(
-            nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
-            nn.BatchNorm2d(num_features=channels),
-            nn.ReLU(),
-            nn.Conv2d(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
-            nn.BatchNorm2d(num_features=channels)
-        )
-        
-        
-    def forward(self, x):
-        return F.relu(self.layer(x) + x)
+from models.layers import DepthwiseSeparableConv, ResidualBlock, ResidualBlockDepthwise
 
 class SmallResnet(nn.Module):
     
@@ -66,23 +48,6 @@ class SmallResnet(nn.Module):
     def forward(self, x):
         
         return self.head(self.model(x))    
-    
-class ResidualBlockDepthwise(nn.Module):
-    
-    def __init__(self, channels : int, kernel_size : int):
-        super().__init__()
-        
-        self.layer = nn.Sequential(
-            DepthwiseSeparableConv(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
-            nn.BatchNorm2d(num_features=channels),
-            nn.ReLU(),
-            DepthwiseSeparableConv(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
-            nn.BatchNorm2d(num_features=channels)
-        )
-        
-        
-    def forward(self, x):
-        return F.relu(self.layer(x) + x)
 
 class SmallResnetDepthwise(nn.Module):
     
@@ -92,24 +57,22 @@ class SmallResnetDepthwise(nn.Module):
         self.model = nn.Sequential(
             
             DepthwiseSeparableConv(in_channels=in_channels, out_channels=64, kernel_size=7, padding=3, stride=2),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
             
             ResidualBlockDepthwise(channels=64, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=64, out_channels=128, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=128),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=128, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=128, out_channels=256, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=256),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=256, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=256, out_channels=512, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=512),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=512, kernel_size=3),
@@ -188,24 +151,22 @@ class SmallResnetDepthwiseReduce(nn.Module):
         self.model = nn.Sequential(
             
             DepthwiseSeparableConv(in_channels=in_channels, out_channels=64, kernel_size=7, padding=3, stride=2),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
             
             ResidualBlockDepthwise(channels=64, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=64, out_channels=128, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=128),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=128, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=128, out_channels=256, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=256),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=256, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=256, out_channels=512, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=512),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=512, kernel_size=3),
@@ -284,6 +245,7 @@ class SmallResnetDepthwiseExtended(nn.Module):
         self.model = nn.Sequential(
             
             DepthwiseSeparableConv(in_channels=in_channels, out_channels=64, kernel_size=7, padding=3, stride=2),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
             
             ResidualBlockDepthwise(channels=64, kernel_size=3),
@@ -291,7 +253,6 @@ class SmallResnetDepthwiseExtended(nn.Module):
             ResidualBlockDepthwise(channels=64, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=64, out_channels=128, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=128),
             nn.ReLU(),
             
             ResidualBlockDepthwise(channels=128, kernel_size=3),
@@ -299,11 +260,9 @@ class SmallResnetDepthwiseExtended(nn.Module):
             ResidualBlockDepthwise(channels=128, kernel_size=3),
             
             DepthwiseSeparableConv(in_channels=128, out_channels=64, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=64),
             nn.ReLU(),
             
             DepthwiseSeparableConv(in_channels=64, out_channels=32, kernel_size=3, padding=1, stride=2),
-            nn.BatchNorm2d(num_features=32),
             nn.ReLU(),
             
             nn.AvgPool2d(kernel_size=3, stride=2, padding=1),

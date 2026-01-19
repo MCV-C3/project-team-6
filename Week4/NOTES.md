@@ -70,3 +70,8 @@ overfitting now is inexistent and if I let it train for more time it may seem th
 Let's test that and run it for a really huge amount of epochs for the night. If the model seems to underfit the data
 at the end while mantaining a low overfitting, then we may expand the model with more depth layers and add residual
 connections for them to be well trained.
+
+Even after 2000 epochs of training, the model seems capable of improving further. However, that kind of slow training
+will be too much to later do a sweep on it. Most of the architecture "cannot have" residual connections, since we are
+halving the size of the input at almost each step, so let's try to increase the complexity of the model (add layers to it)
+to see if that increases how fast it fits the data.
