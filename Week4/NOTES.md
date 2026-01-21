@@ -94,3 +94,18 @@ After executing both depthwise and normal lenets, the main problem now is that t
 plateu quite fast. I will be adding now a learning rate scheduler to reduce the learning rate when the loss gets into a plain.
 For now, we reached almost 0.8 accuracy with just 4k parameters in the depthwise lenet. Let's setup the scheduler and see
 if the training gets a little better, but it seems that it will be kind of hard.
+
+It seems that what is actually happening is that test and training accuracies are actually increasing, but very slowly. It
+also seems that when reaching arround 0.8 it just cannot handle anymore because of the small amount of parameters. This should
+actually improve with knowledge distillation, so I want to try to get similar results with even smaller nets first. Also,
+surprisingly the lenet with depthwise convolutions (less parameters) has less underfitting than the one with normal convolutions,
+something weird, since it should be able to fit better the one with more parameters. On the other hand, with depthwise convolutions
+it can be seen as having extra non-linearities and, thus, some sort of extended expression for this short amount of data I guess.
+Well, whatever, let's try and reduce even further the number of parameters. Let's stuck with the depthwise convolutions as well.
+Lets aim for 1k parameters now. If training goes too bad, let's create the Knowledge Distillation training and push the boundaries
+as much as we can.
+
+Of course, having 1k parameters lead to having arround 0.4 accuracy and plateu there for the remaining epochs. This is probably due
+to the absurd reduction I did to the net, which makes it just unable to learn anything useful. I can maybe get to use some bottleneck
+to reduce parameters instead. First, let's try my new knowledge distillation method to see if it works and helps the accuracy of the
+previous lenets.
