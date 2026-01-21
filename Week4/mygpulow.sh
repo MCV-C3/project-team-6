@@ -5,4 +5,4 @@
 #SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
 #SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
 
-python -m experiments.resnet_extended_WDA_depthwise --epochs 700
+python -m experiments.depthwise_lenet_WDA --epochs 1000

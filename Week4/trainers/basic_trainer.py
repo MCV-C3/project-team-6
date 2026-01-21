@@ -36,11 +36,6 @@ class BasicTrainingModule(pl.LightningModule):
         self.lr = lr
         self.optimizer_cls = optimizer_cls
         
-        self.train_acc = torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
-        self.val_acc = torchmetrics.Accuracy(task="multiclass", num_classes=num_classes)
-        self.val_loss = torchmetrics.MeanMetric()
-        self.train_loss = torchmetrics.MeanMetric()
-        
         self.augmentation = augmentations
         
         
@@ -55,32 +50,23 @@ class BasicTrainingModule(pl.LightningModule):
         
         y_hat = self(x)
         loss = self.loss_fn(y_hat, y)
-
-        self.train_loss.update(loss)
-        self.train_acc.update(y_hat, y)
+        acc = (y_hat.argmax(dim=1) == y).float().mean()
+        
+        self.log("train_loss", loss, on_step=False, on_epoch=True)
+        self.log("train_acc",  acc, on_step=False, on_epoch=True)
 
         return {"loss": loss}
-    
-    def on_train_epoch_end(self):
-        self.log("train_loss", self.train_loss.compute(), on_step=False, on_epoch=True)
-        self.log("train_acc", self.train_acc.compute(), on_step=False, on_epoch=True)
-        self.train_loss.reset()
-        self.train_acc.reset()
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
         loss = self.loss_fn(y_hat, y)
-        self.val_loss.update(loss)
-        self.val_acc.update(y_hat, y)
-        return {"test_loss": loss}
+        acc = (y_hat.argmax(dim=1) == y).float().mean()
         
-
-    def on_validation_epoch_end(self):
-        self.log("test_loss", self.val_loss.compute(), on_step=False, on_epoch=True)
-        self.log("test_acc", self.val_acc.compute(), on_step=False, on_epoch=True)
-        self.val_loss.reset()
-        self.val_acc.reset()
+        self.log("test_loss", loss, on_step=False, on_epoch=True)
+        self.log("test_acc", acc, on_step=False, on_epoch=True)
+        
+        return {"test_loss": loss}
         
     def configure_optimizers(self):
         
@@ -89,4 +75,16 @@ class BasicTrainingModule(pl.LightningModule):
             lr=self.lr,
         )
         
-        return optimizer
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode="min", factor=0.2, patience=3
+        )
+        
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "monitor": "test_loss",  # <-- monitor accuracy
+                "interval": "epoch",
+                "frequency": 1
+            }
+        }

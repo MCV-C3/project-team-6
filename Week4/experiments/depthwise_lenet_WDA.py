@@ -40,12 +40,12 @@ augmentation = ka.AugmentationSequential(
 
 model = SmallLeNetDepthwise()
 total = sum(p.numel() for p in model.parameters())
-train_model = BasicTrainingModule(model=model, augmentations=augmentation)
+train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=0.001)
 
 wandb_logger = WandbLogger(
     project="C3-Week4",
     entity="mcv-team-6",
-    name="Depthwise small lenet WDA (All epochs)"
+    name="Test run"
 )
 
 wandb_logger.experiment.config.update({

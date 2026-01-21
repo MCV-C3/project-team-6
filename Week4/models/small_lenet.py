@@ -12,6 +12,7 @@ class SmallLeNet(nn.Module):
             nn.Conv2d(in_channels=in_channels, out_channels=16, kernel_size=3, padding='same'),
             nn.BatchNorm2d(16),
             nn.ReLU(),
+            nn.Dropout2d(p=0.2),
             nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding='same'),
             nn.BatchNorm2d(32),
             nn.ReLU(),
@@ -19,7 +20,7 @@ class SmallLeNet(nn.Module):
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding='same'),
             nn.BatchNorm2d(64),
             nn.ReLU(),
-            nn.AdaptiveMaxPool2d((1,1)),
+            nn.AdaptiveAvgPool2d((1,1)),
         )
         
         self.head = nn.Linear(in_features=64, out_features=num_class)
@@ -45,7 +46,7 @@ class SmallLeNetDepthwise(nn.Module):
             nn.MaxPool2d(2),
             DepthwiseSeparableConv(in_channels=32, out_channels=64, kernel_size=3, padding='same'),
             nn.ReLU(),
-            nn.AdaptiveMaxPool2d((1,1)),
+            nn.AdaptiveAvgPool2d((1,1)),
         )
         
         self.head = nn.Linear(in_features=64, out_features=num_class)
@@ -60,7 +61,5 @@ class SmallLeNetDepthwise(nn.Module):
     
     
 if __name__ == "__main__":
-    model_depth = SmallLeNetDepthwise()
-    model_normal = SmallLeNet()
-    print(summary(model_normal, input_size=(1, 3, 224, 224), depth=2))
-    print(summary(model_depth, input_size=(1, 3, 224, 224), depth=2))
+    model = SmallLeNetDepthwise()
+    print(summary(model, input_size=(1, 3, 224, 224), depth=2))

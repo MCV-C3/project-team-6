@@ -75,3 +75,22 @@ Even after 2000 epochs of training, the model seems capable of improving further
 will be too much to later do a sweep on it. Most of the architecture "cannot have" residual connections, since we are
 halving the size of the input at almost each step, so let's try to increase the complexity of the model (add layers to it)
 to see if that increases how fast it fits the data.
+
+I heard from other students that they are getting 0.8 of accuracy with just 2k parameters, which I find incredibly weird
+since they are supposedly not using any kind of knowledge distillation. Another issue is that I setted a learning rate
+that its too low, so I will increase it to ease the training in the first epochs. Now, since there are people getting
+that accruacy with just 2k parameters I want to do it too, of course. Let's first see if we can get that, and then if we
+can improve on this with other means. First of all, let's try to see how the first lenet does with a higher learning rate.
+The loss went flat pretty early, so I guess it shouldn't have too much of an impact, but let's see. Probably the training
+will become more chaotic as well, but that's something we can try to tune later. If this high learning rate causes more
+overfitting to appear, we add 2d dropouts between convolution, and everything solved.
+
+Okay, changing the learning rate actually had an enormous impact, which is something I should had notice before, after all
+taking larger steps is needed when training from scratch. If we get to a noisy plain later on, I can think about using
+a learning rate scheduler that reduces the learning rate after some number of epochs. Now, we are reaching higher accuracies
+than we did before with the normal lenet, however the overfitting is also increasing, so I will be setting dropouts now.
+
+After executing both depthwise and normal lenets, the main problem now is that they tend to underfit, the training seems to
+plateu quite fast. I will be adding now a learning rate scheduler to reduce the learning rate when the loss gets into a plain.
+For now, we reached almost 0.8 accuracy with just 4k parameters in the depthwise lenet. Let's setup the scheduler and see
+if the training gets a little better, but it seems that it will be kind of hard.
