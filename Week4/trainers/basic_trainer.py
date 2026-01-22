@@ -73,16 +73,4 @@ class BasicTrainingModule(pl.LightningModule):
             lr=self.lr,
         )
         
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode="min", factor=0.2, patience=3
-        )
-        
-        return {
-            "optimizer": optimizer,
-            "lr_scheduler": {
-                "scheduler": scheduler,
-                "monitor": "test_loss",  # <-- monitor accuracy
-                "interval": "epoch",
-                "frequency": 1
-            }
-        }
+        return optimizer

@@ -16,7 +16,7 @@ LR = 0.001
 
 dry = args.dry
 device = utils.set_device(args.gpu_id)
-"""
+
 augmentation = ka.AugmentationSequential(
         ka.RandomHorizontalFlip(p=0.04855768013650663),
         ka.RandomRotation(degrees=16,
@@ -34,22 +34,6 @@ augmentation = ka.AugmentationSequential(
         ka.RandomGrayscale(p=0.331441327268726),
         ka.Resize(size=(IMG_SIZE, IMG_SIZE))
     )
-"""
-
-augmentation = ka.AugmentationSequential(
-    ka.RandomHorizontalFlip(p=0.5),
-    ka.RandomRotation(
-        degrees=10,
-        p=0.3
-    ),
-    ka.ColorJitter(
-        brightness=0.2,
-        contrast=0.2,
-        saturation=0.2,
-        hue=0.05,
-        p=0.3
-    ),
-)
 
 torch.manual_seed(0)
 torch.cuda.manual_seed(0)
@@ -66,7 +50,7 @@ for m in [TinyMobileSE2k, TinyMobileSEStartBig, TinyMobileSEExtended]:
     wandb_logger = WandbLogger(
         project="C3-Week4",
         entity="mcv-team-6",
-        name=f"SmallMobileSE/{m.__name__}",
+        name=f"SmallMobileSE/{m.__name__} Before ReLU",
         group="SmallMobileSE_Ablation",
         config={
             "architecture": m.__name__,

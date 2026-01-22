@@ -109,7 +109,7 @@ def get_loaders(image_size : Optional[Tuple[int, int]] = None,
 def get_experiment_argument_parser():
     parser = argparse.ArgumentParser(description="Experiment parameters")
 
-    parser.add_argument('--epochs', type=int, default=500, help='Number of training epochs')
+    parser.add_argument('--epochs', type=int, default=1000, help='Number of training epochs')
     parser.add_argument('--gpu-id', type=int, default=0, help='GPU ID to use (default: 0)')
     parser.add_argument('--dry', default=False, action='store_true', help="If present, do not log to wandb nor save or generate any file.")
     parser.add_argument('--augmentation', default=False, action='store_true', help="If present, does data augmentation on the training.")
@@ -146,7 +146,7 @@ def init_wandb_run(*args, **kwargs):
     else:
         return Null()
 
-def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs : int = 500, model_name : str = "small_lenet"):
+def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs : int = 500, model_name : str = "small_lenet", checkpoint : bool = False):
     
     # early_stop_callback = EarlyStopping(
     #     monitor="test_loss",  # metric to monitor
@@ -163,14 +163,25 @@ def get_trainer(logger, patience : int = 15, min_delta : float = 0.001, epochs :
         dirpath="checkpoints/",      # folder to save
         filename=f"{model_name}"        # name of the checkpoint file
     )
+    
+    if checkpoint:
 
-    trainer = pl.Trainer(
-        max_epochs=epochs,
-        accelerator="auto",
-        devices=1,
-        logger=logger,
-        callbacks=[checkpoint_callback],
-        log_every_n_steps=1
-    )
+        trainer = pl.Trainer(
+            max_epochs=epochs,
+            accelerator="auto",
+            devices=1,
+            logger=logger,
+            callbacks=[checkpoint_callback],
+            log_every_n_steps=1
+        )
+    
+    else:
+        trainer = pl.Trainer(
+            max_epochs=epochs,
+            accelerator="auto",
+            devices=1,
+            logger=logger,
+            log_every_n_steps=1
+        )
     
     return trainer

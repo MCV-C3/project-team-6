@@ -5,4 +5,4 @@
 #SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
 #SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
 
-python -m experiments.micro_densenet_WDA --epochs 5000
+python -m experiments.generic_se_test --epochs 1000

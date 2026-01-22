@@ -119,3 +119,39 @@ priority while I'm doing experiments just to see where it goes. Asides from that
 even less parameters without loosing too much performance. If I do not see any fitting way to do so, I will begin to increase parameters and
 reach higher performances to do the tasked graph. I've heard that some group got to 0.9 accuracy using 2M parameters, so let's aim for that
 later on.
+
+The seeking for a model with even less parameters is left to Gerard, so I'll be focusing on supervising how the increase of parameters
+in the lenet makes the accuracy increase. It probably won't be increasing much given that I cannot even make it too deep (not residual)
+but even with that, let's see how it does. As a first increase I will be adding SE modules to see if it improves it's performance
+while adding a very little amount of parameters. I've seen that Gerard's networks channels expansions are much lower than mine. Maybe
+that is what is causing it to have that poor performance. Weirdly enough, even when we are just reduceng 1k parameters, the performance
+does not seem to be able to rise as much as expected. It could be because of the strong augmentations given, so let's try erasing them
+for those models. They could also maybe be needing lower learning rates, which is also possible.
+
+When erasing the data augmentation the model is able to overfit the data, and get training accuracies up to 0.7, but still since it does
+not reach higher accuracies it seems that it just lacks complexity. So let's go ahead and just try to expand the good model capabilities
+further instead. I'll be leaving one with a lower lr training just in case however.
+
+First thing tried in the expanded LeNet has been adding a new layer to further refine the 32 channels followed by an SE module to choose
+which channel is more important. Let's see if this bears any improvement to the performance and if it really has something to do with the
+SE or not. Okay, it seems that there is a problem with the SE module, since it is the module producing early stops in all of the nets.
+So let's see if we can fix it. If it's just that the layer acts like that, then nothing much can be done.
+
+Something weird is happening. I erased the SE module but still the training plateus even earlier than when the smaller net was used. Let me
+try and execute the smaller network again and see if they messed up somewhere. Also, let's try putting the knowledge distillation trainers
+to use, and erase the schedulers, since they do not work at all.
+
+It may seem that the problem of the SE models in general was somehow the scheduler? I don't know, but I got rid of it and the training now
+sems to be working correctly, so let's blame that and that's it. Let's traing again the really small ones and see if that was the problem.
+
+That was the fucking problem. Okay, now the small nets with SE seem to work similar to the bigger lenet I used. Let's then stuck to the SE
+type of architectures and do a general one in which we can define the number of layers, channels, etc so we can later on do the graph of
+accuracies vs parameters in an easy manner. We will keep it small, so no need for residuals right now. Let's go.
+
+Adding the MaxPooling seems to add quite a lot of noise on the training and such, but that is also because the high learning rate, so
+let's keep our generic model and begin increasing and reducing it. Given that this works let's just do a sweep in order to find the best
+constructible model from the SE. I will just be doing a sweep so it does everything for me. I don't want to waste time doing it by hand.
+It will also get the best combination of layers, so that's something good.
+
+The sweep, once it reaches higher layers, begins to overfit the model quite too much, so I'll be adding dropout inside of it to reduce the
+overfitting. I'll be setting low p values to not underfit too much neither.

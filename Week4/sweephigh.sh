@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH -p mlow # Partition to submit to
+#SBATCH -p mhigh # Partition to submit to
 #SBATCH --mem 24G # 24GB memory
 #SBATCH --gres gpu:1 # Request of 1 gpu
 #SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
 #SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
 
-python -m experiments.mobile_se_tiny_WDA --epochs 1000
+wandb agent mcv-team-6/C3-Week4/0ydb13hf

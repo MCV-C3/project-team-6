@@ -1,27 +1,14 @@
 from trainers.basic_trainer import BasicTrainingModule
-from models.generic_model import GenericSE
+from models.small_mobile_se import TinyMobileSE2kExpansion
 import utils
 import torch
 from pytorch_lightning.loggers import WandbLogger
 import pytorch_lightning as pl
 import kornia.augmentation as ka
-import wandb
 
 
 argparser = utils.get_experiment_argument_parser()
-args, unknown = argparser.parse_known_args()
-sweep_config = {}
-for arg in unknown:
-    if arg.startswith("--"):
-        key, val = arg[2:].split("=")
-        try:
-            # Convert numeric values automatically
-            val = float(val)
-            if val.is_integer():
-                val = int(val)
-        except ValueError:
-            pass  # leave as string
-        sweep_config[key] = val
+args = argparser.parse_args()
 
 EPOCHS = args.epochs
 IMG_SIZE = 224
@@ -51,25 +38,23 @@ augmentation = ka.AugmentationSequential(
         ka.Resize(size=(IMG_SIZE, IMG_SIZE))
     )
 
+model = TinyMobileSE2kExpansion()
+total = sum(p.numel() for p in model.parameters())
+train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=0.001)
+
 wandb_logger = WandbLogger(
     project="C3-Week4",
     entity="mcv-team-6",
-    name="Generic SE run"
+    name="SE WDA Channel expansion"
 )
 
-wandb_logger.experiment.config.update(sweep_config)
-cfg = wandb_logger.experiment.config
-
-channels = [8]*cfg.layers_8 + [16]*cfg.layers_16 + [24]*cfg.layers_24 + [32]*cfg.layers_32
-
-model = GenericSE(channels=channels)
-total = sum(p.numel() for p in model.parameters())
-sweep_config["parameters"] = total
-wandb_logger.experiment.config.update(sweep_config)
-
-train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=0.001)
-
-
+wandb_logger.experiment.config.update({
+                "architecture": "SE added",
+                "epochs": EPOCHS,
+                "image_size": IMG_SIZE,
+                "learning_rate": LR,
+                "parameters" : total
+            })
 
 trainer = utils.get_trainer(wandb_logger, patience=30, min_delta=0.001, epochs=EPOCHS)
 
@@ -83,5 +68,3 @@ train_loader, test_loader = utils.get_loaders(
 )
 
 trainer.fit(train_model, train_loader, test_loader)
-
-wandb_logger.experiment.finish()
