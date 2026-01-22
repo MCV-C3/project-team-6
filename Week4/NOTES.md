@@ -109,3 +109,13 @@ Of course, having 1k parameters lead to having arround 0.4 accuracy and plateu t
 to the absurd reduction I did to the net, which makes it just unable to learn anything useful. I can maybe get to use some bottleneck
 to reduce parameters instead. First, let's try my new knowledge distillation method to see if it works and helps the accuracy of the
 previous lenets.
+
+It seems that knowledge distillation does not help the 3k parameters model to further improve its performance, since it remains similar
+to the training without knowledge distillation. This may indicate that the model just underfits the data and is not capable of handling
+the complexity with that low amount of parameters. I would consider that having this performance with 3k parameters is good enough, and we
+will not find models with just 1k or 600 parameters that are able to do the same. I might also say that the performance is still increasing
+in both cases once the 1000 epochs are reached, so I will let one model with the knowledge distillation training for a long time in low
+priority while I'm doing experiments just to see where it goes. Asides from that, for the next step I will be looking for a way of using
+even less parameters without loosing too much performance. If I do not see any fitting way to do so, I will begin to increase parameters and
+reach higher performances to do the tasked graph. I've heard that some group got to 0.9 accuracy using 2M parameters, so let's aim for that
+later on.

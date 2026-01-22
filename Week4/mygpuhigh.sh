@@ -5,4 +5,4 @@
 #SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
 #SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
 
-python -m experiments.lenet_tiny_WDA --epochs 1000
+python -m experiments.depthwise_lenet_WDA_KD --epochs 1000

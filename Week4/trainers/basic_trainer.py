@@ -25,7 +25,6 @@ class BasicTrainingModule(pl.LightningModule):
                  loss_fn : nn.Module = nn.CrossEntropyLoss(), 
                  lr : float = 1e-5, 
                  optimizer_cls : optim.Optimizer = optim.AdamW,
-                 num_classes : int = 8,
                  augmentations = None
                  ):
         

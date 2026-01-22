@@ -1,19 +1,28 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
 import pytorch_lightning as pl
+from experiments.squeeze_excitation_experiment import create_model_for_experiment
 
-class DistillationLightningModule(pl.LightningModule):
+class DistillationTrainingModule(pl.LightningModule):
     
     def __init__(self, 
                  student: nn.Module, 
-                 teacher: nn.Module, 
                  lr: float = 1e-5, 
                  temperature: float = 4.0, 
-                 alpha: float = 0.5):
+                 alpha: float = 0.5,
+                 optimizer_cls : optim.Optimizer = optim.AdamW,
+                 augmentations = None):
 
         super().__init__()
         self.student = student
+        
+        checkpoint_path = '/ghome/group06/workspace/project-team-6/Week4/checkpoints/Definitive model/best_test_accuracy.pt'
+        teacher = create_model_for_experiment("Sweep", num_classes=8)
+        checkpoint = torch.load(checkpoint_path)
+        teacher.load_state_dict(checkpoint['model_state_dict'])
+        
         self.teacher = teacher
         self.teacher.eval()  # freeze teacher
         for param in self.teacher.parameters():
@@ -25,12 +34,20 @@ class DistillationLightningModule(pl.LightningModule):
         
         self.ce_loss = nn.CrossEntropyLoss()  # hard target loss
         self.kl_loss = nn.KLDivLoss(reduction='batchmean')  # soft target loss
+        
+        self.optimizer_cls = optimizer_cls
+        
+        self.augmentation = augmentations
     
     def forward(self, x):
         return self.student(x)
     
     def training_step(self, batch, batch_idx):
         x, y = batch
+        
+        if self.augmentation is not None:
+            x = self.augmentation(x)
+        
         student_logits = self.student(x)
         with torch.no_grad():
             teacher_logits = self.teacher(x)
@@ -64,5 +81,10 @@ class DistillationLightningModule(pl.LightningModule):
         return {"test_loss": loss}
     
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.student.parameters(), lr=self.lr)
+        
+        optimizer = self.optimizer_cls(
+            self.student.parameters(),
+            lr=self.lr,
+        )
+        
         return optimizer
