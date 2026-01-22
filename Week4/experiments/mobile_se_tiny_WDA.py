@@ -5,7 +5,7 @@ import torch
 from pytorch_lightning.loggers import WandbLogger
 import pytorch_lightning as pl
 import kornia.augmentation as ka
-
+import wandb
 
 argparser = utils.get_experiment_argument_parser()
 args = argparser.parse_args()
@@ -55,24 +55,30 @@ torch.manual_seed(0)
 torch.cuda.manual_seed(0)
 
 for m in [TinyMobileSE2k, TinyMobileSEStartBig, TinyMobileSEExtended]:
+    # Close any previous run BEFORE creating a new WandbLogger
+    wandb.finish()
+
     model = m()
     total = sum(p.numel() for p in model.parameters())
     train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=LR)
 
+    # Put config here so it is set at wandb.init time (no later mutation)
     wandb_logger = WandbLogger(
         project="C3-Week4",
         entity="mcv-team-6",
         name=f"SmallMobileSE/{m.__name__}",
-        group="SmallMobileSE_Ablation"
+        group="SmallMobileSE_Ablation",
+        config={
+            "architecture": m.__name__,
+            "epochs": EPOCHS,
+            "image_size": IMG_SIZE,
+            "learning_rate": LR,
+            "parameters": total
+        },
     )
 
-    wandb_logger.experiment.config.update({
-                    "architecture": m.__name__,
-                    "epochs": EPOCHS,
-                    "image_size": IMG_SIZE,
-                    "learning_rate": LR,
-                    "parameters" : total
-                })
+    # IMPORTANT: don't call wandb_logger.experiment.config.update(...)
+    # because Lightning may reuse a run and W&B blocks changing existing keys.
 
     trainer = utils.get_trainer(wandb_logger, patience=30, min_delta=0.001, epochs=EPOCHS, model_name=m.__name__)
 
@@ -86,3 +92,6 @@ for m in [TinyMobileSE2k, TinyMobileSEStartBig, TinyMobileSEExtended]:
     )
 
     trainer.fit(train_model, train_loader, test_loader)
+
+    # Finish the run created/used by this logger (more reliable than plain wandb.finish())
+    wandb_logger.experiment.finish()

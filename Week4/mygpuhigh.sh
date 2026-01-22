@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH -p mhigh # Partition to submit to
-#SBATCH --mem 24G # 24GB memory
-#SBATCH --gres gpu:1 # Request of 1 gpu
+#SBATCH -p mhigh
+#SBATCH --mem 24G
+#SBATCH --gres gpu:1
 #SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
 #SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
 
-python -m experiments.depthwise_lenet_WDA_KD --epochs 1000
+python -m experiments.micro_densenet_WDA --epochs 5000

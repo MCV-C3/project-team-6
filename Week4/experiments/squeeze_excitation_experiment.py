@@ -2,7 +2,7 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 from torchvision import models
-from models.squeeze_escitation import SqueezeExcitation
+from models.squeeze_excitation import SqueezeExcitation
 from augmentation import make_full_augmentation
 import utils
 import wandb

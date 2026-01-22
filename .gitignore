@@ -1,5 +1,8 @@
 data/
 Week1/__pycache__/
 Week1/cache_descriptors
+Week2/logs/
+Week3/logs/
+Week4/logs/
 prepare_code
 wandb/

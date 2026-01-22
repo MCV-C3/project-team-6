@@ -32,6 +32,7 @@ class TransitionLayer(nn.Module):
 class MicroDenseNet(nn.Module):
     def __init__(self, in_channels=3, num_classes=8, growth_rate=4, block_layers=4):
         super(MicroDenseNet, self).__init__()
+        inner_channels = 2 * growth_rate
         
         # initial conv
         self.conv1 = nn.Conv2d(in_channels, inner_channels, kernel_size=3, padding=1, bias=False)
