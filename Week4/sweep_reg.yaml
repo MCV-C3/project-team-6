@@ -1,0 +1,25 @@
+program: experiments/sweep_regularization.py
+name: regularization_search
+method: grid
+metric:
+  name: test_loss
+  goal: minimize
+parameters:
+  dropout_val:
+    values: [0.1, 0.2]
+  dropout_loc:
+    values: ["all", "mid"]
+
+  use_residuals:
+    values: [true, false]
+  use_cbam:
+    values: [true, false]
+    
+  weight_decay:
+    values: [0.01, 0.05]
+
+early_terminate:
+  type: hyperband
+  min_iter: 20
+  max_iter: 1000      
+  s: 2        
