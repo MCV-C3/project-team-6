@@ -1,5 +1,6 @@
 program: experiments/sweep_regularization.py
 name: regularization_search
+project: C3-Week4
 method: grid
 metric:
   name: test_loss
