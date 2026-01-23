@@ -12,7 +12,7 @@ class BasicTrainingModule(pl.LightningModule):
     model : torch.nn.Module
         The PyTorch model to be trained.
     loss_fn : torch.nn.Module
-        Loss function used for optimization.
+        Loss function used for optimization
     lr : float, optional
         Learning rate for the optimizer. Default is 1e-5.
     optimizer_cls : type, optional
