@@ -1,5 +1,5 @@
 from trainers.basic_trainer import BasicTrainingModule
-from models.small_mobile_se import TinyMobileSE2kExpansion
+from models.small_lenet import SmallLeNetSE
 import utils
 import torch
 from pytorch_lightning.loggers import WandbLogger
@@ -38,14 +38,14 @@ augmentation = ka.AugmentationSequential(
         ka.Resize(size=(IMG_SIZE, IMG_SIZE))
     )
 
-model = TinyMobileSE2kExpansion()
+model = SmallLeNetSE()
 total = sum(p.numel() for p in model.parameters())
 train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=0.001)
 
 wandb_logger = WandbLogger(
     project="C3-Week4",
     entity="mcv-team-6",
-    name="SE WDA Channel expansion"
+    name="LeNet Depthwise + SE"
 )
 
 wandb_logger.experiment.config.update({

@@ -128,5 +128,5 @@ class TinyMobileSE2kExpansion(nn.Module):
         return self.head(x)
 
 if __name__ == "__main__":
-    model = TinyMobileSE2kExpansion()
+    model = TinyMobileSE2k()
     print(summary(model, input_size=(1, 3, 224, 224), depth=2))

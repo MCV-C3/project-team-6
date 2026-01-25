@@ -92,12 +92,9 @@ class SmallLeNetSE(nn.Module):
             nn.ReLU(),
             
             DepthwiseSeparableConv(in_channels=16, out_channels=32, kernel_size=3, padding='same'),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            
-            DepthwiseSeparableConv(in_channels=32, out_channels=32, kernel_size=3, padding='same'),
             SqueezeExcitation(channels=32),
             nn.ReLU(),
+            nn.MaxPool2d(2),
             
             DepthwiseSeparableConv(in_channels=32, out_channels=64, kernel_size=3, padding='same'),
             nn.ReLU(),
@@ -146,5 +143,5 @@ class SmallLeNetNoSE(nn.Module):
         return self.head(x)    
 
 if __name__ == "__main__":
-    model = SmallLeNetNoSE()
+    model = SmallLeNetSE()
     print(summary(model, input_size=(1, 3, 224, 224), depth=2))
