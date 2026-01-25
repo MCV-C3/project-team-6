@@ -12,7 +12,7 @@ args = argparser.parse_args()
 
 EPOCHS = args.epochs
 IMG_SIZE = 224
-LR = 0.0001
+LR = 0.001
 
 dry = args.dry
 device = utils.set_device(args.gpu_id)
@@ -40,7 +40,7 @@ augmentation = ka.AugmentationSequential(
 
 model = SmallMobile()
 total = sum(p.numel() for p in model.parameters())
-train_model = BasicTrainingModule(model=model, augmentations=augmentation)
+train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=LR)
 
 wandb_logger = WandbLogger(
     project="C3-Week4",

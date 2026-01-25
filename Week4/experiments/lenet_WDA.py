@@ -12,7 +12,7 @@ args = argparser.parse_args()
 
 EPOCHS = args.epochs
 IMG_SIZE = 224
-LR = 0.0001
+LR = 0.001
 
 dry = args.dry
 device = utils.set_device(args.gpu_id)
@@ -45,7 +45,7 @@ train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=0.
 wandb_logger = WandbLogger(
     project="C3-Week4",
     entity="mcv-team-6",
-    name="Small LeNet WDA w/ dropout (not much)"
+    name="Small LeNet WDA"
 )
 
 wandb_logger.experiment.config.update({

@@ -9,23 +9,11 @@ import wandb
 
 
 argparser = utils.get_experiment_argument_parser()
-args, unknown = argparser.parse_known_args()
-sweep_config = {}
-for arg in unknown:
-    if arg.startswith("--"):
-        key, val = arg[2:].split("=")
-        try:
-            # Convert numeric values automatically
-            val = float(val)
-            if val.is_integer():
-                val = int(val)
-        except ValueError:
-            pass  # leave as string
-        sweep_config[key] = val
+args = argparser.parse_args()
 
 EPOCHS = args.epochs
 IMG_SIZE = 224
-LR = 0.0001
+LR = 0.001
 
 dry = args.dry
 device = utils.set_device(args.gpu_id)
@@ -51,27 +39,28 @@ augmentation = ka.AugmentationSequential(
         ka.Resize(size=(IMG_SIZE, IMG_SIZE))
     )
 
+
+channels = [16]*1 + [32]*5
+model = GenericSE(channels=channels)
+total = sum(p.numel() for p in model.parameters())
+
 wandb_logger = WandbLogger(
     project="C3-Week4",
     entity="mcv-team-6",
-    name="Generic SE run"
+    name="Run for checkpoints"
 )
 
-wandb_logger.experiment.config.update(sweep_config)
-cfg = wandb_logger.experiment.config
-
-channels = [8]*cfg.layers_8 + [16]*cfg.layers_16 + [24]*cfg.layers_24 + [32]*cfg.layers_32
-
-model = GenericSE(channels=channels)
-total = sum(p.numel() for p in model.parameters())
-sweep_config["parameters"] = total
-wandb_logger.experiment.config.update(sweep_config)
+wandb_logger.experiment.config.update({
+                "architecture": "Small Generic",
+                "epochs": EPOCHS,
+                "image_size": IMG_SIZE,
+                "learning_rate": LR,
+                "parameters" : total
+            })
 
 train_model = BasicTrainingModule(model=model, augmentations=augmentation, lr=0.001)
 
-
-
-trainer = utils.get_trainer(wandb_logger, patience=30, min_delta=0.001, epochs=EPOCHS)
+trainer = utils.get_trainer(wandb_logger, patience=30, min_delta=0.001, epochs=EPOCHS, checkpoint=True, model_name="best_test_peak")
 
 train_loader, test_loader = utils.get_loaders(
     image_size=(IMG_SIZE, IMG_SIZE),

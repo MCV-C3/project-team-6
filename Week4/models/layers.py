@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from models.squeeze_excitation import SqueezeExcitation
 
 class DepthwiseSeparableConv(nn.Module):
     
@@ -17,8 +18,7 @@ class DepthwiseSeparableConv(nn.Module):
 
     def forward(self, x):
         return self.layer(x)
-    
-    
+       
 class ResidualBlock(nn.Module):
     
     def __init__(self, channels : int, kernel_size : int):
@@ -35,8 +35,7 @@ class ResidualBlock(nn.Module):
         
     def forward(self, x):
         return F.relu(self.layer(x) + x)
-    
-    
+      
 class ResidualBlockDepthwise(nn.Module):
     
     def __init__(self, channels : int, kernel_size : int):
@@ -52,7 +51,22 @@ class ResidualBlockDepthwise(nn.Module):
     def forward(self, x):
         return F.relu(self.layer(x) + x)
 
-
+class ResidualBlockSE(nn.Module):
+    
+    def __init__(self, channels : int, kernel_size : int):
+        super().__init__()
+        
+        self.layer = nn.Sequential(
+            DepthwiseSeparableConv(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
+            SqueezeExcitation(channels=channels, reduction=8),
+            nn.ReLU(),
+            DepthwiseSeparableConv(in_channels=channels, out_channels=channels, kernel_size=kernel_size, padding='same'),
+            SqueezeExcitation(channels=channels, reduction=8),
+        )
+        
+        
+    def forward(self, x):
+        return F.relu(self.layer(x) + x)
 
 class ChannelAttention(nn.Module): #Paper CNNtention 4.3.3
     def __init__(self, in_channels, reduction_ratio=16):

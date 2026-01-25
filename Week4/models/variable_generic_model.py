@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
-from models.layers import DepthwiseSeparableConv, ResidualBlockDepthwise, SqueezeExcitation, CBAM
+from models.layers import DepthwiseSeparableConv, ResidualBlockDepthwise, CBAM
+from models.squeeze_excitation import SqueezeExcitation
 
 class VariableGenericSE(nn.Module):
 

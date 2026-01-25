@@ -28,7 +28,7 @@ augmentation = ka.AugmentationSequential(
 )
 
 # 3. Definición del Modelo Ganador (GenericSE)
-# Config: layers_8:0, layers_16:1, layers_24:3, layers_32:4
+# Config: layers_8:0, layers_16:1, layers_24:0, layers_32:4
 # Resulting Channels: [16, 24, 24, 24, 32, 32, 32, 32]
 best_channels_config = [16] + [24]*3 + [32]*4
 

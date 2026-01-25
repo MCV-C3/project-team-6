@@ -1,5 +1,5 @@
 program: train.py
-name: sweep_layers
+name: sweep_layers_dropout
 method: grid
 metric:
   name: test_loss

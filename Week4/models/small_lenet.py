@@ -13,7 +13,6 @@ class SmallLeNet(nn.Module):
             nn.Conv2d(in_channels=in_channels, out_channels=16, kernel_size=3, padding='same'),
             nn.BatchNorm2d(16),
             nn.ReLU(),
-            nn.Dropout2d(p=0.2),
             nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, padding='same'),
             nn.BatchNorm2d(32),
             nn.ReLU(),
