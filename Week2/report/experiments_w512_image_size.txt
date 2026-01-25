@@ -1,0 +1,5 @@
+(w=512 d=2) Imsize variation : 224x224          k9xqtycb
+(w=512 d=2) Imsize variation : 128x128          2rvjltid
+(w=512 d=2) Imsize variation : 64x64            kt3snrik
+(w=512 d=2) Imsize variation : 32x32            q4fses58
+(w=512 d=2) Imsize variation : 16x16            w2qndlmd

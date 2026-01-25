@@ -1,0 +1,46 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 17:02:05,180 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 17:02:05,960 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 17:02:05,960 - wandb.wandb_agent - INFO - Agent starting run with config:
+	batch_size: 32
+	label_smoothing: 0.00018932525963499813
+	lr: 0.005485192011825278
+	optimizer: Nadam
+	weight_decay: 7.9485083286199e-06
+2026-01-10 17:02:05,962 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train.py --batch_size=32 --label_smoothing=0.00018932525963499813 --lr=0.005485192011825278 --optimizer=Nadam --weight_decay=7.9485083286199e-06
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+2026-01-10 17:02:10,966 - wandb.wandb_agent - INFO - Running runs: ['lgm09o4q']
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_170210-lgm09o4q
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/k5ns8jzl
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/lgm09o4q
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 1/500 [00:04<36:55,  4.44s/it]TRAINING THE MODEL:   0%|          | 2/500 [00:07<30:49,  3.71s/it]TRAINING THE MODEL:   1%|          | 3/500 [00:10<28:34,  3.45s/it]TRAINING THE MODEL:   1%|          | 4/500 [00:13<27:28,  3.32s/it]TRAINING THE MODEL:   1%|          | 5/500 [00:17<26:57,  3.27s/it]TRAINING THE MODEL:   1%|          | 6/500 [00:20<26:38,  3.24s/it]TRAINING THE MODEL:   1%|▏         | 7/500 [00:23<26:23,  3.21s/it]TRAINING THE MODEL:   2%|▏         | 8/500 [00:26<26:10,  3.19s/it]TRAINING THE MODEL:   2%|▏         | 9/500 [00:29<25:59,  3.18s/it]TRAINING THE MODEL:   2%|▏         | 10/500 [00:32<25:49,  3.16s/it]TRAINING THE MODEL:   2%|▏         | 11/500 [00:36<25:56,  3.18s/it]TRAINING THE MODEL:   2%|▏         | 12/500 [00:39<25:51,  3.18s/it]TRAINING THE MODEL:   3%|▎         | 13/500 [00:42<25:41,  3.17s/it]TRAINING THE MODEL:   3%|▎         | 14/500 [00:45<25:35,  3.16s/it]TRAINING THE MODEL:   3%|▎         | 15/500 [00:48<25:44,  3.18s/it]TRAINING THE MODEL:   3%|▎         | 16/500 [00:52<25:49,  3.20s/it]TRAINING THE MODEL:   3%|▎         | 17/500 [00:55<25:54,  3.22s/it]TRAINING THE MODEL:   4%|▎         | 18/500 [00:58<25:42,  3.20s/it]TRAINING THE MODEL:   4%|▍         | 19/500 [01:01<25:50,  3.22s/it]TRAINING THE MODEL:   4%|▍         | 20/500 [01:05<27:12,  3.40s/it]TRAINING THE MODEL:   4%|▍         | 21/500 [01:08<26:31,  3.32s/it]TRAINING THE MODEL:   4%|▍         | 22/500 [01:11<26:05,  3.27s/it]TRAINING THE MODEL:   5%|▍         | 23/500 [01:15<25:55,  3.26s/it]TRAINING THE MODEL:   5%|▍         | 24/500 [01:18<25:42,  3.24s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:21<25:38,  3.24s/it]TRAINING THE MODEL:   5%|▌         | 25/500 [01:24<26:49,  3.39s/it]
+wandb: updating run metadata
+wandb: uploading config.yaml
+wandb: uploading console lines 4-32
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁▁▂▂▂▂▃▃▃▄▄▄▄▅▅▅▅▆▆▆▇▇▇▇██
+wandb:  test_accuracy ▁▁▂▃▃▄▄▅▄▄█▆▁▅▄▇▇▇▂█▇▄▇▅▇█
+wandb:      test_loss █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: train_accuracy ▁▁▁▂▂▃▃▄▄▅▅▅▆▆▆▆▇▆▆▆█▇████
+wandb:     train_loss █▇▇▆▅▅▄▄▄▄▃▃▃▃▂▂▂▂▂▂▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 25
+wandb:  test_accuracy 0.58698
+wandb:      test_loss 1.28864
+wandb: train_accuracy 0.76
+wandb:     train_loss 0.69918
+wandb: 
+wandb: 🚀 View run Sweep run at: https://wandb.ai/mcv-team-6/C3-Week3/runs/lgm09o4q
+wandb: ⭐️ View project at: https://wandb.ai/mcv-team-6/C3-Week3
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260110_170210-lgm09o4q/logs
+2026-01-10 17:03:43,786 - wandb.wandb_agent - INFO - Cleaning up finished run: lgm09o4q
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

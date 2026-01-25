@@ -1,0 +1,20 @@
+program: train.py
+name: sweep_layers_dropout
+method: grid
+metric:
+  name: test_loss
+  goal: minimize
+parameters:
+  layers_8:
+    values : [0, 1, 2, 3, 4, 5]
+  layers_16:
+    values : [0, 1, 2, 3, 4, 5]
+  layers_24:
+    values : [0, 1, 2, 3, 4, 5]
+  layers_32:
+    values : [0, 1, 2, 3, 4, 5]
+early_terminate:
+  type: hyperband
+  min_iter: 20
+  max_iter: 1000      
+  s: 2               

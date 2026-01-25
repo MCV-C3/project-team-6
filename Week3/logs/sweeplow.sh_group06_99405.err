@@ -1,0 +1,46 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 17:44:30,434 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 17:44:30,972 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 17:44:30,972 - wandb.wandb_agent - INFO - Agent starting run with config:
+	batch_size: 64
+	label_smoothing: 0.06738246318071142
+	lr: 0.006648504524025414
+	optimizer: Adagrad
+	weight_decay: 1.4449058472925904e-06
+2026-01-10 17:44:30,974 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train.py --batch_size=64 --label_smoothing=0.06738246318071142 --lr=0.006648504524025414 --optimizer=Adagrad --weight_decay=1.4449058472925904e-06
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+wandb: setting up run nwbrwdgx
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_174435-nwbrwdgx
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/k5ns8jzl
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/nwbrwdgx
+2026-01-10 17:44:35,978 - wandb.wandb_agent - INFO - Running runs: ['nwbrwdgx']
+TRAINING THE MODEL:   0%|          | 0/500 [00:00<?, ?it/s]TRAINING THE MODEL:   0%|          | 0/500 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train.py", line 91, in <module>
+    experiment(
+  File "/export/home/group06/workspace/project-team-6/Week3/pipeline.py", line 168, in experiment
+    train_loss, train_accuracy = train(model, train_loader, criterion, optimizer, device, augmentation)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/export/home/group06/workspace/project-team-6/Week3/pipeline.py", line 40, in train
+    optimizer.step()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/optimizer.py", line 484, in wrapper
+    out = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/optimizer.py", line 89, in _use_grad
+    ret = func(self, *args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/adagrad.py", line 169, in step
+    adagrad(
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/adagrad.py", line 299, in adagrad
+    func(
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/torch/optim/adagrad.py", line 470, in _multi_tensor_adagrad
+    torch._foreach_addcmul_(device_state_sums, device_grads, device_grads, value=1)
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
+2026-01-10 17:44:46,249 - wandb.wandb_agent - INFO - Cleaning up finished run: nwbrwdgx
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

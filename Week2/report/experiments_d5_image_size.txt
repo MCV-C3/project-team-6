@@ -1,0 +1,5 @@
+(w=300 d=5) Imsize variation : 224x224          m9zjxxo0
+(w=300 d=5) Imsize variation : 128x128          4itl6tay
+(w=300 d=5) Imsize variation : 64x64            5fsmm2r8
+(w=300 d=5) Imsize variation : 32x32            mwvfla6j
+(w=300 d=5) Imsize variation : 16x16            vvkwnsp8

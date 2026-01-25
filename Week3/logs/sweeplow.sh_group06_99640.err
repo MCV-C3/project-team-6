@@ -1,0 +1,55 @@
+wandb: Starting wandb agent 🕵️
+2026-01-10 20:47:54,805 - wandb.wandb_agent - INFO - Running runs: []
+2026-01-10 20:47:55,302 - wandb.wandb_agent - INFO - Agent received command: run
+2026-01-10 20:47:55,302 - wandb.wandb_agent - INFO - Agent starting run with config:
+	affine: 0.6404101894078216
+	blur: 0.75521666292159
+	brightness: 0.685855629903658
+	contrast: 0.951762115538157
+	crop: 0.7492009965603067
+	crop_scale: 0.6459256230514727
+	flip: 0.022062997111218174
+	gaussian_blur_kernel: 5
+	gaussian_noise_std: 0.7290610975215593
+	grey: 0.08203631097825026
+	hue: -0.05550117186486752
+	jiggle: 0.6911839443147222
+	rotate: 0.9318915534722576
+	rotation: 4
+	saturation: 1.0342432177614242
+	scale: 0.9725324341926336
+	shear: 31
+	translate_x: 0.07873059218819077
+	translate_y: 0.05478612633382545
+2026-01-10 20:47:55,306 - wandb.wandb_agent - INFO - About to run command: /usr/bin/env python train_data.py --affine=0.6404101894078216 --blur=0.75521666292159 --brightness=0.685855629903658 --contrast=0.951762115538157 --crop=0.7492009965603067 --crop_scale=0.6459256230514727 --flip=0.022062997111218174 --gaussian_blur_kernel=5 --gaussian_noise_std=0.7290610975215593 --grey=0.08203631097825026 --hue=-0.05550117186486752 --jiggle=0.6911839443147222 --rotate=0.9318915534722576 --rotation=4 --saturation=1.0342432177614242 --scale=0.9725324341926336 --shear=31 --translate_x=0.07873059218819077 --translate_y=0.05478612633382545
+wandb: Currently logged in as: arnaumarcosalmansa (mcv-team-6) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: WARNING Ignoring project 'C3-Week3' when running a sweep.
+wandb: WARNING Ignoring entity 'mcv-team-6' when running a sweep.
+wandb: Tracking run with wandb version 0.23.1
+wandb: Run data is saved locally in /export/home/group06/workspace/project-team-6/Week3/wandb/run-20260110_204759-93820hkc
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Sweep run
+wandb: ⭐️ View project at https://wandb.ai/mcv-team-6/C3-Week3
+wandb: 🧹 View sweep at https://wandb.ai/mcv-team-6/C3-Week3/sweeps/8yeenlu8
+wandb: 🚀 View run at https://wandb.ai/mcv-team-6/C3-Week3/runs/93820hkc
+2026-01-10 20:48:00,312 - wandb.wandb_agent - INFO - Running runs: ['93820hkc']
+Traceback (most recent call last):
+  File "/export/home/group06/workspace/project-team-6/Week3/train_data.py", line 61, in <module>
+    ka.ColorJitter(brightness=cfg.brightness,
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/_2d/intensity/color_jitter.py", line 105, in __init__
+    self._param_generator = rg.ColorJitterGenerator(brightness, contrast, saturation, hue)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 34, in __call__
+    obj.__post_init__()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 48, in __post_init__
+    self.set_rng_device_and_dtype()
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/base.py", line 64, in set_rng_device_and_dtype
+    self.make_samplers(device, dtype)
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/random_generator/_2d/color_jitter.py", line 86, in make_samplers
+    hue: Tensor = _range_bound(self.hue, "hue", bounds=(-0.5, 0.5), device=device, dtype=dtype)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ghome/group06/miniconda3/envs/c3/lib/python3.12/site-packages/kornia/augmentation/utils/param_validation.py", line 53, in _range_bound
+    raise ValueError(f"If {name} is a single number, it must be non negative. Got {factor}.")
+ValueError: If hue is a single number, it must be non negative. Got -0.055501170456409454.
+2026-01-10 20:48:05,448 - wandb.wandb_agent - INFO - Cleaning up finished run: 93820hkc
+wandb: Terminating and syncing runs. Press ctrl-c to kill.

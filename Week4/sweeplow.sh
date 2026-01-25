@@ -1,0 +1,9 @@
+#!/bin/bash
+#SBATCH -p mlow # Partition to submit to
+#SBATCH --array=1-5
+#SBATCH --mem 24G # 24GB memory
+#SBATCH --gres gpu:1 # Request of 1 gpu
+#SBATCH -o logs/%x_%u_%j.out # File to which STDOUT will be written
+#SBATCH -e logs/%x_%u_%j.err # File to which STDERR will be written
+
+wandb agent mcv-team-6/C3-Week4/l0zokq5e
